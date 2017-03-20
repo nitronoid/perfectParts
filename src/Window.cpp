@@ -99,7 +99,7 @@ void Window::pollEvent(Emitter &_e)
     }
     case SDLK_r :
     {
-      _e.createSmoke();
+      _e.m_smoke = !_e.m_smoke;
       break;
     }
     default : break;

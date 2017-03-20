@@ -74,7 +74,7 @@ Particle* SmokeParticle::createChild(const int &_frame) const
                              calcInitVel(),                          //initial velocity
                              m_col,                                  //initial colour
                              m_size,                                 //initial size
-                             100,                                     //life span
+                             _frame-m_birthFrame+m_life,             //life span
                              _frame,                                 //current frame
                              false);
 }
