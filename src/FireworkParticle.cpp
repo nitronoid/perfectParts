@@ -108,7 +108,7 @@ glm::vec4 FireworkParticle::calcCol(const int &_frame) const
 
 Particle* FireworkParticle::createChild(const int &_frame) const
 {
-  return new FireworkParticle (0,
+  return new FireworkParticle (-_frame,
                                m_pos,                                  //initial position
                                calcInitVel(),                          //initial velocity
                                m_col,                                  //initial colour

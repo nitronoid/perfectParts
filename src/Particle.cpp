@@ -38,7 +38,7 @@ void Particle::update(int const &_frame, unsigned int &_particleCount)
   {
     m_vel += m_accel;
     m_pos += m_vel ;
-    m_size -= m_sizeDelta;
+    m_size += m_sizeDelta;
     m_col += m_colDelta;
     m_life--;
   }

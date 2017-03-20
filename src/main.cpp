@@ -29,7 +29,7 @@ int main()
       }
       win.draw(em);
       win.swapWindow();
-      glAccum(GL_ACCUM, 0.9f);
+      glAccum(GL_ACCUM, 0.75f);
     }
   }
   return EXIT_SUCCESS;

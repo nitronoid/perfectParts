@@ -20,7 +20,6 @@ void Emitter::update()
   {
     createSmoke();
   }
-  spawnParticles();
   for(auto &p : m_particles)
   {
     if(p->m_alive)
@@ -28,7 +27,7 @@ void Emitter::update()
       p->update(m_frame,m_particleCount);
     }
   }
-
+  spawnParticles();
   std::sort(std::begin(m_particles),std::end(m_particles),compareZ);
   ++m_frame;
 }
@@ -42,7 +41,7 @@ void Emitter::spawnParticles()
     if(m_particles[i]->m_alive && m_particles[i]->m_spawn)
     {
       newSpawn = m_particles[i]->newParts(m_frame);
-      for(int i = 0; (i < newSpawn) && (m_particleCount < m_maxParticles); ++i)
+      for(int j = 0; (j < newSpawn) && (m_particleCount < m_maxParticles); ++j)
       {
         newParticle.reset(m_particles[i]->createChild(m_frame));
         if(newParticle != nullptr)
@@ -74,7 +73,7 @@ void Emitter::addParticle( std::unique_ptr<Particle> &_newParticle)
   }
   if(!isSpace && (m_particleCount < m_maxParticles))
   {
-    m_particles.emplace_back(std::move(_newParticle));
+    m_particles.push_back(std::move(_newParticle));
     ++m_particleCount;
   }
 
@@ -111,7 +110,7 @@ void Emitter::createSmoke()
 
 void Emitter::createFirework()
 {
-  int fuel = 200;
+  int fuel = 100;
   int trail = 10;
   if(m_particleCount + fuel*(trail*1) < m_maxParticles)
   {
