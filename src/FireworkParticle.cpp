@@ -74,7 +74,7 @@ glm::vec3 FireworkParticle::getExplosionVel() const
   std::uniform_real_distribution<float> dist(0.5,1);
   std::mt19937_64 rng(seed);
   float radial = dist(rng);
-  dist = std::uniform_real_distribution<float>(0.0f,360.0f);
+  dist = std::uniform_real_distribution<float>(0.0f,6.28);
   float asimuthal = dist(rng);
   float polar = dist(rng);
   glm::vec3 newVel;

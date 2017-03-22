@@ -40,7 +40,7 @@ void Particle::update(int const &_frame, unsigned int &_particleCount)
     m_pos += m_vel ;
     m_size += m_sizeDelta;
     m_col += m_colDelta;
-    m_life--;
+    --m_life;
   }
   if(m_alive && ((m_life <= 0) || (m_size <= 0.0f) || (m_col.a <= 0.0f)))
   {

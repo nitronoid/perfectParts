@@ -1,4 +1,5 @@
 #include "Emitter.h"
+#include <iostream>
 
 Emitter::Emitter(glm::vec3 _pos, unsigned int _max)
 {
@@ -98,35 +99,36 @@ void Emitter::clearParticles()
 
 void Emitter::createSmoke()
 {
-  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::uniform_real_distribution<float> dist(0.0f,2.0f);
-  std::mt19937_64 rng(seed);
-  float radial = dist(rng);
-  dist = std::uniform_real_distribution<float>(0.0f,15.0f);
-  float theta = dist(rng);
-  glm::vec3 newPos = glm::vec3(radial * cos(theta),
-                               0.0f,
-                               radial * sin(theta));
+  for(int i =0; i < 3; ++i)
+  {
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    std::uniform_real_distribution<float> dist(0.0f,2.0f);
+    std::mt19937_64 rng(seed);
+    float radial = dist(rng);
+    dist = std::uniform_real_distribution<float>(0.0f,15.0f);
+    float theta = dist(rng);
+    glm::vec3 newPos = glm::vec3(radial * cos(theta),
+                                 0.0f,
+                                 radial * sin(theta));
 
-  radial = 1.2f;
-  dist = std::uniform_real_distribution<float>(-15.0f,15.0f);
-  float phi = dist(rng);
+    radial = 1.2f;
+    dist = std::uniform_real_distribution<float>(-0.175f,0.175f); //radians
+    float phi = dist(rng);
 
-  glm::vec3 newVel = glm::vec3(radial * sin(theta) * cos(phi),
-                               radial * sin(theta) * sin(phi),
-                               radial * cos(theta));
-  glm::vec3 coneCentre = glm::vec3(0,1,0);
-  glm::vec3 thedot = glm::dot(coneCentre,);
+    glm::vec3 newVel = glm::vec3(radial * sin(phi) * cos(theta),
+                                 radial * cos(phi),
+                                 radial * sin(phi) * sin(theta));
 
 
-  std::unique_ptr<Particle> temp (new SmokeParticle(m_pos + newPos,                                  //initial position
-                                                    newVel,                                          //initial velocity
-                                                    glm::vec4(1.0f,1.0f,1.0f,1.0f),                  //initial colour
-                                                    5.0f,                                            //initial size
-                                                    200,                                             //life span
-                                                    m_frame,                                         //current frame
-                                                    true));
-  addParticle(temp);
+    std::unique_ptr<Particle> temp (new SmokeParticle(m_pos + newPos,                                  //initial position
+                                                      newVel,                                          //initial velocity
+                                                      glm::vec4(1.0f,1.0f,1.0f,1.0f),                  //initial colour
+                                                      2.0f,                                            //initial size
+                                                      150,                                             //life span
+                                                      m_frame,                                         //current frame
+                                                      true));
+    addParticle(temp);
+  }
 }
 
 void Emitter::createFirework()

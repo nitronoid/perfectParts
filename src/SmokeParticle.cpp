@@ -45,28 +45,11 @@ glm::vec3 SmokeParticle::calcInitVel() const
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
   std::uniform_real_distribution<float> dist(-1,1);
   std::mt19937_64 rng(seed);
-  float variance = 0.1f;
+  float variance = 0.05f;
   return glm::vec3(m_vel.x + variance * dist(rng),
                    m_vel.y + variance * dist(rng),
                    m_vel.z + variance * dist(rng));
 }
-
-//glm::vec3 SmokeParticle::getEjectionVel() const
-//{
-//  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-//  std::uniform_real_distribution<float> dist(350,500);
-//  std::mt19937_64 rng(seed);
-//  float radial = dist(rng);
-//  dist = std::uniform_real_distribution<float>(0.0f,360.0f);
-//  float asimuthal = dist(rng);
-//  dist = std::uniform_real_distribution<float>(0.0f,30.0f);
-//  float polar = dist(rng);
-//  glm::vec3 newVel;
-//  newVel.x = (radial * cos(asimuthal) * sin(polar));
-//  newVel.y = (radial * sin(asimuthal) * sin(polar));
-//  newVel.z = (radial * cos(polar));
-//  return newVel;
-//}
 
 Particle* SmokeParticle::createChild(const int &_frame) const
 {
