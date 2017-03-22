@@ -8,6 +8,7 @@ Emitter::Emitter(glm::vec3 _pos, unsigned int _max)
   m_frame = 0;
   m_particleCount = 0;
   m_smoke = false;
+  m_particles.reserve(_max);
 }
 
 Emitter::~Emitter()
@@ -124,7 +125,7 @@ void Emitter::createSmoke()
                                                       newVel,                                          //initial velocity
                                                       glm::vec4(1.0f,1.0f,1.0f,1.0f),                  //initial colour
                                                       2.0f,                                            //initial size
-                                                      150,                                             //life span
+                                                      100,                                             //life span
                                                       m_frame,                                         //current frame
                                                       true));
     addParticle(temp);
@@ -146,6 +147,7 @@ void Emitter::createFirework()
                                                             1.0f,                           //initial brightness
                                                             2.5f,                                 //initial size
                                                             200,                            //life span
+                                                            trail,
                                                             m_frame,                                        //current frame
                                                             true,
                                                             false));

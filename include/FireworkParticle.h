@@ -14,6 +14,7 @@ public:
                    float brightness,
                    float _size,
                    int _life,
+                   int _trailLife,
                    int _frame,
                    bool _spawn,
                    bool _blink);
@@ -37,6 +38,7 @@ private:
   bool m_blink;
   bool m_exploded;
   float m_brightness;
+  int m_trailLife;
 };
 
 #endif // FIREWORKPARTICLE_H

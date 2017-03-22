@@ -8,6 +8,7 @@ FireworkParticle::FireworkParticle(int _fuse,
                                    float brightness,
                                    float _size,
                                    int _life,
+                                   int _trailLife,
                                    int _frame,
                                    bool _spawn,
                                    bool _blink) : Particle(_pos,
@@ -34,6 +35,7 @@ FireworkParticle::FireworkParticle(int _fuse,
   }
   m_exploded = false;
   m_explosionFuse = _fuse + _frame;
+  m_trailLife = _trailLife;
 }
 
 FireworkParticle::~FireworkParticle()
@@ -61,7 +63,7 @@ void FireworkParticle::explode()
   m_col = glm::vec4(m_col.r += dist(rng), m_col.g += dist(rng), m_col.b += dist(rng), 1.0f);
   m_size = 2.5f;
   m_brightness = 1.0f;
-  m_life = 100;
+  m_life = 80;
 
   float colChange = -m_col.a/m_life;
   m_sizeDelta = -m_size/m_life;
@@ -71,7 +73,7 @@ void FireworkParticle::explode()
 glm::vec3 FireworkParticle::getExplosionVel() const
 {
   unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::uniform_real_distribution<float> dist(0.5,1);
+  std::uniform_real_distribution<float> dist(0.5,0.75);
   std::mt19937_64 rng(seed);
   float radial = dist(rng);
   dist = std::uniform_real_distribution<float>(0.0f,6.28);
@@ -108,16 +110,17 @@ glm::vec4 FireworkParticle::calcCol(const int &_frame) const
 
 Particle* FireworkParticle::createChild(const int &_frame) const
 {
-  return new FireworkParticle (-_frame,
+  return new FireworkParticle (-_frame,                                //we set the fuse to 0 using -frame
                                m_pos,                                  //initial position
                                calcInitVel(),                          //initial velocity
                                m_col,                                  //initial colour
                                m_brightness,                           //initial brightness
                                m_size,                                 //initial size
-                               10,                                     //life span
+                               m_trailLife,                            //life span
+                               0,
                                _frame,                                 //current frame
-                               false,
-                               m_blink);
+                               false,                                  //spawning
+                               m_blink);                               //blinking
 }
 
 void FireworkParticle::draw(const int &_frame) const
