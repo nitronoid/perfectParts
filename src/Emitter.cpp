@@ -1,7 +1,6 @@
 #include "Emitter.h"
-#include <iostream>
 
-Emitter::Emitter(glm::vec3 _pos, unsigned int _max)
+Emitter::Emitter(const glm::vec3 &_pos, const unsigned int &_max)
 {
   m_pos = _pos;
   m_maxParticles = _max;
@@ -20,7 +19,7 @@ void Emitter::update()
 {
   if(m_smoke)
   {
-    createSmoke();
+    createFlame();
   }
   for(auto &p : m_particles)
   {
@@ -98,7 +97,7 @@ void Emitter::clearParticles()
   m_particleCount = 0;
 }
 
-void Emitter::createSmoke()
+void Emitter::createFlame()
 {
   for(int i =0; i < 3; ++i)
   {

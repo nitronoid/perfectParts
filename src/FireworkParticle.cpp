@@ -1,17 +1,16 @@
 #include "FireworkParticle.h"
-#include <iostream>
 
-FireworkParticle::FireworkParticle(int _fuse,
-                                   glm::vec3 _pos,
-                                   glm::vec3 _vel,
-                                   glm::vec4 _col,
-                                   float brightness,
-                                   float _size,
-                                   int _life,
-                                   int _trailLife,
-                                   int _frame,
-                                   bool _spawn,
-                                   bool _blink) : Particle(_pos,
+FireworkParticle::FireworkParticle(const int &_fuse,
+                                   const glm::vec3 &_pos,
+                                   const glm::vec3 &_vel,
+                                   const glm::vec4 &_col,
+                                   const float &_brightness,
+                                   const float &_size,
+                                   const int &_life,
+                                   const int &_trailLife,
+                                   const int &_frame,
+                                   const bool &_spawn,
+                                   const bool &_blink) : Particle(_pos,
                                                            _vel,
                                                            _col,
                                                            _size,
@@ -19,7 +18,7 @@ FireworkParticle::FireworkParticle(int _fuse,
                                                            _frame,
                                                            _spawn)
 {
-  m_brightness = brightness;
+  m_brightness = _brightness;
   m_type = ParticleType::FIREWORK;
   m_blink = _blink;
 

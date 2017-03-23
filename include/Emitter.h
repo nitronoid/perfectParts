@@ -10,9 +10,10 @@
 
 class Emitter
 {
+  //Public functions, contructors and destructor
 public:
   Emitter() = default;
-  Emitter(glm::vec3 _pos, unsigned int _max);
+  Emitter(const glm::vec3 &_pos, const unsigned int &_max);
   ~Emitter();
 
   void update();
@@ -21,18 +22,24 @@ public:
   void clearParticles();
   void spawnParticles();
   void createFirework();
-  void createSmoke();
-
-  static bool compareZ(const std::unique_ptr<Particle> &_i, const std::unique_ptr<Particle> &_j);
+  void createFlame();
 
   //Accessors
-  inline unsigned int particleCount() { return m_particleCount; }
-  inline glm::vec3 pos() { return m_pos; }
+  inline unsigned int particleCount() const { return m_particleCount; }
+  inline glm::vec3 pos() const { return m_pos; }
 
   //Mutators
-  inline void setPos(const glm::vec3 &_pos) { m_pos=_pos;}
+  inline void setPos( glm::vec3 &_pos) { m_pos=_pos;}
+
+  //Private functions
+private:
+  static bool compareZ(const std::unique_ptr<Particle> &_i, const std::unique_ptr<Particle> &_j);
+
+  //Public members
+public:
   bool m_smoke;
 
+  //Private members
 private:
   std::vector <std::unique_ptr<Particle>> m_particles;
   unsigned int m_particleCount;

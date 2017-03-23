@@ -1,6 +1,4 @@
 #include "Particle.h"
-#define PI 3.14
-#include "iostream"
 
 Particle::Particle(glm::vec3 _pos,
                    glm::vec3 _vel,

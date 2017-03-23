@@ -19,6 +19,7 @@
 
 class Particle
 {
+  //Public functions, constructors and destructor
 public:
   Particle() = default;
 
@@ -39,10 +40,12 @@ public:
   inline ParticleType type() { return m_type; }
   inline bool zDepth() { return m_pos.z; }
 
-
+  //Public members
+public:
   bool m_alive;
   bool m_spawn;
 
+  //Protected members
 protected:
   glm::vec3 m_pos;
   glm::vec3 m_vel;

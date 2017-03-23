@@ -4,20 +4,20 @@
 
 class FireworkParticle : public Particle
 {
+  //Public functions, constructors and destructor
 public:
   FireworkParticle() = default;
-
-  FireworkParticle(int _fuse,
-                   glm::vec3 _pos,
-                   glm::vec3 _vel,
-                   glm::vec4 _col,
-                   float brightness,
-                   float _size,
-                   int _life,
-                   int _trailLife,
-                   int _frame,
-                   bool _spawn,
-                   bool _blink);
+  FireworkParticle(const int &_fuse,
+                   const glm::vec3 &_pos,
+                   const glm::vec3 &_vel,
+                   const glm::vec4 &_col,
+                   const float &_brightness,
+                   const float &_size,
+                   const int &_life,
+                   const int &_trailLife,
+                   const int &_frame,
+                   const bool &_spawn,
+                   const bool &_blink);
 
   ~FireworkParticle();
 
@@ -26,10 +26,13 @@ public:
   void draw(const int &_frame) const override;
   Particle* createChild(const int &_frame) const override;
 
+  //Private functions
 private:
   void explode();
   glm::vec4 calcCol(const int &_frame) const;
 
+  //Private members
+private:
   int m_explosionFuse;
   int m_blinkPeriod;
   bool m_blink;

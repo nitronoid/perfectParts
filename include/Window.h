@@ -9,6 +9,7 @@
 
 class Window
 {
+  //Public functions, constructors and destructor
 public :
   Window(const std::string &_name, int _x, int _y, int _width, int _height);
   ~Window();
@@ -18,11 +19,23 @@ public :
   void draw(const Emitter &_e);
   void pollEvent(Emitter &_e);
 
+  //Private functions
+private:
+  void init();
+  void initGL();
+  void createGLContext();
+  void loadProjection(glm::mat4 _matrix);
+  void loadModelView(glm::mat4 _matrix);
+  void ErrorExit(const std::string &_msg) const;
+
+  //Public members
+public:
   bool m_quit=false;
   bool m_pause = false;
   bool m_trails = false;
   SDL_Event m_inputEvent;
 
+  //Private members
 private :
   int m_width;
   int m_height;
@@ -32,12 +45,7 @@ private :
   SDL_Window *m_sdlWin;
   SDL_GLContext m_glContext;
 
-  void init();
-  void initGL();
-  void createGLContext();
-  void loadProjection(glm::mat4 _matrix);
-  void loadModelView(glm::mat4 _matrix);
-  void ErrorExit(const std::string &_msg) const;
+
 
 };
 
