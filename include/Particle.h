@@ -14,6 +14,8 @@
 #include <memory>
 #include <cmath>
 #include "ParticleType.h"
+#include <glm/gtc/random.hpp>
+#include <glm/gtx/polar_coordinates.hpp>
 
 class Particle
 {
@@ -32,11 +34,11 @@ public:
 
   virtual int newParts(const int &_frame) const = 0;
   virtual void update(const int &_frame, unsigned int &_particleCount);
-  virtual glm::vec3 calcInitVel() const = 0;
   virtual Particle* createChild(const int &_frame) const = 0;
   virtual void draw(const int &_frame) const = 0;
   inline ParticleType type() { return m_type; }
-  inline bool alphaBlend() { return m_col.a; }
+  inline bool zDepth() { return m_pos.z; }
+
 
   bool m_alive;
   bool m_spawn;
@@ -53,5 +55,6 @@ protected:
   int m_birthFrame;
   ParticleType m_type;
 };
+
 
 #endif // PARTICLE_H

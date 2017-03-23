@@ -22,17 +22,16 @@ FireworkParticle::FireworkParticle(int _fuse,
   m_brightness = brightness;
   m_type = ParticleType::FIREWORK;
   m_blink = _blink;
+
   if(_blink)
   {
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::uniform_int_distribution<int> dist(2,30);
-    std::mt19937_64 rng(seed);
-    m_blinkPeriod = dist(rng);
+    m_blinkPeriod = glm::linearRand(2,30);
   }
   else
   {
     m_blinkPeriod = 0;
   }
+
   m_exploded = false;
   m_explosionFuse = _fuse + _frame;
   m_trailLife = _trailLife;
@@ -48,19 +47,12 @@ int FireworkParticle::newParts(const int &_frame) const
   return 1;
 }
 
-glm::vec3 FireworkParticle::calcInitVel() const
-{
-  return glm::vec3(0.0f,0.0f,0.0f);
-}
 
 void FireworkParticle::explode()
 {
   m_exploded = true;
-  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::uniform_real_distribution<float> dist(-0.15f,0.15f);
-  std::mt19937_64 rng(seed);
-  m_vel = getExplosionVel();
-  m_col = glm::vec4(m_col.r += dist(rng), m_col.g += dist(rng), m_col.b += dist(rng), 1.0f);
+  m_vel = glm::sphericalRand(glm::linearRand(0.5f,0.75f));
+  m_col += glm::vec4(glm::ballRand(0.15f),(1.0f - m_col.a));
   m_size = 2.5f;
   m_brightness = 1.0f;
   m_life = 80;
@@ -68,22 +60,6 @@ void FireworkParticle::explode()
   float colChange = -m_col.a/m_life;
   m_sizeDelta = -m_size/m_life;
   m_colDelta = glm::vec4(colChange,colChange,colChange,colChange);
-}
-
-glm::vec3 FireworkParticle::getExplosionVel() const
-{
-  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::uniform_real_distribution<float> dist(0.5,0.75);
-  std::mt19937_64 rng(seed);
-  float radial = dist(rng);
-  dist = std::uniform_real_distribution<float>(0.0f,6.28);
-  float asimuthal = dist(rng);
-  float polar = dist(rng);
-  glm::vec3 newVel;
-  newVel.x = (radial * cos(asimuthal) * sin(polar));
-  newVel.y = (radial * sin(asimuthal) * sin(polar));
-  newVel.z = (radial * cos(polar));
-  return newVel;
 }
 
 void FireworkParticle::update(int const &_frame, unsigned int &_particleCount)
@@ -112,7 +88,7 @@ Particle* FireworkParticle::createChild(const int &_frame) const
 {
   return new FireworkParticle (-_frame,                                //we set the fuse to 0 using -frame
                                m_pos,                                  //initial position
-                               calcInitVel(),                          //initial velocity
+                               glm::vec3(0.0f,0.0f,0.0f),              //initial velocity
                                m_col,                                  //initial colour
                                m_brightness,                           //initial brightness
                                m_size,                                 //initial size

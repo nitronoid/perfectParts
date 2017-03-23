@@ -6,7 +6,7 @@ SOURCES+=\
     $$PWD/src/Window.cpp \
     $$PWD/src/Particle.cpp \
     $$PWD/src/FireworkParticle.cpp \
-    $$PWD/src/SmokeParticle.cpp \
+    $$PWD/src/FlameParticle.cpp \
     $$PWD/src/Emitter.cpp
 
 CONFIG += c++11
@@ -21,7 +21,7 @@ HEADERS += \
     $$PWD/include/Window.h \
     $$PWD/include/Particle.h \
     $$PWD/include/FireworkParticle.h \
-    $$PWD/include/SmokeParticle.h \
+    $$PWD/include/FlameParticle.h \
     $$PWD/include/Emitter.h \
     $$PWD/include/ParticleType.h
 

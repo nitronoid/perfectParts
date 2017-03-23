@@ -1,6 +1,6 @@
-#include "SmokeParticle.h"
+#include "FlameParticle.h"
 
-SmokeParticle::SmokeParticle(glm::vec3 _pos,
+FlameParticle::FlameParticle(glm::vec3 _pos,
                              glm::vec3 _vel,
                              glm::vec4 _col,
                              float _size,
@@ -14,25 +14,22 @@ SmokeParticle::SmokeParticle(glm::vec3 _pos,
                                                       _frame,
                                                       _spawn)
 {
-  m_type = ParticleType::SMOKE;
+  m_type = ParticleType::FLAME;
+  m_colDelta.x = 0.0f;
+  m_colDelta.z = 0.3f/_life;
 }
-SmokeParticle::~SmokeParticle()
+FlameParticle::~FlameParticle()
 {
 
 }
 
-int SmokeParticle::newParts(const int &_frame) const
+int FlameParticle::newParts(const int &_frame) const
 {
   float initialMean = 2.0f;
   float deltaMean = -0.1f;
-  float mean = round(initialMean + deltaMean * (_frame - m_birthFrame));
-
-  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::uniform_real_distribution<float> dist(-1.0f,1.0f);
-  std::mt19937_64 rng(seed);
-  float rand = dist(rng);
-  float variance = 0.0f;
-  int num = round(mean + variance * rand);
+  float mean = initialMean + deltaMean * (_frame - m_birthFrame);
+  float variance = 0.2f;
+  int num = round(mean + variance * glm::linearRand(-1.0f,1.0f));
   if ((num < 0))
   {
     num = 0;
@@ -40,21 +37,10 @@ int SmokeParticle::newParts(const int &_frame) const
   return num;
 }
 
-glm::vec3 SmokeParticle::calcInitVel() const
+Particle* FlameParticle::createChild(const int &_frame) const
 {
-  unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-  std::uniform_real_distribution<float> dist(-1,1);
-  std::mt19937_64 rng(seed);
-  float variance = 0.05f;
-  return glm::vec3(m_vel.x + variance * dist(rng),
-                   m_vel.y + variance * dist(rng),
-                   m_vel.z + variance * dist(rng));
-}
-
-Particle* SmokeParticle::createChild(const int &_frame) const
-{
-  return new SmokeParticle ( m_pos,                                  //initial position
-                             calcInitVel(),                          //initial velocity
+  return new FlameParticle ( m_pos,                                  //initial position
+                             m_vel + glm::ballRand(0.05f),           //initial velocity
                              m_col,                                  //initial colour
                              m_size,                                 //initial size
                              _frame-m_birthFrame+m_life,             //life span
@@ -62,7 +48,7 @@ Particle* SmokeParticle::createChild(const int &_frame) const
                              false);
 }
 
-void SmokeParticle::draw(const int &_frame) const
+void FlameParticle::draw(const int &_frame) const
 {
   glm::vec4 clampedCol = glm::clamp(m_col,0.0f,1.0f);
   glColor4fv((const GLfloat*)glm::value_ptr(clampedCol));

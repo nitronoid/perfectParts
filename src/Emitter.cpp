@@ -8,7 +8,7 @@ Emitter::Emitter(glm::vec3 _pos, unsigned int _max)
   m_frame = 0;
   m_particleCount = 0;
   m_smoke = false;
-  m_particles.reserve(_max);
+//  m_particles.reserve(_max);
 }
 
 Emitter::~Emitter()
@@ -56,7 +56,7 @@ void Emitter::spawnParticles()
 }
 bool Emitter::compareZ(const std::unique_ptr<Particle> &_i, const std::unique_ptr<Particle> &_j)
 {
-  return (_i->alphaBlend()) < (_j->alphaBlend());
+  return (_i->zDepth()) < (_j->zDepth());
 }
 
 
@@ -102,30 +102,23 @@ void Emitter::createSmoke()
 {
   for(int i =0; i < 3; ++i)
   {
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
-    std::uniform_real_distribution<float> dist(0.0f,2.0f);
-    std::mt19937_64 rng(seed);
-    float radial = dist(rng);
-    dist = std::uniform_real_distribution<float>(0.0f,15.0f);
-    float theta = dist(rng);
-    glm::vec3 newPos = glm::vec3(radial * cos(theta),
-                                 0.0f,
-                                 radial * sin(theta));
 
-    radial = 1.2f;
-    dist = std::uniform_real_distribution<float>(-0.175f,0.175f); //radians
-    float phi = dist(rng);
+    glm::vec2 disk = glm::diskRand(2.0f);
+    glm::vec3 newPos = glm::vec3(disk.x,0.0f,disk.y);
 
+    float theta = glm::linearRand(0.0f,6.28f);   //radians
+    float phi = glm::linearRand(-0.175f,0.175f); //radians
+    float radial = 1.2f;
     glm::vec3 newVel = glm::vec3(radial * sin(phi) * cos(theta),
                                  radial * cos(phi),
                                  radial * sin(phi) * sin(theta));
 
 
-    std::unique_ptr<Particle> temp (new SmokeParticle(m_pos + newPos,                                  //initial position
+    std::unique_ptr<Particle> temp (new FlameParticle(m_pos + newPos,                                  //initial position
                                                       newVel,                                          //initial velocity
-                                                      glm::vec4(1.0f,1.0f,1.0f,1.0f),                  //initial colour
-                                                      2.0f,                                            //initial size
-                                                      100,                                             //life span
+                                                      glm::vec4(1.0f,0.67f,0.0f,1.0f),                  //initial colour
+                                                      5.0f,                                            //initial size
+                                                      50,                                             //life span
                                                       m_frame,                                         //current frame
                                                       true));
     addParticle(temp);

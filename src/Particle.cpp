@@ -49,5 +49,3 @@ void Particle::update(int const &_frame, unsigned int &_particleCount)
   }
 }
 
-
-

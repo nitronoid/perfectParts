@@ -23,14 +23,11 @@ public:
 
   int newParts(const int &_frame) const override;
   void update(const int &_frame, unsigned int &_particleCount) override;
-  glm::vec3 calcInitVel() const override;
-
   void draw(const int &_frame) const override;
   Particle* createChild(const int &_frame) const override;
 
 private:
   void explode();
-  glm::vec3 getExplosionVel() const;
   glm::vec4 calcCol(const int &_frame) const;
 
   int m_explosionFuse;

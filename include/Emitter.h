@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <glm/glm.hpp>
 #include "Particle.h"
-#include "SmokeParticle.h"
+#include "FlameParticle.h"
 #include "FireworkParticle.h"
 
 class Emitter
