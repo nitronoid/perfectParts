@@ -7,12 +7,15 @@ SOURCES+=\
     $$PWD/src/Particle.cpp \
     $$PWD/src/FireworkParticle.cpp \
     $$PWD/src/FlameParticle.cpp \
-    $$PWD/src/Emitter.cpp
+    $$PWD/src/Emitter.cpp \
+    $$PWD/src/pngutils.cpp
 
 CONFIG += c++11
 CONFIG-=app_bundle
+CONFIG += debug
+
+QT += opengl
 QT -= core
-QT -=opengl
 QT -=xml
 
 
@@ -23,7 +26,8 @@ HEADERS += \
     $$PWD/include/FireworkParticle.h \
     $$PWD/include/FlameParticle.h \
     $$PWD/include/Emitter.h \
-    $$PWD/include/ParticleType.h
+    $$PWD/include/ParticleType.h \
+    $$PWD/include/pngutils.h
 
 INCLUDEPATH +=include
 
@@ -38,7 +42,7 @@ message(output from sdl2-config --cflags added to CXXFLAGS= $$QMAKE_CFLAGS)
 INCLUDEPATH+=/usr/local/include/SDL2
 LIBS+=$$system(sdl2-config  --libs)
 message(output from sdl2-config --libs added to LIB=$$LIBS)
-LIBS += -L/usr/local/lib
+LIBS += -L/usr/local/lib -lglut -lGLU -lGL -lpng
 linux-g++* {
                 DEFINES +=GL_GLEXT_PROTOTYPES
                 LIBS+=-lGLU

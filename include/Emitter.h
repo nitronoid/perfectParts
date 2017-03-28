@@ -4,6 +4,10 @@
 #include <vector>
 #include <algorithm>
 #include <glm/glm.hpp>
+#include <QObject>
+#include <QImage>
+#include <QtOpenGL/QGLWidget>
+#include "pngutils.h"
 #include "Particle.h"
 #include "FlameParticle.h"
 #include "FireworkParticle.h"
@@ -23,6 +27,7 @@ public:
   void spawnParticles();
   void createFirework();
   void createFlame();
+  void initTextures();
 
   //Accessors
   inline unsigned int particleCount() const { return m_particleCount; }
@@ -33,7 +38,7 @@ public:
 
   //Private functions
 private:
-  static bool compareZ(const std::unique_ptr<Particle> &_i, const std::unique_ptr<Particle> &_j);
+  static bool compareZ(const std::unique_ptr<Particle> &_i, const std::unique_ptr<Particle> &_j, const float &_origin);
 
   //Public members
 public:
@@ -46,6 +51,9 @@ private:
   unsigned int m_maxParticles;
   glm::vec3 m_pos;
   int m_frame;
+  GLuint m_texID;
+  std::string m_texName;
+
 };
 
 #endif // EMITTER_H

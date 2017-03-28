@@ -50,6 +50,8 @@ Particle* FlameParticle::createChild(const int &_frame) const
 
 void FlameParticle::draw(const int &_frame) const
 {
+
+  glEnable(GL_TEXTURE_2D);
   glm::vec4 clampedCol = glm::clamp(m_col,0.0f,1.0f);
   glColor4fv((const GLfloat*)glm::value_ptr(clampedCol));
   glPointSize(m_size);

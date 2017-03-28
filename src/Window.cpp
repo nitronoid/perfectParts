@@ -57,8 +57,11 @@ void Window::initGL()
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_NORMALIZE);
   glEnable( GL_POINT_SMOOTH );
-  glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_POINT_SPRITE);
+  glBlendFunc( GL_ONE, GL_ONE );
   glEnable( GL_BLEND );
+
 
 }
 

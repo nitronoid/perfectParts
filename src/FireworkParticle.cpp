@@ -100,6 +100,7 @@ Particle* FireworkParticle::createChild(const int &_frame) const
 
 void FireworkParticle::draw(const int &_frame) const
 {
+  glDisable(GL_TEXTURE_2D);
   glm::vec4 clampedCol = glm::clamp(calcCol(_frame),0.0f,1.0f);
   glColor4fv((const GLfloat*)glm::value_ptr(clampedCol));
   glPointSize(m_size);

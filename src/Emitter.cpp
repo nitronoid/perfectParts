@@ -1,5 +1,6 @@
 #include "Emitter.h"
 
+
 Emitter::Emitter(const glm::vec3 &_pos, const unsigned int &_max)
 {
   m_pos = _pos;
@@ -8,6 +9,7 @@ Emitter::Emitter(const glm::vec3 &_pos, const unsigned int &_max)
   m_particleCount = 0;
   m_smoke = false;
 //  m_particles.reserve(_max);
+  initTextures();
 }
 
 Emitter::~Emitter()
@@ -29,7 +31,7 @@ void Emitter::update()
     }
   }
   spawnParticles();
-  std::sort(std::begin(m_particles),std::end(m_particles),compareZ);
+  std::sort(std::begin(m_particles),std::end(m_particles),std::bind(compareZ, std::placeholders::_1, std::placeholders::_2, m_pos.z));
   ++m_frame;
 }
 
@@ -53,9 +55,10 @@ void Emitter::spawnParticles()
     }
   }
 }
-bool Emitter::compareZ(const std::unique_ptr<Particle> &_i, const std::unique_ptr<Particle> &_j)
+
+bool Emitter::compareZ(const std::unique_ptr<Particle> &_i, const std::unique_ptr<Particle> &_j, const float &_origin)
 {
-  return (_i->zDepth()) < (_j->zDepth());
+  return (_i->zDepth(_origin)) > (_j->zDepth(_origin));
 }
 
 
@@ -77,7 +80,6 @@ void Emitter::addParticle( std::unique_ptr<Particle> &_newParticle)
     m_particles.push_back(std::move(_newParticle));
     ++m_particleCount;
   }
-
 }
 
 void Emitter::draw() const
@@ -116,7 +118,7 @@ void Emitter::createFlame()
     std::unique_ptr<Particle> temp (new FlameParticle(m_pos + newPos,                                  //initial position
                                                       newVel,                                          //initial velocity
                                                       glm::vec4(1.0f,0.67f,0.0f,1.0f),                  //initial colour
-                                                      5.0f,                                            //initial size
+                                                      20.5f,                                            //initial size
                                                       50,                                             //life span
                                                       m_frame,                                         //current frame
                                                       true));
@@ -147,3 +149,22 @@ void Emitter::createFirework()
     }
   }
 }
+
+void Emitter::initTextures()
+{
+  m_texName = "data/RadialGradient.png";
+
+  glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE );
+  QImage texImage = QImage(m_texName.c_str());
+  QImage texData = QGLWidget::convertToGLFormat(texImage);
+  glActiveTexture(GL_TEXTURE0);
+  glGenTextures(1, &m_texID);
+  glBindTexture(GL_TEXTURE_2D, m_texID);
+  glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, texData.width(), texData.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, texData.bits());
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glPointParameteri(GL_POINT_SPRITE_COORD_ORIGIN, GL_LOWER_LEFT);
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+  glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+}
+

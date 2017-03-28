@@ -38,7 +38,7 @@ public:
   virtual Particle* createChild(const int &_frame) const = 0;
   virtual void draw(const int &_frame) const = 0;
   inline ParticleType type() { return m_type; }
-  inline bool zDepth() { return m_pos.z; }
+  inline float zDepth(const float &_cam) { return m_pos.z-_cam; }
 
   //Public members
 public:
