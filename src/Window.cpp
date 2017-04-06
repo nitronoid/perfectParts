@@ -61,8 +61,6 @@ void Window::initGL()
   glEnable(GL_POINT_SPRITE);
   glBlendFunc( GL_ONE, GL_ONE );
   glEnable( GL_BLEND );
-
-
 }
 
 void Window::createGLContext()

@@ -52,12 +52,12 @@ void FireworkParticle::explode()
   m_exploded = true;
   m_vel = glm::sphericalRand(glm::linearRand(0.5f,0.75f));
   m_col += glm::vec4(glm::ballRand(0.15f),(1.0f - m_col.a));
-  m_size = 2.5f;
+  m_size = 5.0f;
   m_brightness = 1.0f;
   m_life = 80;
 
   float colChange = -m_col.a/m_life;
-  m_sizeDelta = -m_size/m_life;
+  m_sizeDelta = -(m_size+1.0f)/m_life;
   m_colDelta = glm::vec4(colChange,colChange,colChange,colChange);
 }
 
@@ -100,7 +100,6 @@ Particle* FireworkParticle::createChild(const int &_frame) const
 
 void FireworkParticle::draw(const int &_frame) const
 {
-  glDisable(GL_TEXTURE_2D);
   glm::vec4 clampedCol = glm::clamp(calcCol(_frame),0.0f,1.0f);
   glColor4fv((const GLfloat*)glm::value_ptr(clampedCol));
   glPointSize(m_size);

@@ -8,7 +8,7 @@ Emitter::Emitter(const glm::vec3 &_pos, const unsigned int &_max)
   m_frame = 0;
   m_particleCount = 0;
   m_smoke = false;
-//  m_particles.reserve(_max);
+  m_particles.reserve(_max);
   initTextures();
 }
 
@@ -108,7 +108,7 @@ void Emitter::createFlame()
     glm::vec3 newPos = glm::vec3(disk.x,0.0f,disk.y);
 
     float theta = glm::linearRand(0.0f,6.28f);   //radians
-    float phi = glm::linearRand(-0.175f,0.175f); //radians
+    float phi = glm::linearRand(-0.26f,0.26f); //radians
     float radial = 1.2f;
     glm::vec3 newVel = glm::vec3(radial * sin(phi) * cos(theta),
                                  radial * cos(phi),
@@ -118,7 +118,7 @@ void Emitter::createFlame()
     std::unique_ptr<Particle> temp (new FlameParticle(m_pos + newPos,                                  //initial position
                                                       newVel,                                          //initial velocity
                                                       glm::vec4(1.0f,0.67f,0.0f,1.0f),                  //initial colour
-                                                      20.5f,                                            //initial size
+                                                      20.0f,                                            //initial size
                                                       50,                                             //life span
                                                       m_frame,                                         //current frame
                                                       true));
@@ -139,12 +139,12 @@ void Emitter::createFirework()
                                                             glm::vec3(0.0f,1.0f,0.0f),  //initial velocity
                                                             glm::vec4(1.0f,0.078f,0.576f,1.0f),                              //initial colour
                                                             1.0f,                           //initial brightness
-                                                            2.5f,                                 //initial size
+                                                            5.0f,                                 //initial size
                                                             200,                            //life span
                                                             trail,
                                                             m_frame,                                        //current frame
                                                             true,
-                                                            false));
+                                                            true));
       addParticle(temp);
     }
   }
