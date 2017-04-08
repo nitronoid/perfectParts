@@ -42,7 +42,7 @@ message(output from sdl2-config --cflags added to CXXFLAGS= $$QMAKE_CFLAGS)
 INCLUDEPATH+=/usr/local/include/SDL2
 LIBS+=$$system(sdl2-config  --libs)
 message(output from sdl2-config --libs added to LIB=$$LIBS)
-LIBS += -L/usr/local/lib -lglut -lGLU -lGL -lpng
+LIBS += -L/usr/local/lib  -lGLU -lGL -lpng
 linux-g++* {
                 DEFINES +=GL_GLEXT_PROTOTYPES
                 LIBS+=-lGLU

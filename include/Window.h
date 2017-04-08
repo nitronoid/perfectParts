@@ -27,6 +27,7 @@ private:
   void loadProjection(glm::mat4 _matrix);
   void loadModelView(glm::mat4 _matrix);
   void ErrorExit(const std::string &_msg) const;
+  void drawGrid() const;
 
   //Public members
 public:

@@ -118,7 +118,7 @@ void Emitter::createFlame()
     std::unique_ptr<Particle> temp (new FlameParticle(m_pos + newPos,                                  //initial position
                                                       newVel,                                          //initial velocity
                                                       glm::vec4(1.0f,0.67f,0.0f,1.0f),                  //initial colour
-                                                      20.0f,                                            //initial size
+                                                      30.0f,                                            //initial size
                                                       50,                                             //life span
                                                       m_frame,                                         //current frame
                                                       true));
@@ -144,7 +144,7 @@ void Emitter::createFirework()
                                                             trail,
                                                             m_frame,                                        //current frame
                                                             true,
-                                                            true));
+                                                            false));
       addParticle(temp);
     }
   }

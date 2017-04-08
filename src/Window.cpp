@@ -136,7 +136,28 @@ void Window::loadModelView(glm::mat4 _matrix)
 
 void Window::draw(const Emitter &_e)
 {
+  glDisable(GL_TEXTURE_2D);
+  drawGrid();
+  glEnable(GL_TEXTURE_2D);
   _e.draw();
+
+}
+
+void Window::drawGrid() const
+{
+  glColor4f(1.0f,1.0f,1.0f,1.0f);
+  glLineWidth(1.0f);
+  glBegin(GL_LINES);
+  int num = 20;
+  int step = 4;
+  for(int i = -num; i <= num; i+=step)
+  {
+    glVertex3f(num,0.0f,i);
+    glVertex3f(-num,0.0f,i);
+    glVertex3f(i,0.0f,num);
+    glVertex3f(i,0.0f,-num);
+  }
+  glEnd();
 }
 
 

@@ -4,7 +4,6 @@
 #include <vector>
 #include <algorithm>
 #include <glm/glm.hpp>
-#include <QObject>
 #include <QImage>
 #include <QtOpenGL/QGLWidget>
 #include "pngutils.h"
