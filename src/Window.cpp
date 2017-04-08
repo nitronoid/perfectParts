@@ -95,7 +95,7 @@ void Window::pollEvent(Emitter &_e)
     case SDLK_s : m_trails = !m_trails; break;
     case SDLK_e :
     {
-      _e.createFirework();
+      _e.createFirework(m_mouseX, m_mouseY);
       break;
     }
     case SDLK_r :
@@ -106,8 +106,13 @@ void Window::pollEvent(Emitter &_e)
     default : break;
     }
   }
+  case SDL_MOUSEMOTION:
+  {
+    SDL_GetMouseState( &m_mouseX, &m_mouseY );
+  }
   default : break;
   }
+
 }
 
 void Window::ErrorExit(const std::string &_msg) const

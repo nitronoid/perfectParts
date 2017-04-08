@@ -126,10 +126,11 @@ void Emitter::createFlame()
   }
 }
 
-void Emitter::createFirework()
+void Emitter::createFirework(const float &_x, const float &_y)
 {
   int fuel = 100;
   int trail = 10;
+  float angle = atan(_y/_x);
   if(m_particleCount + fuel*(trail*1) < m_maxParticles)
   {
     for(int i =0; i < fuel; ++i)

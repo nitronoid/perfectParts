@@ -24,7 +24,7 @@ public:
   void addParticle(std::unique_ptr<Particle> &_newParticle);
   void clearParticles();
   void spawnParticles();
-  void createFirework();
+  void createFirework(const float &_x, const float &_y);
   void createFlame();
   void initTextures();
 
