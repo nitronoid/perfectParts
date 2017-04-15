@@ -14,6 +14,8 @@ Window::Window(const std::string &_name, int _x, int _y,int _width, int _height)
   m_y=_y;
   m_width=_width;
   m_height=_height;
+  SDL_GetMouseState(&m_lastX, &m_lastY);
+  m_mouseDown = false;
   init();
 }
 
@@ -54,7 +56,7 @@ void Window::initGL()
   view = glm::lookAt(glm::vec3(0,50,-150),glm::vec3(0,50,0),glm::vec3(0,1,0));
   loadModelView(view);
   glDisable(GL_LIGHTING);
-  glEnable(GL_DEPTH_TEST);
+  glDisable(GL_DEPTH_TEST);
   glEnable(GL_NORMALIZE);
   glEnable( GL_POINT_SMOOTH );
   glEnable(GL_TEXTURE_2D);
@@ -82,37 +84,52 @@ void Window::createGLContext()
 void Window::pollEvent(Emitter &_e)
 {
   makeCurrent();
-  SDL_PollEvent(&m_inputEvent);
-  switch (m_inputEvent.type)
+//  const Uint8* keyStates = SDL_GetKeyboardState(NULL);
+
+//  if(keyStates[SDL_SCANCODE_ESCAPE])
+//  {
+//    m_quit = true;
+//  }
+  while(SDL_PollEvent(&m_inputEvent))
   {
-  case SDL_QUIT : m_quit = true; break;
-  case SDL_KEYDOWN:
-  {
-    switch( m_inputEvent.key.keysym.sym )
+    switch (m_inputEvent.type)
     {
-    case SDLK_ESCAPE :  m_quit = true; break;
-    case SDLK_w : m_pause = !m_pause; break;
-    case SDLK_s : m_trails = !m_trails; break;
-    case SDLK_e :
+    case SDL_QUIT : m_quit = true; break;
+    case SDL_KEYDOWN:
     {
-      _e.createFirework(m_mouseX, m_mouseY);
-      break;
+      switch( m_inputEvent.key.keysym.sym )
+      {
+      case SDLK_ESCAPE :  m_quit = true; break;
+      case SDLK_w : m_pause = !m_pause; break;
+      case SDLK_s : m_trails = !m_trails; break;
+      case SDLK_e :
+      {
+        _e.createFirework();
+        break;
+      }
+      case SDLK_r :
+      {
+        _e.m_smoke = !_e.m_smoke;
+        break;
+      }
+      default : break;
+      }
     }
-    case SDLK_r :
+    case SDL_MOUSEMOTION :
     {
-      _e.m_smoke = !_e.m_smoke;
-      break;
+      int x, y;
+      if(SDL_GetGlobalMouseState( &x, &y ) == SDL_BUTTON_LMASK)
+      {
+        glMatrixMode(GL_MODELVIEW);
+        glRotatef( ((float)(x - m_lastX) * 0.1f), 0.0f,1.0f,0.0f );
+        glRotatef( ((float)(y - m_lastY) * 0.1f), 1.0f,0.0f,0.0f );
+      }
+      m_lastX = x;
+      m_lastY = y;
     }
     default : break;
     }
   }
-  case SDL_MOUSEMOTION:
-  {
-    SDL_GetMouseState( &m_mouseX, &m_mouseY );
-  }
-  default : break;
-  }
-
 }
 
 void Window::ErrorExit(const std::string &_msg) const

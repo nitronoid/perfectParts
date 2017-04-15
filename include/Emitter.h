@@ -24,7 +24,7 @@ public:
   void addParticle(std::unique_ptr<Particle> &_newParticle);
   void clearParticles();
   void spawnParticles();
-  void createFirework(const float &_x, const float &_y);
+  void createFirework();
   void createFlame();
   void initTextures();
 
@@ -37,7 +37,7 @@ public:
 
   //Private functions
 private:
-  static bool compareZ(const std::unique_ptr<Particle> &_i, const std::unique_ptr<Particle> &_j, const float &_origin);
+  static bool compareZ(const std::unique_ptr<Particle> &_i, const std::unique_ptr<Particle> &_j, const glm::vec3 &_origin);
 
   //Public members
 public:

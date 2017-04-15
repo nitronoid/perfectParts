@@ -42,13 +42,12 @@ private :
   int m_height;
   int m_x;
   int m_y;
-  int m_mouseX;
-  int m_mouseY;
+  int m_lastX;
+  int m_lastY;
+  bool m_mouseDown;
   std::string m_name;
   SDL_Window *m_sdlWin;
   SDL_GLContext m_glContext;
-
-
 
 };
 

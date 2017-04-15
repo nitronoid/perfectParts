@@ -31,7 +31,7 @@ void Emitter::update()
     }
   }
   spawnParticles();
-  std::sort(std::begin(m_particles),std::end(m_particles),std::bind(compareZ, std::placeholders::_1, std::placeholders::_2, m_pos.z));
+  std::sort(std::begin(m_particles),std::end(m_particles),std::bind(compareZ, std::placeholders::_1, std::placeholders::_2, m_pos));
   ++m_frame;
 }
 
@@ -56,7 +56,7 @@ void Emitter::spawnParticles()
   }
 }
 
-bool Emitter::compareZ(const std::unique_ptr<Particle> &_i, const std::unique_ptr<Particle> &_j, const float &_origin)
+bool Emitter::compareZ(const std::unique_ptr<Particle> &_i, const std::unique_ptr<Particle> &_j, const glm::vec3 &_origin)
 {
   return (_i->zDepth(_origin)) > (_j->zDepth(_origin));
 }
@@ -126,11 +126,11 @@ void Emitter::createFlame()
   }
 }
 
-void Emitter::createFirework(const float &_x, const float &_y)
+void Emitter::createFirework()
 {
   int fuel = 100;
   int trail = 10;
-  float angle = atan(_y/_x);
+
   if(m_particleCount + fuel*(trail*1) < m_maxParticles)
   {
     for(int i =0; i < fuel; ++i)
