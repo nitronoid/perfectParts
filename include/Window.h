@@ -6,6 +6,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "Emitter.h"
+#include "Camera.h"
 
 class Window
 {
@@ -40,11 +41,9 @@ public:
 private :
   int m_width;
   int m_height;
-  int m_x;
-  int m_y;
-  int m_lastX;
-  int m_lastY;
-  bool m_mouseDown;
+  glm::ivec2 m_winPos;
+  glm::ivec2 m_mousePos;
+  glm::vec2 m_rotation;
   std::string m_name;
   SDL_Window *m_sdlWin;
   SDL_GLContext m_glContext;

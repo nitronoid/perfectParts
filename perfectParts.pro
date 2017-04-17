@@ -2,7 +2,6 @@ TARGET=perfectParts
 DESTDIR=./
 SOURCES+=\
     $$PWD/src/main.cpp \
-    $$PWD/src/Camera.cpp \
     $$PWD/src/Window.cpp \
     $$PWD/src/Particle.cpp \
     $$PWD/src/FireworkParticle.cpp \
@@ -20,7 +19,6 @@ QT -=xml
 
 
 HEADERS += \
-    $$PWD/include/Camera.h \
     $$PWD/include/Window.h \
     $$PWD/include/Particle.h \
     $$PWD/include/FireworkParticle.h \

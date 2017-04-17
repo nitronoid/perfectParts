@@ -10,12 +10,13 @@
 Window::Window(const std::string &_name, int _x, int _y,int _width, int _height)
 {
   m_name=_name;
-  m_x=_x;
-  m_y=_y;
+  m_winPos.x = _x;
+  m_winPos.y = _y;
   m_width=_width;
   m_height=_height;
-  SDL_GetMouseState(&m_lastX, &m_lastY);
-  m_mouseDown = false;
+  SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
+  m_rotation.x = 0.0f;
+  m_rotation.y = 0.001f;
   init();
 }
 
@@ -32,7 +33,7 @@ void Window::init()
     ErrorExit("Failed to initialise");
   }
 
-  m_sdlWin=SDL_CreateWindow(m_name.c_str(),m_x,m_y,
+  m_sdlWin=SDL_CreateWindow(m_name.c_str(),m_winPos.x,m_winPos.y,
                             m_width,m_height,
                             SDL_WINDOW_OPENGL );
   if(!m_sdlWin)
@@ -51,10 +52,9 @@ void Window::initGL()
   // this is how big our window is for drawing
   glViewport(0,0,720,576);
 
+  glLoadIdentity();
   glm::mat4 view = glm::perspective(0.7f,float(720/576),0.1f,1000.0f);
   loadProjection(view);
-  view = glm::lookAt(glm::vec3(0,50,-150),glm::vec3(0,50,0),glm::vec3(0,1,0));
-  loadModelView(view);
   glDisable(GL_LIGHTING);
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_NORMALIZE);
@@ -84,12 +84,6 @@ void Window::createGLContext()
 void Window::pollEvent(Emitter &_e)
 {
   makeCurrent();
-//  const Uint8* keyStates = SDL_GetKeyboardState(NULL);
-
-//  if(keyStates[SDL_SCANCODE_ESCAPE])
-//  {
-//    m_quit = true;
-//  }
   while(SDL_PollEvent(&m_inputEvent))
   {
     switch (m_inputEvent.type)
@@ -120,12 +114,39 @@ void Window::pollEvent(Emitter &_e)
       int x, y;
       if(SDL_GetGlobalMouseState( &x, &y ) == SDL_BUTTON_LMASK)
       {
-        glMatrixMode(GL_MODELVIEW);
-        glRotatef( ((float)(x - m_lastX) * 0.1f), 0.0f,1.0f,0.0f );
-        glRotatef( ((float)(y - m_lastY) * 0.1f), 1.0f,0.0f,0.0f );
+//        //make sure we transform the correct matrix
+//        glMatrixMode(GL_MODELVIEW);
+//        //obtain the current view matrix
+//        GLfloat view[16];
+//        glGetFloatv(GL_MODELVIEW_MATRIX, view);
+//        //get the eye vector from view matrix
+//        glm::vec3 eye = glm::normalize(glm::vec3(view[2],view[6],view[10]));
+//        //calculate the cross product of this with Y axis
+//        glm::vec3 axis = glm::cross(eye,glm::vec3(0.0f,1.0f,0.0f));
+
+//        //rotate around y
+//        glRotatef( ((float)(x - m_mousePos.x) * 0.1f), 0.0f,1.0f,0.0f );
+//        //rotate around cross product
+//        glRotatef( m_flip * ((float)(y - m_mousePos.y) * 0.1f), axis.x,axis.y,axis.z );
+
+
+//        glGetFloatv(GL_MODELVIEW_MATRIX, view);
+//        eye = glm::normalize(glm::vec3(view[2],view[6],view[10]));
+//        if(eye.y == 1.0f || eye.y == -1.0f)
+//        {
+//          glRotatef( -m_flip * ((float)(y - m_mousePos.y) * 0.1f), 1.0f,0.0f,0.0f );
+//          m_flip = -m_flip;
+//        }
+
+//        glRotatef( ((float)(x - m_mousePos.x) * 0.1f), 0.0f,1.0f,0.0f );
+//        //rotate around cross product
+//        glRotatef( ((float)(y - m_mousePos.y) * 0.1f), 1.0f,0.0f,0.0f );
+        m_rotation.x += ((float)(y - m_mousePos.y) * 0.1f);
+        m_rotation.y += ((float)(x - m_mousePos.x) * 0.1f);
       }
-      m_lastX = x;
-      m_lastY = y;
+      m_mousePos.x = x;
+      m_mousePos.y = y;
+      break;
     }
     default : break;
     }
@@ -158,15 +179,19 @@ void Window::loadModelView(glm::mat4 _matrix)
 
 void Window::draw(const Emitter &_e)
 {
-  glDisable(GL_TEXTURE_2D);
+  glLoadIdentity();
+  glm::mat4 view = glm::lookAt(glm::vec3(0,50,-150),glm::vec3(0,50,0),glm::vec3(0,1,0));
+  loadModelView(view);
+  glRotatef(m_rotation.x,1.0f,0.0f,0.0f);
+  glRotatef(m_rotation.y,0.0f,1.0f,0.0f);
   drawGrid();
-  glEnable(GL_TEXTURE_2D);
   _e.draw();
 
 }
 
 void Window::drawGrid() const
 {
+  glDisable(GL_TEXTURE_2D);
   glColor4f(1.0f,1.0f,1.0f,1.0f);
   glLineWidth(1.0f);
   glBegin(GL_LINES);
@@ -180,6 +205,7 @@ void Window::drawGrid() const
     glVertex3f(i,0.0f,-num);
   }
   glEnd();
+  glEnable(GL_TEXTURE_2D);
 }
 
 
