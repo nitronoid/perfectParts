@@ -41,7 +41,8 @@ private:
 
   //Public members
 public:
-  bool m_smoke;
+  bool m_flame;
+  bool m_firework;
 
   //Private members
 private:
@@ -50,6 +51,7 @@ private:
   unsigned int m_maxParticles;
   glm::vec3 m_pos;
   int m_frame;
+  int m_emitTimer;
   GLuint m_texID;
   std::string m_texName;
 

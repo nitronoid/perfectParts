@@ -14,6 +14,7 @@ public:
                    const float &_brightness,
                    const float &_size,
                    const int &_life,
+                   const int &_elife,
                    const int &_trailLife,
                    const int &_frame,
                    const bool &_spawn,
@@ -21,7 +22,7 @@ public:
 
   ~FireworkParticle();
 
-  int newParts(const int &_frame) const override;
+  int newParts(const int &) const override;
   void update(const int &_frame, unsigned int &_particleCount) override;
   void draw(const int &_frame) const override;
   Particle* createChild(const int &_frame) const override;
@@ -39,6 +40,7 @@ private:
   bool m_exploded;
   float m_brightness;
   int m_trailLife;
+  int m_explodedLife;
 };
 
 #endif // FIREWORKPARTICLE_H

@@ -34,7 +34,7 @@ public:
   virtual ~Particle();
 
   virtual int newParts(const int &_frame) const = 0;
-  virtual void update(const int &_frame, unsigned int &_particleCount);
+  virtual void update(const int &, unsigned int &_particleCount);
   virtual Particle* createChild(const int &_frame) const = 0;
   virtual void draw(const int &_frame) const = 0;
   inline ParticleType type() { return m_type; }

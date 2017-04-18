@@ -7,9 +7,10 @@ Emitter::Emitter(const glm::vec3 &_pos, const unsigned int &_max)
   m_maxParticles = _max;
   m_frame = 0;
   m_particleCount = 0;
-  m_smoke = false;
+  m_emitTimer = 0;
+  m_flame = false;
+  m_firework = true;
   m_particles.reserve(_max);
-  initTextures();
 }
 
 Emitter::~Emitter()
@@ -19,7 +20,7 @@ Emitter::~Emitter()
 
 void Emitter::update()
 {
-  if(m_smoke)
+  if(m_flame)
   {
     createFlame();
   }
@@ -33,6 +34,14 @@ void Emitter::update()
   spawnParticles();
   std::sort(std::begin(m_particles),std::end(m_particles),std::bind(compareZ, std::placeholders::_1, std::placeholders::_2, m_pos));
   ++m_frame;
+  if(m_emitTimer > 0)
+  {
+    m_emitTimer--;
+  }
+  else
+  {
+    m_firework = true;
+  }
 }
 
 void Emitter::spawnParticles()
@@ -115,38 +124,47 @@ void Emitter::createFlame()
                                  radial * sin(phi) * sin(theta));
 
 
-    std::unique_ptr<Particle> temp (new FlameParticle(m_pos + newPos,                                  //initial position
-                                                      newVel,                                          //initial velocity
-                                                      glm::vec4(1.0f,0.67f,0.0f,1.0f),                  //initial colour
-                                                      30.0f,                                            //initial size
-                                                      50,                                             //life span
-                                                      m_frame,                                         //current frame
-                                                      true));
+    std::unique_ptr<Particle> temp (new FlameParticle(m_pos + newPos,                              //initial position
+                                                      newVel,                                      //initial velocity
+                                                      glm::vec4(1.0f,0.67f,0.0f,1.0f),             //initial colour
+                                                      100.0f,                                      //initial size
+                                                      50,                                          //life span
+                                                      m_frame,                                     //current frame
+                                                      true));                                      //flag for spawning children
     addParticle(temp);
   }
 }
 
 void Emitter::createFirework()
 {
-  int fuel = 100;
-  int trail = 10;
-
-  if(m_particleCount + fuel*(trail*1) < m_maxParticles)
+  if(m_firework)
   {
-    for(int i =0; i < fuel; ++i)
+    m_firework = false;
+    int fuel = 100;
+    int trail = 15;
+    int fuse = 95;
+    int eLife = 80;
+
+    m_emitTimer = fuse + eLife + trail;
+
+    if(m_particleCount + fuel*(trail*1) < m_maxParticles)
     {
-      std::unique_ptr<Particle> temp ( new FireworkParticle(95,
-                                                            m_pos,                                  //initial position
-                                                            glm::vec3(0.0f,1.0f,0.0f),  //initial velocity
-                                                            glm::vec4(1.0f,0.078f,0.576f,1.0f),                              //initial colour
-                                                            1.0f,                           //initial brightness
-                                                            5.0f,                                 //initial size
-                                                            200,                            //life span
-                                                            trail,
-                                                            m_frame,                                        //current frame
-                                                            true,
-                                                            false));
-      addParticle(temp);
+      for(int i =0; i < fuel; ++i)
+      {
+        std::unique_ptr<Particle> temp ( new FireworkParticle(fuse,                                  //explosion timer
+                                                              m_pos,                                 //initial position
+                                                              glm::vec3(0.0f,1.0f,0.0f),             //initial velocity
+                                                              glm::vec4(1.0f,0.078f,0.576f,1.0f),    //initial colour
+                                                              1.0f,                                  //initial brightness
+                                                              25.0f,                                 //initial size
+                                                              fuse*2,                                //life span
+                                                              eLife,                                 //exploded life span
+                                                              trail,                                 //trail life span
+                                                              m_frame,                               //current frame
+                                                              true,                                  //flag for spawning trails
+                                                              false));                               //flag for blinking
+        addParticle(temp);
+      }
     }
   }
 }
@@ -154,7 +172,6 @@ void Emitter::createFirework()
 void Emitter::initTextures()
 {
   m_texName = "data/RadialGradient.png";
-
   glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE );
   QImage texImage = QImage(m_texName.c_str());
   QImage texData = QGLWidget::convertToGLFormat(texImage);

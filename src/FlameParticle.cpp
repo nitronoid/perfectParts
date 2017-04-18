@@ -16,7 +16,7 @@ FlameParticle::FlameParticle(const glm::vec3 &_pos,
 {
   m_type = ParticleType::FLAME;
   m_colDelta.x = 0.0f;
-  m_colDelta.z = 0.3f/_life;
+  m_colDelta.z = 0.1f/_life;
 }
 FlameParticle::~FlameParticle()
 {
@@ -48,7 +48,7 @@ Particle* FlameParticle::createChild(const int &_frame) const
                              false);
 }
 
-void FlameParticle::draw(const int &_frame) const
+void FlameParticle::draw(const int &) const
 {
   glm::vec4 clampedCol = glm::clamp(m_col,0.0f,1.0f);
   glColor4fv((const GLfloat*)glm::value_ptr(clampedCol));

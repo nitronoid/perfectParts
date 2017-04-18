@@ -30,7 +30,7 @@ Particle::~Particle()
 
 }
 
-void Particle::update(int const &_frame, unsigned int &_particleCount)
+void Particle::update(int const &, unsigned int &_particleCount)
 {
   if(m_alive)
   {

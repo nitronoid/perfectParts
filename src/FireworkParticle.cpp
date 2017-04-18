@@ -7,6 +7,7 @@ FireworkParticle::FireworkParticle(const int &_fuse,
                                    const float &_brightness,
                                    const float &_size,
                                    const int &_life,
+                                   const int &_elife,
                                    const int &_trailLife,
                                    const int &_frame,
                                    const bool &_spawn,
@@ -21,7 +22,6 @@ FireworkParticle::FireworkParticle(const int &_fuse,
   m_brightness = _brightness;
   m_type = ParticleType::FIREWORK;
   m_blink = _blink;
-
   if(_blink)
   {
     m_blinkPeriod = glm::linearRand(2,30);
@@ -30,10 +30,10 @@ FireworkParticle::FireworkParticle(const int &_fuse,
   {
     m_blinkPeriod = 0;
   }
-
   m_exploded = false;
   m_explosionFuse = _fuse + _frame;
   m_trailLife = _trailLife;
+  m_explodedLife = _elife;
 }
 
 FireworkParticle::~FireworkParticle()
@@ -41,7 +41,7 @@ FireworkParticle::~FireworkParticle()
 
 }
 
-int FireworkParticle::newParts(const int &_frame) const
+int FireworkParticle::newParts(const int &) const
 {
   return 1;
 }
@@ -52,10 +52,9 @@ void FireworkParticle::explode()
   m_exploded = true;
   m_vel = glm::sphericalRand(glm::linearRand(0.5f,0.75f));
   m_col += glm::vec4(glm::ballRand(0.15f),(1.0f - m_col.a));
-  m_size = 5.0f;
+  m_size = 25.0f;
   m_brightness = 1.0f;
-  m_life = 80;
-
+  m_life = m_explodedLife;
   float colChange = -m_col.a/m_life;
   m_sizeDelta = -(m_size+1.0f)/m_life;
   m_colDelta = glm::vec4(colChange,colChange,colChange,colChange);
@@ -92,7 +91,8 @@ Particle* FireworkParticle::createChild(const int &_frame) const
                                m_brightness,                           //initial brightness
                                m_size,                                 //initial size
                                m_trailLife,                            //life span
-                               0,
+                               0,                                      //won't explode
+                               0,                                      //won't have trails
                                _frame,                                 //current frame
                                false,                                  //spawning
                                m_blink);                               //blinking

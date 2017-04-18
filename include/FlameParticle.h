@@ -16,7 +16,7 @@ public:
   ~FlameParticle();
 
   int newParts(const int &_frame) const override;
-  void draw(const int &_frame) const override;
+  void draw(const int &) const override;
   Particle* createChild(const int &_frame) const override;
 };
 
