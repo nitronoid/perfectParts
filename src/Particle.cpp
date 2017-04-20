@@ -9,7 +9,7 @@ Particle::Particle(glm::vec3 _pos,
                    bool _spawn)
 {
 
-  float sizeDecay = -(_size+1.0f)/_life;
+  float sizeDecay = -(_size)/(_life);
   float colDecay = -_col.a/_life;
 
   m_pos = _pos;
@@ -30,7 +30,7 @@ Particle::~Particle()
 
 }
 
-void Particle::update(int const &, unsigned int &_particleCount)
+void Particle::update(int const &, size_t &_particleCount)
 {
   if(m_alive)
   {

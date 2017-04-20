@@ -7,9 +7,9 @@ Emitter::Emitter(const glm::vec3 &_pos, const unsigned int &_max)
   m_maxParticles = _max;
   m_frame = 0;
   m_particleCount = 0;
-  m_emitTimer = 0;
+  m_free = 0;
   m_flame = false;
-  m_firework = true;
+  m_firework = false;
   m_particles.reserve(_max);
 }
 
@@ -20,27 +20,33 @@ Emitter::~Emitter()
 
 void Emitter::update()
 {
+  createObjects();
+  for(auto p = m_particles.begin(); p != m_particles.end(); ++p)
+  {
+    if((*p)->m_alive)
+    {
+      (*p)->update(m_frame,m_particleCount);
+      int index = p-m_particles.begin();
+      if((!(*p)->m_alive) && (index < m_free ))
+      {
+        m_free = index;
+      }
+    }
+  }
+  spawnParticles();
+  ++m_frame;
+}
+
+void Emitter::createObjects()
+{
   if(m_flame)
   {
     createFlame();
   }
-  for(auto &p : m_particles)
+  if(m_firework)
   {
-    if(p->m_alive)
-    {
-      p->update(m_frame,m_particleCount);
-    }
-  }
-  spawnParticles();
-  std::sort(std::begin(m_particles),std::end(m_particles),std::bind(compareZ, std::placeholders::_1, std::placeholders::_2, m_pos));
-  ++m_frame;
-  if(m_emitTimer > 0)
-  {
-    m_emitTimer--;
-  }
-  else
-  {
-    m_firework = true;
+    createFirework();
+    m_firework = false;
   }
 }
 
@@ -48,7 +54,8 @@ void Emitter::spawnParticles()
 {
   int newSpawn;
   std::unique_ptr<Particle> newParticle;
-  for(std::vector<std::unique_ptr<Particle>>::size_type i = 0; i < m_particles.size(); ++i )
+  std::vector<std::unique_ptr<Particle>>::size_type i;
+  for(i = 0; i < m_particles.size(); ++i )
   {
     if(m_particles[i]->m_alive && m_particles[i]->m_spawn)
     {
@@ -65,30 +72,37 @@ void Emitter::spawnParticles()
   }
 }
 
-bool Emitter::compareZ(const std::unique_ptr<Particle> &_i, const std::unique_ptr<Particle> &_j, const glm::vec3 &_origin)
+void Emitter::removeParticles()
 {
-  return (_i->zDepth(_origin)) > (_j->zDepth(_origin));
+  for(auto it = m_particles.begin(); it != m_particles.end();)
+  {
+    if(!((*it)->m_alive))
+    {
+      it = m_particles.erase(it);
+    }
+    else
+    {
+      ++it;
+    }
+  }
 }
-
 
 void Emitter::addParticle( std::unique_ptr<Particle> &_newParticle)
 {
-  bool isSpace = false;
-  for(auto &i : m_particles)
+  auto deadParticle = std::find_if(m_particles.begin()+m_free,
+                                   m_particles.end(),
+                                   [](const std::unique_ptr<Particle> &p){return !(p->m_alive);});
+  m_free = deadParticle-m_particles.begin();
+  if(deadParticle != m_particles.end())
   {
-    if(!i->m_alive)
-    {
-      i = std::move(_newParticle);
-      ++m_particleCount;
-      isSpace = true;
-      break;
-    }
+    (*deadParticle) = std::move(_newParticle);
+    ++m_free;
   }
-  if(!isSpace && (m_particleCount < m_maxParticles))
+  else
   {
-    m_particles.push_back(std::move(_newParticle));
-    ++m_particleCount;
+    m_particles.emplace_back(std::move(_newParticle));
   }
+  ++m_particleCount;
 }
 
 void Emitter::draw() const
@@ -110,7 +124,7 @@ void Emitter::clearParticles()
 
 void Emitter::createFlame()
 {
-  for(int i =0; i < 3; ++i)
+  for(int i =0; i < 10; ++i)
   {
 
     glm::vec2 disk = glm::diskRand(2.0f);
@@ -128,7 +142,7 @@ void Emitter::createFlame()
                                                       newVel,                                      //initial velocity
                                                       glm::vec4(1.0f,0.67f,0.0f,1.0f),             //initial colour
                                                       100.0f,                                      //initial size
-                                                      50,                                          //life span
+                                                      40,                                          //life span
                                                       m_frame,                                     //current frame
                                                       true));                                      //flag for spawning children
     addParticle(temp);
@@ -137,15 +151,10 @@ void Emitter::createFlame()
 
 void Emitter::createFirework()
 {
-  if(m_firework)
-  {
-    m_firework = false;
-    int fuel = 100;
-    int trail = 15;
+    int fuel = 300;
+    int trail = 20;
     int fuse = 95;
     int eLife = 80;
-
-    m_emitTimer = fuse + eLife + trail;
 
     if(m_particleCount + fuel*(trail*1) < m_maxParticles)
     {
@@ -166,18 +175,18 @@ void Emitter::createFirework()
         addParticle(temp);
       }
     }
-  }
+
 }
 
-void Emitter::initTextures()
+void Emitter::initTextures() const
 {
-  m_texName = "data/RadialGradient.png";
+  GLuint texID;
   glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE );
-  QImage texImage = QImage(m_texName.c_str());
+  QImage texImage = QImage("data/RadialGradient.png");
   QImage texData = QGLWidget::convertToGLFormat(texImage);
   glActiveTexture(GL_TEXTURE0);
-  glGenTextures(1, &m_texID);
-  glBindTexture(GL_TEXTURE_2D, m_texID);
+  glGenTextures(1, &texID);
+  glBindTexture(GL_TEXTURE_2D, texID);
   glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, texData.width(), texData.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, texData.bits());
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

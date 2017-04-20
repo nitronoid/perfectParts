@@ -60,7 +60,7 @@ void FireworkParticle::explode()
   m_colDelta = glm::vec4(colChange,colChange,colChange,colChange);
 }
 
-void FireworkParticle::update(int const &_frame, unsigned int &_particleCount)
+void FireworkParticle::update(int const &_frame, size_t &_particleCount)
 {
   Particle::update(_frame,_particleCount);
   m_brightness += m_colDelta.x;

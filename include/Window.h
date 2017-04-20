@@ -15,23 +15,23 @@ public :
   Window(const std::string &_name, int _x, int _y, int _width, int _height);
   ~Window();
 
-  inline void makeCurrent() { SDL_GL_MakeCurrent(m_sdlWin,m_glContext);}
-  inline void swapWindow() { SDL_GL_SwapWindow(m_sdlWin); }
-  void draw();
-  void pollEvent();
+  inline void makeCurrent() const { SDL_GL_MakeCurrent(m_sdlWin,m_glContext);}
+  inline void swapWindow() const { SDL_GL_SwapWindow(m_sdlWin); }
+  void draw() const;
+  void tick();
 
   //Private functions
 private:
   void init();
-  void initGL();
+  void initGL() const;
   void createGLContext();
-  void loadProjection(glm::mat4 _matrix);
-  void loadModelView(glm::mat4 _matrix);
+  void loadProjection(glm::mat4 _matrix) const;
+  void loadModelView(glm::mat4 _matrix) const;
   void ErrorExit(const std::string &_msg) const;
   void drawGrid(int _num, int _step) const;
   void resetPos();
   void handleMouse();
-  void resize();
+  void resize() const;
   Uint32 timerCallback(Uint32 interval);
   static Uint32 timerCallback(Uint32 interval, void *param);
 

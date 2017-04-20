@@ -7,7 +7,7 @@
 #endif
 #include "Window.h"
 
-Window::Window(const std::string &_name, int _x, int _y,int _width, int _height) : m_emit(glm::vec3(0.0f,0.0f,0.0f),5000)
+Window::Window(const std::string &_name, int _x, int _y,int _width, int _height) : m_emit(glm::vec3(0.0f,0.0f,0.0f),50000)
 {
   m_quit = false;
   m_pause = false;
@@ -22,9 +22,9 @@ Window::Window(const std::string &_name, int _x, int _y,int _width, int _height)
   m_emit.initTextures();
   m_drawing = false;
   m_updating = false;
-  m_updateTimerID = SDL_AddTimer(10, /*elapsed time in milliseconds*/
-                                 timerCallback, /*callback function*/
-                                 this /*pointer to the object*/);
+//  m_updateTimerID = SDL_AddTimer(10, /*elapsed time in milliseconds*/
+//                                 timerCallback, /*callback function*/
+//                                 this /*pointer to the object*/);
 }
 
 Window::~Window()
@@ -79,7 +79,7 @@ void Window::init()
   initGL();
 }
 
-void Window::initGL()
+void Window::initGL() const
 {
   float coeff[3] = {0.0f,0.1f,0.0f};
   float min = 1.0f;
@@ -101,7 +101,7 @@ void Window::initGL()
   glEnable( GL_BLEND );
 }
 
-void Window::resize()
+void Window::resize() const
 {
   glViewport(0,0,m_width,m_height);
   loadProjection(glm::perspective(0.7f,float((float)m_width/m_height),0.1f,1000.0f));
@@ -123,12 +123,12 @@ void Window::createGLContext()
 
 }
 
-void Window::pollEvent()
+void Window::tick()
 {
-//  if(!m_pause && !m_quit)
-//  {
-//    m_emit.update();
-//  }
+  if(!m_pause && !m_quit)
+  {
+    m_emit.update();
+  }
   makeCurrent();
   while(SDL_PollEvent(&m_inputEvent))
   {
@@ -147,8 +147,10 @@ void Window::pollEvent()
       {
       case SDLK_ESCAPE :  m_quit = true; break;
       case SDLK_w : m_pause = !m_pause; break;
-      case SDLK_e : m_emit.createFirework(); break;
+      case SDLK_e : m_emit.m_firework = true; break;
       case SDLK_r : m_emit.m_flame = !m_emit.m_flame; break;
+      case SDLK_t : std::cout<<m_emit.particleCount()<<'\n'; break;
+      case SDLK_y : m_emit.m_flame = false; m_emit.clearParticles(); break;
       case SDLK_f : resetPos(); break;
       default : break;
       }
@@ -210,7 +212,7 @@ void Window::ErrorExit(const std::string &_msg) const
 }
 
 
-void Window::loadProjection(glm::mat4 _matrix)
+void Window::loadProjection(glm::mat4 _matrix) const
 {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -218,14 +220,14 @@ void Window::loadProjection(glm::mat4 _matrix)
   glMatrixMode(GL_MODELVIEW);
 }
 
-void Window::loadModelView(glm::mat4 _matrix)
+void Window::loadModelView(glm::mat4 _matrix) const
 {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glMultMatrixf((const float*)glm::value_ptr(_matrix));
 }
 
-void Window::draw()
+void Window::draw() const
 {
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -235,10 +237,10 @@ void Window::draw()
   glRotatef(m_rotation.x,1.0f,0.0f,0.0f);
   glRotatef(m_rotation.y,0.0f,1.0f,0.0f);
   drawGrid(5,5);
-  while(m_updating);
-  m_drawing = true;
+//  while(m_updating);
+//  m_drawing = true;
   m_emit.draw();
-  m_drawing = false;
+//  m_drawing = false;
 }
 
 void Window::drawGrid(int _num, int _step) const
