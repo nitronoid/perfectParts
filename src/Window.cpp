@@ -7,10 +7,12 @@
 #endif
 #include "Window.h"
 
-Window::Window(const std::string &_name, int _x, int _y,int _width, int _height) : m_emit(glm::vec3(0.0f,0.0f,0.0f),50000)
+Window::Window(const std::string &_name, int _x, int _y,int _width, int _height) :
+  m_emit(glm::vec3(0.0f,0.0f,0.0f),50000)
 {
   m_quit = false;
   m_pause = false;
+  m_grid = true;
   m_name=_name;
   m_winPos.x = _x;
   m_winPos.y = _y;
@@ -19,6 +21,19 @@ Window::Window(const std::string &_name, int _x, int _y,int _width, int _height)
   SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
   resetPos();
   init();
+  m_io = ImGui::GetIO();
+//  m_fConfig.OversampleH = 1;
+//  m_fConfig.OversampleV = 1;
+//  m_fConfig.PixelSnapH = 1;
+//  m_io.Fonts->AddFontFromFileTTF("/home/nitronoid/Documents/cpp/test/perfectParts/data/Roboto-Medium.ttf",
+//                                 15.0f/*,&m_fConfig,m_io.Fonts->GetGlyphRangesDefault()*/);
+//  m_io.Fonts->TexDesiredWidth = 2048;
+//  m_io.Fonts->AddFontDefault(&m_fConfig);
+//  unsigned char* pixels;
+//  int width,height,bpp;
+//  m_io.Fonts->GetTexDataAsRGBA32(&pixels,&width,&height,&bpp);
+  m_style = ImGui::GetStyle();
+  m_style.Colors[ImGuiCol_WindowBg] = ImVec4(1.0f,1.0f,1.0f,1.0f);
   m_emit.initTextures();
   m_drawing = false;
   m_updating = false;
@@ -29,6 +44,8 @@ Window::Window(const std::string &_name, int _x, int _y,int _width, int _height)
 
 Window::~Window()
 {
+  ImGui_ImplSdl_Shutdown();
+  SDL_GL_DeleteContext(m_glContext);
   SDL_DestroyWindow(m_sdlWin);
   SDL_RemoveTimer(m_updateTimerID);
   SDL_Quit();
@@ -53,10 +70,8 @@ Uint32 Window::timerCallback(Uint32 interval, void * param)
 
 void Window::resetPos()
 {
-  m_rotation.x = 0.0f;
-  m_rotation.y = 0.001f;
-  m_translation.x = 0.0f;
-  m_translation.y = 0.0f;
+  m_rotation = glm::vec2(0.0f,0.0f);
+  m_translation = glm::vec2(0.0f,0.0f);
   m_zoom = 0.0f;
 }
 
@@ -77,6 +92,7 @@ void Window::init()
 
   createGLContext();
   initGL();
+  ImGui_ImplSdl_Init(m_sdlWin);
 }
 
 void Window::initGL() const
@@ -125,51 +141,63 @@ void Window::createGLContext()
 
 void Window::tick()
 {
+
   if(!m_pause && !m_quit)
   {
     m_emit.update();
   }
+  float tester[3] = {0.0f,0.0f,0.0f};
   makeCurrent();
   while(SDL_PollEvent(&m_inputEvent))
   {
-    if ((m_inputEvent.type == SDL_WINDOWEVENT) &&
-        (m_inputEvent.window.event == SDL_WINDOWEVENT_RESIZED))
+    ImGui_ImplSdl_ProcessEvent(&m_inputEvent);
+    ImGui_ImplSdl_NewFrame(m_sdlWin);
+    ImGui::Begin("Model");
+    ImGui::SliderFloat3("test",tester,-180.0f,180.f);
+    ImGui::Checkbox("Pause",&m_pause);
+    ImGui::End();
+    if(!m_io.WantCaptureMouse)
     {
-      SDL_GetWindowSize(m_sdlWin,&m_width,&m_height);
-      resize();
-    }
-    switch (m_inputEvent.type)
-    {
-    case SDL_QUIT : m_quit = true; break;
-    case SDL_KEYDOWN:
-    {
-      switch( m_inputEvent.key.keysym.sym )
+      if ((m_inputEvent.type == SDL_WINDOWEVENT) &&
+          (m_inputEvent.window.event == SDL_WINDOWEVENT_RESIZED))
       {
-      case SDLK_ESCAPE :  m_quit = true; break;
-      case SDLK_w : m_pause = !m_pause; break;
-      case SDLK_e : m_emit.m_firework = true; break;
-      case SDLK_r : m_emit.m_flame = !m_emit.m_flame; break;
-      case SDLK_t : std::cout<<m_emit.particleCount()<<'\n'; break;
-      case SDLK_y : m_emit.m_flame = false; m_emit.clearParticles(); break;
-      case SDLK_f : resetPos(); break;
+        SDL_GetWindowSize(m_sdlWin,&m_width,&m_height);
+        resize();
+      }
+      switch (m_inputEvent.type)
+      {
+      case SDL_QUIT : m_quit = true; break;
+      case SDL_KEYDOWN:
+      {
+        switch( m_inputEvent.key.keysym.sym )
+        {
+        case SDLK_ESCAPE :  m_quit = true; break;
+        case SDLK_w : m_pause = !m_pause; break;
+        case SDLK_e : m_emit.m_firework = true; break;
+        case SDLK_r : m_emit.m_flame = !m_emit.m_flame; break;
+        case SDLK_t : std::cout<<m_emit.particleCount()<<'\n'; break;
+        case SDLK_y : m_emit.m_flame = false; m_emit.clearParticles(); break;
+        case SDLK_f : resetPos(); break;
+        case SDLK_g : m_grid = !m_grid; break;
+        default : break;
+        }
+      }
+      case SDL_MOUSEMOTION : handleMouse(); break;
       default : break;
       }
     }
-    case SDL_MOUSEMOTION : handleMouse(); break;
-    default : break;
-    }
   }
+
 }
 
 
 void Window::handleMouse()
 {
   const Uint8 *keystates = SDL_GetKeyboardState(NULL);
-  int x, y;
+  glm::ivec2 newPos;
   float strength = 0.2f;
-  Uint32 button = SDL_GetMouseState(&x, &y);
-  float diffX = ((float)(x - m_mousePos.x) * strength);
-  float diffY = ((float)(y - m_mousePos.y) * strength);
+  Uint32 button = SDL_GetMouseState(&newPos.x, &newPos.y);
+  glm::vec2 diff = ((glm::vec2)(newPos - m_mousePos)) * strength;
 
   switch(button)
   {
@@ -177,30 +205,28 @@ void Window::handleMouse()
   {
     if(keystates[SDL_SCANCODE_LALT] || keystates[SDL_SCANCODE_RALT])
     {
-      m_translation.x -= diffX;
-      m_translation.y -= diffY;
+      m_translation -= diff;
     }
     else
     {
-      m_rotation.x += diffY;
-      m_rotation.y += diffX;
+      m_rotation.x -= diff.y;
+      m_rotation.y += diff.x;
     }
     break;
   }
   case SDL_BUTTON_RMASK :
   {
-    m_zoom -= diffY;
+    m_zoom -= diff.y;
     break;
   }
   case SDL_BUTTON_MMASK :
   {
-    m_translation.x -= diffX;
-    m_translation.y -= diffY;
+    m_translation -= diff;
+    break;
   }
   default: break;
   }
-  m_mousePos.x = x;
-  m_mousePos.y = y;
+  m_mousePos = newPos;
 }
 
 void Window::ErrorExit(const std::string &_msg) const
@@ -236,11 +262,16 @@ void Window::draw() const
   glTranslatef(m_translation.x,m_translation.y,0.0f);
   glRotatef(m_rotation.x,1.0f,0.0f,0.0f);
   glRotatef(m_rotation.y,0.0f,1.0f,0.0f);
-  drawGrid(5,5);
+  if(m_grid)
+  {
+    drawGrid(5,5);
+  }
 //  while(m_updating);
 //  m_drawing = true;
   m_emit.draw();
 //  m_drawing = false;
+  ImGui::Render();
+  SDL_GL_SwapWindow(m_sdlWin);
 }
 
 void Window::drawGrid(int _num, int _step) const
@@ -259,6 +290,3 @@ void Window::drawGrid(int _num, int _step) const
   glEnd();
   glEnable(GL_TEXTURE_2D);
 }
-
-
-

@@ -6,7 +6,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "Emitter.h"
-#include "Camera.h"
+#include "ImGUIImpl.h"
 
 class Window
 {
@@ -16,7 +16,6 @@ public :
   ~Window();
 
   inline void makeCurrent() const { SDL_GL_MakeCurrent(m_sdlWin,m_glContext);}
-  inline void swapWindow() const { SDL_GL_SwapWindow(m_sdlWin); }
   void draw() const;
   void tick();
 
@@ -43,6 +42,9 @@ public:
 
   //Private members
 private :
+  ImGuiIO &m_io = ImGui::GetIO();
+  ImGuiStyle &m_style = ImGui::GetStyle();
+  ImFontConfig m_fConfig;
   Emitter m_emit;
   int m_width;
   int m_height;
@@ -57,6 +59,7 @@ private :
   SDL_TimerID m_updateTimerID;
   bool m_drawing;
   bool m_updating;
+  bool m_grid;
 
 };
 

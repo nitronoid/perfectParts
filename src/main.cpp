@@ -8,7 +8,6 @@
 #include <cstdlib>
 #include "Window.h"
 
-
 int main()
 {
   Window win("Particle Simulation",0,0,720,576);
@@ -17,7 +16,7 @@ int main()
   {
     win.tick();
     win.draw();
-    win.swapWindow();
   }
   return EXIT_SUCCESS;
 }
+
