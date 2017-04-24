@@ -30,7 +30,7 @@ Particle::~Particle()
 
 }
 
-void Particle::update(int const &, size_t &_particleCount)
+void Particle::update(int const &)
 {
   if(m_alive)
   {
@@ -43,7 +43,6 @@ void Particle::update(int const &, size_t &_particleCount)
   if(m_alive && ((m_life <= 0) || (m_size <= 1.0f) || (m_col.a <= 0.0f)))
   {
     m_alive = false;
-    --_particleCount;
   }
 }
 

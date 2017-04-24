@@ -10,6 +10,8 @@ Emitter::Emitter(const glm::vec3 &_pos, const unsigned int &_max)
   m_free = 0;
   m_flame = false;
   m_firework = false;
+  m_explosion = 0;
+  m_fwCol = glm::vec4(1.0f,0.078f,0.576f,1.0f);
   m_particles.reserve(_max);
 }
 
@@ -25,11 +27,15 @@ void Emitter::update()
   {
     if((*p)->m_alive)
     {
-      (*p)->update(m_frame,m_particleCount);
+      (*p)->update(m_frame);
       int index = p-m_particles.begin();
-      if((!(*p)->m_alive) && (index < m_free ))
+      if((!(*p)->m_alive))
       {
-        m_free = index;
+        if(index < m_free )
+        {
+          m_free = index;
+        }
+        --m_particleCount;
       }
     }
   }
@@ -47,6 +53,11 @@ void Emitter::createObjects()
   {
     createFirework();
     m_firework = false;
+  }
+  if(m_explosion > 0)
+  {
+    createExplosion();
+    m_explosion--;
   }
 }
 
@@ -107,6 +118,7 @@ void Emitter::addParticle( std::unique_ptr<Particle> &_newParticle)
 
 void Emitter::draw() const
 {
+  glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE );
   for(auto &p : m_particles)
   {
     if(p->m_alive)
@@ -114,10 +126,12 @@ void Emitter::draw() const
       p->draw(m_frame);
     }
   }
+  glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_FALSE );
 }
 
 void Emitter::clearParticles()
 {
+  m_flame = false;
   m_particles.clear();
   m_particleCount = 0;
 }
@@ -163,7 +177,7 @@ void Emitter::createFirework()
         std::unique_ptr<Particle> temp ( new FireworkParticle(fuse,                                  //explosion timer
                                                               m_pos,                                 //initial position
                                                               glm::vec3(0.0f,1.0f,0.0f),             //initial velocity
-                                                              glm::vec4(1.0f,0.078f,0.576f,1.0f),    //initial colour
+                                                              m_fwCol,                               //initial colour
                                                               1.0f,                                  //initial brightness
                                                               25.0f,                                 //initial size
                                                               fuse*2,                                //life span
@@ -171,17 +185,45 @@ void Emitter::createFirework()
                                                               trail,                                 //trail life span
                                                               m_frame,                               //current frame
                                                               true,                                  //flag for spawning trails
-                                                              false));                               //flag for blinking
+                                                              m_fwBlink));                           //flag for blinking
         addParticle(temp);
       }
     }
 
 }
 
+void Emitter::createExplosion()
+{
+  for(int i =0; i < 25; ++i)
+  {
+    float size = glm::linearRand(40.0f,120.0f);
+
+    glm::vec2 disk = glm::diskRand(2.0f);
+    glm::vec3 newPos = glm::vec3(disk.x,0.0f,disk.y);
+
+    float theta = glm::linearRand(0.0f,6.28f);   //radians
+    float phi = glm::linearRand(-1.5f,1.5f); //radians
+    float radial = glm::linearRand(0.5f,1.2f);
+    glm::vec3 newVel = glm::vec3(radial * sin(phi) * cos(theta),
+                                 radial * cos(phi),
+                                 radial * sin(phi) * sin(theta));
+
+
+    std::unique_ptr<Particle> temp( new ExplosionParticle(m_pos,                                       //initial position
+                                                          newVel,                                      //initial velocity
+                                                          glm::vec4(0.647f,0.306f,0.2f,1.0f),          //initial colour
+                                                          size,                                      //initial size
+                                                          80,                                         //life span
+                                                          20,                                          //trail life spaj
+                                                          m_frame,                                     //current frame
+                                                          true));                                      //flag for spawning trails
+    addParticle(temp);
+  }
+}
+
 void Emitter::initTextures() const
 {
   GLuint texID;
-  glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE );
   QImage texImage = QImage("data/RadialGradient.png");
   QImage texData = QGLWidget::convertToGLFormat(texImage);
   glActiveTexture(GL_TEXTURE0);

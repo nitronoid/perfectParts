@@ -23,7 +23,7 @@ public:
   ~FireworkParticle();
 
   int newParts(const int &) const override;
-  void update(const int &_frame, size_t &_particleCount) override;
+  void update(const int &_frame) override;
   void draw(const int &_frame) const override;
   Particle* createChild(const int &_frame) const override;
 

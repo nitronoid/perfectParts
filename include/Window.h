@@ -12,6 +12,13 @@ class Window
 {
   //Public functions, constructors and destructor
 public :
+//  enum guiTab
+//  {
+//    FIREWORKTAB,
+//    FLAMETAB,
+//    EXPLOSIONTAB
+//  };
+
   Window(const std::string &_name, int _x, int _y, int _width, int _height);
   ~Window();
 
@@ -34,6 +41,13 @@ private:
   Uint32 timerCallback(Uint32 interval);
   static Uint32 timerCallback(Uint32 interval, void *param);
 
+  //Gui functions
+  void initStyle();
+  void displayGui();
+  void displayFlameGui();
+  void displayExplosionGui();
+  void displayFireworkGui();
+
   //Public members
 public:
   bool m_quit=false;
@@ -42,10 +56,12 @@ public:
 
   //Private members
 private :
+  //Gui members
   ImGuiIO &m_io = ImGui::GetIO();
   ImGuiStyle &m_style = ImGui::GetStyle();
   ImFontConfig m_fConfig;
-  Emitter m_emit;
+  int m_tab;
+  //Window members
   int m_width;
   int m_height;
   glm::ivec2 m_winPos;
@@ -55,6 +71,7 @@ private :
   glm::vec2 m_rotation;
   std::string m_name;
   SDL_Window *m_sdlWin;
+  Emitter m_emit;
   SDL_GLContext m_glContext;
   SDL_TimerID m_updateTimerID;
   bool m_drawing;

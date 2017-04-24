@@ -2,9 +2,9 @@
 #include "imgui_internal.h"
 #include <glm/glm.hpp>
 // based on https://gist.github.com/thennequin/a21d5769bdcaa4d0992e
-ImVec4 nglColorToImVec4(const glm::vec4 &_c)
+ImVec4 glmColorToImVec4(const glm::vec4 &_c)
 {
-  return ImVec4(_c.a,_c.g,_c.b,_c.a);
+  return ImVec4(_c.r,_c.g,_c.b,_c.a);
 }
 
 
@@ -33,7 +33,7 @@ bool ColorSelector(const char* pLabel, glm::vec4 &oRGBA)
 	const ImGuiID iStorageCurrentColorA = iID + ImGui::GetID("ColorSelector_CurrentColor_A");
 
 	
-	//pWindow->StateStorage.SetFloat(iID);
+  //pWindow->StateStorage.SetFloat(iID);
 
 	ImDrawList* pDrawList = ImGui::GetWindowDrawList();
 
@@ -61,10 +61,10 @@ bool ColorSelector(const char* pLabel, glm::vec4 &oRGBA)
 		{
 			ImVec2 oA(ImGui::GetItemRectMin().x + iX * 8.f, ImGui::GetItemRectMin().y + iY * 8.f);
 			ImVec2 oB(ImGui::GetItemRectMin().x + (1+iX) * 8.f, ImGui::GetItemRectMin().y + (1+iY) * 8.f);
-			pDrawList->AddRectFilled( oA, oB, (0 == (iX+iY)%2) ? c_oColorGrey : c_oColorWhite );
+      pDrawList->AddRectFilled( oA, oB, (0 == (iX+iY)%2) ? c_oColorGrey : c_oColorWhite );
 		}
 	}
-  pDrawList->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImGui::ColorConvertFloat4ToU32(nglColorToImVec4(oRGBA)));
+  pDrawList->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImGui::ColorConvertFloat4ToU32(glmColorToImVec4(oRGBA)));
 
 	ImVec2 oRectMin = ImGui::GetItemRectMin();
 	ImVec2 oRectMax = ImGui::GetItemRectMax();
@@ -98,7 +98,7 @@ bool ColorSelector(const char* pLabel, glm::vec4 &oRGBA)
 			}
 		}
 
-    pDrawList->AddRectFilled(oColorAreaMin, oColorAreaMax, ImGui::ColorConvertFloat4ToU32(nglColorToImVec4(oRGBA)));
+    pDrawList->AddRectFilled(oColorAreaMin, oColorAreaMax, ImGui::ColorConvertFloat4ToU32(glmColorToImVec4(oRGBA)));
 
 		float fHue = pWindow->StateStorage.GetFloat(iStorageCurrentColorH);
 		float fSat = pWindow->StateStorage.GetFloat(iStorageCurrentColorS);
@@ -125,7 +125,7 @@ bool ColorSelector(const char* pLabel, glm::vec4 &oRGBA)
 					fVal =  1.f - oNewValue.y;
           ImGui::ColorConvertHSVtoRGB( fHue, fSat, fVal, oRGBA.r, oRGBA.g, oRGBA.b );
 
-          ImVec4 oToolTipColor = nglColorToImVec4(oRGBA);
+          ImVec4 oToolTipColor = glmColorToImVec4(oRGBA);
 					oToolTipColor.w = 1.f;
 
 					ImGui::BeginTooltip();

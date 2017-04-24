@@ -16,8 +16,8 @@ FlameParticle::FlameParticle(const glm::vec3 &_pos,
 {
   m_type = ParticleType::FLAME;
   m_sizeDelta *= 2.0f;
-  m_colDelta.x = 0.0f;
-  m_colDelta.z = 0.15f/_life;
+  m_colDelta.r = 0.0f;
+  m_colDelta.b = 0.15f/_life;
 }
 FlameParticle::~FlameParticle()
 {
@@ -26,7 +26,7 @@ FlameParticle::~FlameParticle()
 
 int FlameParticle::newParts(const int &_frame) const
 {
-  float initialMean = 2.0f;
+  float initialMean = 1.75f;
   float deltaMean = -0.1f;
   float mean = initialMean + deltaMean * (_frame - m_birthFrame);
   float variance = 0.2f;

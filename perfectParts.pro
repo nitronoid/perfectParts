@@ -11,7 +11,8 @@ SOURCES+=\
     $$PWD/imgui/src/imgui.cpp \
     $$PWD/imgui/src/imgui_draw.cpp \
     $$PWD/imgui/src/ColourPicker.cpp \
-    $$PWD/src/ImGUIImpl.cpp
+    $$PWD/src/ImGUIImpl.cpp \
+    $$PWD/src/ExplosionParticle.cpp
 
 
 CONFIG += c++11
@@ -37,7 +38,8 @@ HEADERS += \
     $$PWD/imgui/include/imconfig.h \
     $$PWD/imgui/include/imgui_internal.h \
     $$PWD/imgui/include/stb_textedit.h \
-    $$PWD/include/ImGUIImpl.h
+    $$PWD/include/ImGUIImpl.h \
+    include/ExplosionParticle.h
 
 INCLUDEPATH +=include
 INCLUDEPATH +=imgui/include

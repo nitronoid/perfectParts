@@ -6,6 +6,9 @@
 #include <OpenGL/glu.h>
 #endif
 #include "Window.h"
+#include <string>
+
+extern bool ColorSelector(const char* pLabel, glm::vec4& oRGBA);
 
 Window::Window(const std::string &_name, int _x, int _y,int _width, int _height) :
   m_emit(glm::vec3(0.0f,0.0f,0.0f),50000)
@@ -22,18 +25,9 @@ Window::Window(const std::string &_name, int _x, int _y,int _width, int _height)
   resetPos();
   init();
   m_io = ImGui::GetIO();
-//  m_fConfig.OversampleH = 1;
-//  m_fConfig.OversampleV = 1;
-//  m_fConfig.PixelSnapH = 1;
-//  m_io.Fonts->AddFontFromFileTTF("/home/nitronoid/Documents/cpp/test/perfectParts/data/Roboto-Medium.ttf",
-//                                 15.0f/*,&m_fConfig,m_io.Fonts->GetGlyphRangesDefault()*/);
-//  m_io.Fonts->TexDesiredWidth = 2048;
-//  m_io.Fonts->AddFontDefault(&m_fConfig);
-//  unsigned char* pixels;
-//  int width,height,bpp;
-//  m_io.Fonts->GetTexDataAsRGBA32(&pixels,&width,&height,&bpp);
-  m_style = ImGui::GetStyle();
-  m_style.Colors[ImGuiCol_WindowBg] = ImVec4(1.0f,1.0f,1.0f,1.0f);
+  m_io.Fonts->AddFontDefault();
+  m_tab = 1;
+  initStyle();
   m_emit.initTextures();
   m_drawing = false;
   m_updating = false;
@@ -49,6 +43,14 @@ Window::~Window()
   SDL_DestroyWindow(m_sdlWin);
   SDL_RemoveTimer(m_updateTimerID);
   SDL_Quit();
+}
+
+void Window::initStyle()
+{
+  m_style = ImGui::GetStyle();
+  m_style.Colors[ImGuiCol_WindowBg] = ImVec4(1.0f,1.0f,1.0f,0.5f);
+  m_style.Colors[ImGuiCol_TitleBgActive] = ImVec4(1.0f,1.0f,1.0f,0.75f);
+  m_style.Colors[ImGuiCol_TitleBg] = ImVec4(1.0f,1.0f,1.0f,0.6f);
 }
 
 Uint32 Window::timerCallback(Uint32 interval)
@@ -139,6 +141,59 @@ void Window::createGLContext()
 
 }
 
+void Window::displayGui()
+{
+  ImGui_ImplSdl_ProcessEvent(&m_inputEvent);
+  ImGui_ImplSdl_NewFrame(m_sdlWin);
+  ImGui::Begin("Controls");
+  if(ImGui::Button("Firework")) m_tab = 1;
+  ImGui::SameLine();
+  if(ImGui::Button("Flame")) m_tab = 2;
+  ImGui::SameLine();
+  if(ImGui::Button("Explosion")) m_tab = 3;
+  ImGui::Separator();
+  switch(m_tab)
+  {
+  case 1: {displayFireworkGui(); break;}
+  case 2: {displayFlameGui(); break;}
+  case 3: {displayExplosionGui(); break;}
+  }
+  ImGui::Separator();
+  ImGui::Checkbox("Pause time",&m_pause);
+  ImGui::SameLine();
+  if(ImGui::Button("Clear System")) m_emit.clearParticles();
+  //ImGui::SameLine();
+//  ImVec4 col = {m_emit.m_fwCol.r,m_emit.m_fwCol.g,m_emit.m_fwCol.b,m_emit.m_fwCol.a};
+//  ImGui::ColorEdit3("Firework colour", (float*)&col);
+//  m_emit.m_fwCol = glm::vec4(col.x,col.y,col.z,col.w);
+
+  ImGui::End();
+}
+void Window::displayFlameGui()
+{
+  ImGui::Checkbox("Ignite flame",&m_emit.m_flame);
+}
+
+void Window::displayExplosionGui()
+{
+  if(ImGui::Button("Detonate Explosion"))
+  {
+    m_emit.clearParticles();
+    m_emit.m_explosion = 6;
+  }
+}
+
+void Window::displayFireworkGui()
+{
+  ImGui::Text("Firework colour");
+  ColorSelector("", m_emit.m_fwCol);
+  ImGui::Checkbox("Blinking",&m_emit.m_fwBlink);
+  if(ImGui::Button("Launch Firework"))
+  {
+    m_emit.m_firework = true;
+  }
+}
+
 void Window::tick()
 {
 
@@ -146,16 +201,10 @@ void Window::tick()
   {
     m_emit.update();
   }
-  float tester[3] = {0.0f,0.0f,0.0f};
   makeCurrent();
   while(SDL_PollEvent(&m_inputEvent))
   {
-    ImGui_ImplSdl_ProcessEvent(&m_inputEvent);
-    ImGui_ImplSdl_NewFrame(m_sdlWin);
-    ImGui::Begin("Model");
-    ImGui::SliderFloat3("test",tester,-180.0f,180.f);
-    ImGui::Checkbox("Pause",&m_pause);
-    ImGui::End();
+    displayGui();
     if(!m_io.WantCaptureMouse)
     {
       if ((m_inputEvent.type == SDL_WINDOWEVENT) &&
@@ -174,9 +223,10 @@ void Window::tick()
         case SDLK_ESCAPE :  m_quit = true; break;
         case SDLK_w : m_pause = !m_pause; break;
         case SDLK_e : m_emit.m_firework = true; break;
+        case SDLK_a : m_emit.clearParticles();m_emit.m_explosion = 6; break;
         case SDLK_r : m_emit.m_flame = !m_emit.m_flame; break;
         case SDLK_t : std::cout<<m_emit.particleCount()<<'\n'; break;
-        case SDLK_y : m_emit.m_flame = false; m_emit.clearParticles(); break;
+        case SDLK_y : m_emit.clearParticles(); break;
         case SDLK_f : resetPos(); break;
         case SDLK_g : m_grid = !m_grid; break;
         default : break;

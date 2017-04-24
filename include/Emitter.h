@@ -10,6 +10,7 @@
 #include "Particle.h"
 #include "FlameParticle.h"
 #include "FireworkParticle.h"
+#include "ExplosionParticle.h"
 
 class Emitter
 {
@@ -37,6 +38,7 @@ private:
   void spawnParticles();
   void createFlame();
   void createFirework();
+  void createExplosion();
   void createObjects();
   void removeParticles();
 
@@ -44,6 +46,9 @@ private:
 public:
   bool m_flame;
   bool m_firework;
+  int m_explosion;
+  glm::vec4 m_fwCol;
+  bool m_fwBlink = false;
 
   //Private members
 private:

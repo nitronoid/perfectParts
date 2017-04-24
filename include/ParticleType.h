@@ -4,7 +4,8 @@
 enum class ParticleType
 {
   FIREWORK,
-  FLAME
+  FLAME,
+  EXPLOSION
 
 };
 
