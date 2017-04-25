@@ -60,7 +60,7 @@ private :
   ImGuiIO &m_io = ImGui::GetIO();
   ImGuiStyle &m_style = ImGui::GetStyle();
   ImFontConfig m_fConfig;
-  int m_tab;
+  bool m_tab;
   //Window members
   int m_width;
   int m_height;

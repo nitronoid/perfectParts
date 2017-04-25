@@ -12,6 +12,7 @@ Emitter::Emitter(const glm::vec3 &_pos, const unsigned int &_max)
   m_firework = false;
   m_explosion = 0;
   m_fwCol = glm::vec4(1.0f,0.078f,0.576f,1.0f);
+  m_expCol = glm::vec4(0.647f,0.306f,0.2f,1.0f);
   m_particles.reserve(_max);
 }
 
@@ -154,7 +155,7 @@ void Emitter::createFlame()
 
     std::unique_ptr<Particle> temp (new FlameParticle(m_pos + newPos,                              //initial position
                                                       newVel,                                      //initial velocity
-                                                      glm::vec4(1.0f,0.67f,0.0f,1.0f),             //initial colour
+                                                      m_fiCol,                                     //initial colour
                                                       100.0f,                                      //initial size
                                                       40,                                          //life span
                                                       m_frame,                                     //current frame
@@ -165,24 +166,23 @@ void Emitter::createFlame()
 
 void Emitter::createFirework()
 {
-    int fuel = 300;
-    int trail = 20;
-    int fuse = 95;
-    int eLife = 80;
+    glm::vec3 newVel = glm::vec3(m_fwThrust * sin(m_fwPhi) * cos(m_fwTheta),
+                                 m_fwThrust * cos(m_fwPhi),
+                                 m_fwThrust * sin(m_fwPhi) * sin(m_fwTheta));
 
-    if(m_particleCount + fuel*(trail*1) < m_maxParticles)
+    if(m_particleCount + m_fwFuel*(m_fwTrail*1) < m_maxParticles)
     {
-      for(int i =0; i < fuel; ++i)
+      for(int i =0; i < m_fwFuel; ++i)
       {
-        std::unique_ptr<Particle> temp ( new FireworkParticle(fuse,                                  //explosion timer
+        std::unique_ptr<Particle> temp ( new FireworkParticle(m_fwFuse,                                  //explosion timer
                                                               m_pos,                                 //initial position
-                                                              glm::vec3(0.0f,1.0f,0.0f),             //initial velocity
+                                                              newVel,                                //initial velocity
                                                               m_fwCol,                               //initial colour
                                                               1.0f,                                  //initial brightness
                                                               25.0f,                                 //initial size
-                                                              fuse*2,                                //life span
-                                                              eLife,                                 //exploded life span
-                                                              trail,                                 //trail life span
+                                                              m_fwFuse*2,                                //life span
+                                                              m_fwExpLife,                                 //exploded life span
+                                                              m_fwTrail,                                 //trail life span
                                                               m_frame,                               //current frame
                                                               true,                                  //flag for spawning trails
                                                               m_fwBlink));                           //flag for blinking
@@ -197,10 +197,6 @@ void Emitter::createExplosion()
   for(int i =0; i < 25; ++i)
   {
     float size = glm::linearRand(40.0f,120.0f);
-
-    glm::vec2 disk = glm::diskRand(2.0f);
-    glm::vec3 newPos = glm::vec3(disk.x,0.0f,disk.y);
-
     float theta = glm::linearRand(0.0f,6.28f);   //radians
     float phi = glm::linearRand(-1.5f,1.5f); //radians
     float radial = glm::linearRand(0.5f,1.2f);
@@ -211,9 +207,9 @@ void Emitter::createExplosion()
 
     std::unique_ptr<Particle> temp( new ExplosionParticle(m_pos,                                       //initial position
                                                           newVel,                                      //initial velocity
-                                                          glm::vec4(0.647f,0.306f,0.2f,1.0f),          //initial colour
-                                                          size,                                      //initial size
-                                                          80,                                         //life span
+                                                          m_expCol,                                    //initial colour
+                                                          size,                                        //initial size
+                                                          80,                                          //life span
                                                           20,                                          //trail life spaj
                                                           m_frame,                                     //current frame
                                                           true));                                      //flag for spawning trails

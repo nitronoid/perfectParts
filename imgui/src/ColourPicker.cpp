@@ -232,13 +232,11 @@ bool ColorSelector(const char* pLabel, glm::vec4 &oRGBA)
       int r = (int)(ImSaturate( oRGBA.r )*255.f);
       int g = (int)(ImSaturate( oRGBA.g )*255.f);
       int b = (int)(ImSaturate( oRGBA.b )*255.f);
-      int a = (int)(ImSaturate( oRGBA.a )*255.f);
 			bool bChange = false;
 			ImGui::PushItemWidth(130.f);
 			bChange |= ImGui::SliderInt("R", &r, 0, 255);
 			bChange |= ImGui::SliderInt("G", &g, 0, 255);
-			bChange |= ImGui::SliderInt("B", &b, 0, 255);
-			bChange |= ImGui::SliderInt("A", &a, 0, 255);
+      bChange |= ImGui::SliderInt("B", &b, 0, 255);
 			ImGui::PopItemWidth();
 			if (bChange)
 			{
@@ -246,7 +244,6 @@ bool ColorSelector(const char* pLabel, glm::vec4 &oRGBA)
         oRGBA.r = (float)r/255.f;
         oRGBA.g = (float)g/255.f;
         oRGBA.b = (float)b/255.f;
-        oRGBA.a = (float)a/255.f;
 
         ImGui::ColorConvertRGBtoHSV( oRGBA.r, oRGBA.g, oRGBA.b, fHue, fSat, fVal );
 			}
@@ -280,13 +277,12 @@ bool ColorSelector(const char* pLabel, glm::vec4 &oRGBA)
 
 	ImGui::SameLine();
 
-  float fValues[4] = {oRGBA.r, oRGBA.g, oRGBA.b, oRGBA.a};
-	if (ImGui::DragFloat4(pLabel, fValues, 0.01f))
+  float fValues[3] = {oRGBA.r, oRGBA.g, oRGBA.b};
+  if (ImGui::DragFloat3(pLabel, fValues, 0.01f))
 	{
     oRGBA.r = fValues[0];
     oRGBA.g = fValues[1];
     oRGBA.b = fValues[2];
-    oRGBA.a = fValues[3];
 		bRet = true;
 	}
 

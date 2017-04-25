@@ -39,7 +39,7 @@ HEADERS += \
     $$PWD/imgui/include/imgui_internal.h \
     $$PWD/imgui/include/stb_textedit.h \
     $$PWD/include/ImGUIImpl.h \
-    include/ExplosionParticle.h
+    $$PWD/include/ExplosionParticle.h
 
 INCLUDEPATH +=include
 INCLUDEPATH +=imgui/include

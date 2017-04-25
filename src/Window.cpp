@@ -8,7 +8,7 @@
 #include "Window.h"
 #include <string>
 
-extern bool ColorSelector(const char* pLabel, glm::vec4& oRGBA);
+bool ColorSelector(const char* pLabel, glm::vec4& oRGBA);
 
 Window::Window(const std::string &_name, int _x, int _y,int _width, int _height) :
   m_emit(glm::vec3(0.0f,0.0f,0.0f),50000)
@@ -31,9 +31,9 @@ Window::Window(const std::string &_name, int _x, int _y,int _width, int _height)
   m_emit.initTextures();
   m_drawing = false;
   m_updating = false;
-//  m_updateTimerID = SDL_AddTimer(10, /*elapsed time in milliseconds*/
-//                                 timerCallback, /*callback function*/
-//                                 this /*pointer to the object*/);
+  //  m_updateTimerID = SDL_AddTimer(10, /*elapsed time in milliseconds*/
+  //                                 timerCallback, /*callback function*/
+  //                                 this /*pointer to the object*/);
 }
 
 Window::~Window()
@@ -47,10 +47,58 @@ Window::~Window()
 
 void Window::initStyle()
 {
+  ImVec4 col_text = ImColor::HSV(0.56f, 0.079f, 0.922f);
+  ImVec4 col_main = ImColor::HSV(0.56f, 0.706f, 0.631f);
+  ImVec4 col_back = ImColor::HSV(0.56f, 0.231f, 0.157f);
+  ImVec4 col_area = ImColor::HSV(0.56f, 0.486f, 0.392f);
+
   m_style = ImGui::GetStyle();
-  m_style.Colors[ImGuiCol_WindowBg] = ImVec4(1.0f,1.0f,1.0f,0.5f);
-  m_style.Colors[ImGuiCol_TitleBgActive] = ImVec4(1.0f,1.0f,1.0f,0.75f);
-  m_style.Colors[ImGuiCol_TitleBg] = ImVec4(1.0f,1.0f,1.0f,0.6f);
+
+  m_style.Colors[ImGuiCol_Text]                  = ImVec4(col_text.x, col_text.y, col_text.z, 1.00f);
+  m_style.Colors[ImGuiCol_TextDisabled]          = ImVec4(col_text.x, col_text.y, col_text.z, 0.58f);
+  m_style.Colors[ImGuiCol_WindowBg]              = ImVec4(col_back.x, col_back.y, col_back.z, 1.00f);
+  m_style.Colors[ImGuiCol_ChildWindowBg]         = ImVec4(col_area.x, col_area.y, col_area.z, 0.00f);
+  m_style.Colors[ImGuiCol_Border]                = ImVec4(col_text.x, col_text.y, col_text.z, 0.30f);
+  m_style.Colors[ImGuiCol_BorderShadow]          = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+  m_style.Colors[ImGuiCol_FrameBg]               = ImVec4(col_area.x, col_area.y, col_area.z, 1.00f);
+  m_style.Colors[ImGuiCol_FrameBgHovered]        = ImVec4(col_main.x, col_main.y, col_main.z, 0.68f);
+  m_style.Colors[ImGuiCol_FrameBgActive]         = ImVec4(col_main.x, col_main.y, col_main.z, 1.00f);
+  m_style.Colors[ImGuiCol_TitleBg]               = ImVec4(col_main.x, col_main.y, col_main.z, 0.45f);
+  m_style.Colors[ImGuiCol_TitleBgCollapsed]      = ImVec4(col_main.x, col_main.y, col_main.z, 0.35f);
+  m_style.Colors[ImGuiCol_TitleBgActive]         = ImVec4(col_main.x, col_main.y, col_main.z, 0.78f);
+  m_style.Colors[ImGuiCol_MenuBarBg]             = ImVec4(col_area.x, col_area.y, col_area.z, 0.57f);
+  m_style.Colors[ImGuiCol_ScrollbarBg]           = ImVec4(col_area.x, col_area.y, col_area.z, 1.00f);
+  m_style.Colors[ImGuiCol_ScrollbarGrab]         = ImVec4(col_main.x, col_main.y, col_main.z, 0.31f);
+  m_style.Colors[ImGuiCol_ScrollbarGrabHovered]  = ImVec4(col_main.x, col_main.y, col_main.z, 0.78f);
+  m_style.Colors[ImGuiCol_ScrollbarGrabActive]   = ImVec4(col_main.x, col_main.y, col_main.z, 1.00f);
+  m_style.Colors[ImGuiCol_ComboBg]               = ImVec4(col_area.x, col_area.y, col_area.z, 1.00f);
+  m_style.Colors[ImGuiCol_CheckMark]             = ImVec4(col_main.x, col_main.y, col_main.z, 0.80f);
+  m_style.Colors[ImGuiCol_SliderGrab]            = ImVec4(col_main.x, col_main.y, col_main.z, 0.24f);
+  m_style.Colors[ImGuiCol_SliderGrabActive]      = ImVec4(col_main.x, col_main.y, col_main.z, 1.00f);
+  m_style.Colors[ImGuiCol_Button]                = ImVec4(col_main.x, col_main.y, col_main.z, 0.44f);
+  m_style.Colors[ImGuiCol_ButtonHovered]         = ImVec4(col_main.x, col_main.y, col_main.z, 0.86f);
+  m_style.Colors[ImGuiCol_ButtonActive]          = ImVec4(col_main.x, col_main.y, col_main.z, 1.00f);
+  m_style.Colors[ImGuiCol_Header]                = ImVec4(col_main.x, col_main.y, col_main.z, 0.76f);
+  m_style.Colors[ImGuiCol_HeaderHovered]         = ImVec4(col_main.x, col_main.y, col_main.z, 0.86f);
+  m_style.Colors[ImGuiCol_HeaderActive]          = ImVec4(col_main.x, col_main.y, col_main.z, 1.00f);
+  m_style.Colors[ImGuiCol_Column]                = ImVec4(col_text.x, col_text.y, col_text.z, 0.32f);
+  m_style.Colors[ImGuiCol_ColumnHovered]         = ImVec4(col_text.x, col_text.y, col_text.z, 0.78f);
+  m_style.Colors[ImGuiCol_ColumnActive]          = ImVec4(col_text.x, col_text.y, col_text.z, 1.00f);
+  m_style.Colors[ImGuiCol_ResizeGrip]            = ImVec4(col_main.x, col_main.y, col_main.z, 0.20f);
+  m_style.Colors[ImGuiCol_ResizeGripHovered]     = ImVec4(col_main.x, col_main.y, col_main.z, 0.78f);
+  m_style.Colors[ImGuiCol_ResizeGripActive]      = ImVec4(col_main.x, col_main.y, col_main.z, 1.00f);
+  m_style.Colors[ImGuiCol_CloseButton]           = ImVec4(col_text.x, col_text.y, col_text.z, 0.16f);
+  m_style.Colors[ImGuiCol_CloseButtonHovered]    = ImVec4(col_text.x, col_text.y, col_text.z, 0.39f);
+  m_style.Colors[ImGuiCol_CloseButtonActive]     = ImVec4(col_text.x, col_text.y, col_text.z, 1.00f);
+  m_style.Colors[ImGuiCol_PlotLines]             = ImVec4(col_text.x, col_text.y, col_text.z, 0.63f);
+  m_style.Colors[ImGuiCol_PlotLinesHovered]      = ImVec4(col_main.x, col_main.y, col_main.z, 1.00f);
+  m_style.Colors[ImGuiCol_PlotHistogram]         = ImVec4(col_text.x, col_text.y, col_text.z, 0.63f);
+  m_style.Colors[ImGuiCol_PlotHistogramHovered]  = ImVec4(col_main.x, col_main.y, col_main.z, 1.00f);
+  m_style.Colors[ImGuiCol_TextSelectedBg]        = ImVec4(col_main.x, col_main.y, col_main.z, 0.43f);
+  m_style.Colors[ImGuiCol_ModalWindowDarkening]  = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
+
+  m_style.WindowRounding = 0.0f;
+  m_style.Alpha = 0.75f;
 }
 
 Uint32 Window::timerCallback(Uint32 interval)
@@ -146,51 +194,61 @@ void Window::displayGui()
   ImGui_ImplSdl_ProcessEvent(&m_inputEvent);
   ImGui_ImplSdl_NewFrame(m_sdlWin);
   ImGui::Begin("Controls");
-  if(ImGui::Button("Firework")) m_tab = 1;
-  ImGui::SameLine();
-  if(ImGui::Button("Flame")) m_tab = 2;
-  ImGui::SameLine();
-  if(ImGui::Button("Explosion")) m_tab = 3;
-  ImGui::Separator();
-  switch(m_tab)
-  {
-  case 1: {displayFireworkGui(); break;}
-  case 2: {displayFlameGui(); break;}
-  case 3: {displayExplosionGui(); break;}
-  }
-  ImGui::Separator();
+  displayFireworkGui();
+  displayFlameGui();
+  displayExplosionGui();
   ImGui::Checkbox("Pause time",&m_pause);
   ImGui::SameLine();
+  ImGui::Checkbox("Display grid",&m_grid);
   if(ImGui::Button("Clear System")) m_emit.clearParticles();
-  //ImGui::SameLine();
-//  ImVec4 col = {m_emit.m_fwCol.r,m_emit.m_fwCol.g,m_emit.m_fwCol.b,m_emit.m_fwCol.a};
-//  ImGui::ColorEdit3("Firework colour", (float*)&col);
-//  m_emit.m_fwCol = glm::vec4(col.x,col.y,col.z,col.w);
-
+  ImGui::Text("Particle count: %zu / %zu",m_emit.particleCount(),m_emit.maxParticles());
   ImGui::End();
 }
 void Window::displayFlameGui()
 {
-  ImGui::Checkbox("Ignite flame",&m_emit.m_flame);
+  if(ImGui::CollapsingHeader("Fire"))
+  {
+    ImGui::Text("Fire colour");
+    ColorSelector("", m_emit.m_fiCol);
+    ImGui::Checkbox("Ignite flame",&m_emit.m_flame);
+    ImGui::Separator();
+  }
 }
 
 void Window::displayExplosionGui()
 {
-  if(ImGui::Button("Detonate Explosion"))
+  if(ImGui::CollapsingHeader("Explosion"))
   {
-    m_emit.clearParticles();
-    m_emit.m_explosion = 6;
+    ImGui::Text("Explosion colour");
+    ColorSelector("", m_emit.m_expCol);
+    if(ImGui::Button("Detonate Explosion"))
+    {
+      m_emit.clearParticles();
+      m_emit.m_explosion = 6;
+    }
+    ImGui::Separator();
   }
 }
 
 void Window::displayFireworkGui()
 {
-  ImGui::Text("Firework colour");
-  ColorSelector("", m_emit.m_fwCol);
-  ImGui::Checkbox("Blinking",&m_emit.m_fwBlink);
-  if(ImGui::Button("Launch Firework"))
+  if(ImGui::CollapsingHeader("Firework"))
   {
-    m_emit.m_firework = true;
+    ImGui::Text("Colour");
+    ColorSelector("", m_emit.m_fwCol);
+    ImGui::SliderAngle("Steepness",&m_emit.m_fwPhi,-90.0f,90.0f);
+    ImGui::SliderAngle("Rotation",&m_emit.m_fwTheta,0.0f,360.0f);
+    ImGui::SliderFloat("Thrust",&m_emit.m_fwThrust,0.1f,2.0f);
+    ImGui::SliderInt("Fuel",&m_emit.m_fwFuel,0,1000);
+    ImGui::SliderInt("Fuse",&m_emit.m_fwFuse,0,200);
+    ImGui::SliderInt("Trail length",&m_emit.m_fwTrail,0,50);
+    ImGui::SliderInt("Explosion size",&m_emit.m_fwExpLife,0,200);
+    ImGui::Checkbox("Blinking",&m_emit.m_fwBlink);
+    if(ImGui::Button("Launch Firework"))
+    {
+      m_emit.m_firework = true;
+    }
+    ImGui::Separator();
   }
 }
 
@@ -316,10 +374,10 @@ void Window::draw() const
   {
     drawGrid(5,5);
   }
-//  while(m_updating);
-//  m_drawing = true;
+  //  while(m_updating);
+  //  m_drawing = true;
   m_emit.draw();
-//  m_drawing = false;
+  //  m_drawing = false;
   ImGui::Render();
   SDL_GL_SwapWindow(m_sdlWin);
 }

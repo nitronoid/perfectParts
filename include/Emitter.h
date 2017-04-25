@@ -27,10 +27,12 @@ public:
 
   //Accessors
   inline size_t particleCount() const { return m_particleCount; }
+  inline size_t maxParticles() const { return m_maxParticles;}
   inline glm::vec3 pos() const { return m_pos; }
 
   //Mutators
-  inline void setPos(glm::vec3 &_pos) { m_pos=_pos;}
+  inline void setPos(glm::vec3 &_pos) { m_pos=_pos; }
+  inline void setMaxParticles(size_t &_max) { m_maxParticles = _max; }
 
   //Private functions
 private:
@@ -45,10 +47,21 @@ private:
   //Public members
 public:
   bool m_flame;
+  glm::vec4 m_fiCol = glm::vec4(1.0f,0.67f,0.0f,1.0f);
+
   bool m_firework;
-  int m_explosion;
   glm::vec4 m_fwCol;
   bool m_fwBlink = false;
+  float m_fwTheta = 3.14f;
+  float m_fwPhi = 0.0f;
+  float m_fwThrust = 1.0f;
+  int m_fwFuel = 300;
+  int m_fwTrail = 20;
+  int m_fwFuse = 95;
+  int m_fwExpLife = 80;
+
+  int m_explosion;
+  glm::vec4 m_expCol;
 
   //Private members
 private:
