@@ -17,13 +17,12 @@ class Emitter
   //Public functions, contructors and destructor
 public:
   Emitter() = default;
-  Emitter(const glm::vec3 &_pos, const unsigned int &_max);
+  Emitter(glm::vec3 &&_pos, size_t &&_max);
   ~Emitter();
 
-  void initTextures() const;
+  void initTextures(std::string texPath = "data/RadialGradient.png") const;
   void update();
   void draw() const;
-  void clearParticles();
 
   //Accessors
   inline size_t particleCount() const { return m_particleCount; }
@@ -36,21 +35,22 @@ public:
 
   //Private functions
 private:
-  void addParticle(std::unique_ptr<Particle> &_newParticle);
+  void addParticle(Particle *&&_newParticle);
   void spawnParticles();
   void createFlame();
   void createFirework();
   void createExplosion();
   void createObjects();
   void removeParticles();
+  void clearParticles();
 
   //Public members
 public:
-  bool m_flame;
+  bool m_flame = false;
   glm::vec4 m_fiCol = glm::vec4(1.0f,0.67f,0.0f,1.0f);
 
-  bool m_firework;
-  glm::vec4 m_fwCol;
+  bool m_firework = false;
+  glm::vec4 m_fwCol = glm::vec4(1.0f,0.078f,0.576f,1.0f);
   bool m_fwBlink = false;
   float m_fwTheta = 3.14f;
   float m_fwPhi = 0.0f;
@@ -60,17 +60,19 @@ public:
   int m_fwFuse = 95;
   int m_fwExpLife = 80;
 
-  int m_explosion;
-  glm::vec4 m_expCol;
+  int m_explosion = 0;
+  glm::vec4 m_expCol = glm::vec4(0.647f,0.306f,0.2f,1.0f);
 
+
+  bool m_clear = false;
   //Private members
 private:
   std::vector <std::unique_ptr<Particle>> m_particles;
-  size_t m_particleCount;
-  size_t m_maxParticles;
-  glm::vec3 m_pos;
-  int m_frame;
-  int m_free;
+  size_t m_particleCount = 0;
+  size_t m_maxParticles = 50000;
+  glm::vec3 m_pos = glm::vec3(0.0f,0.0f,0.0f);
+  int m_frame = 0;
+  int m_free = 0;
 };
 
 #endif // EMITTER_H

@@ -34,13 +34,13 @@ private:
 
   //Private members
 private:
-  int m_explosionFuse;
+  int m_explosionFuse = 100;
   int m_blinkPeriod;
-  bool m_blink;
-  bool m_exploded;
-  float m_brightness;
-  int m_trailLife;
-  int m_explodedLife;
+  bool m_blink = false;
+  bool m_exploded = false;
+  float m_brightness = 1.0f;
+  int m_trailLife = 15;
+  int m_explodedLife = 100;
 };
 
 #endif // FIREWORKPARTICLE_H

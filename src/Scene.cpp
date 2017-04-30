@@ -5,47 +5,44 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #endif
-#include "Window.h"
+#include "Scene.h"
 #include <string>
+#include <chrono>
 
-bool ColorSelector(const char* pLabel, glm::vec4& oRGBA);
+extern bool ColorPicker(const char* label, glm::vec4 &col);
 
-Window::Window(const std::string &_name, int _x, int _y,int _width, int _height) :
-  m_emit(glm::vec3(0.0f,0.0f,0.0f),50000)
+Scene::Scene( std::string const&_name, int const&_x, int const&_y,int const&_width, int const&_height) :
+  m_width(_width),
+  m_height(_height),
+  m_winPos(_x,_y),
+  m_name(_name),
+  m_emit(glm::vec3(0.0f,0.0f,0.0f),100000)
 {
-  m_quit = false;
-  m_pause = false;
-  m_grid = true;
-  m_name=_name;
-  m_winPos.x = _x;
-  m_winPos.y = _y;
-  m_width=_width;
-  m_height=_height;
   SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
   resetPos();
   init();
-  m_io = ImGui::GetIO();
-  m_io.Fonts->AddFontDefault();
-  m_tab = 1;
-  initStyle();
   m_emit.initTextures();
-  m_drawing = false;
-  m_updating = false;
+  //  m_mutex = SDL_CreateMutex();
+  //  m_canDraw = SDL_CreateCond();
+  //  m_canUpdate = SDL_CreateCond();
   //  m_updateTimerID = SDL_AddTimer(10, /*elapsed time in milliseconds*/
   //                                 timerCallback, /*callback function*/
   //                                 this /*pointer to the object*/);
 }
 
-Window::~Window()
+Scene::~Scene()
 {
   ImGui_ImplSdl_Shutdown();
+  SDL_RemoveTimer(m_updateTimerID);
+  //  SDL_DestroyMutex(m_mutex);
+  //  SDL_DestroyCond(m_canDraw);
+  //  SDL_DestroyCond(m_canUpdate);
   SDL_GL_DeleteContext(m_glContext);
   SDL_DestroyWindow(m_sdlWin);
-  SDL_RemoveTimer(m_updateTimerID);
   SDL_Quit();
 }
 
-void Window::initStyle()
+void Scene::initStyle()
 {
   ImVec4 col_text = ImColor::HSV(0.56f, 0.079f, 0.922f);
   ImVec4 col_main = ImColor::HSV(0.56f, 0.706f, 0.631f);
@@ -101,31 +98,35 @@ void Window::initStyle()
   m_style.Alpha = 0.75f;
 }
 
-Uint32 Window::timerCallback(Uint32 interval)
+Uint32 Scene::timerCallback(Uint32 interval)
 {
   if(!m_pause && !m_quit)
   {
-    while(m_drawing);
-    m_updating = true;
+    SDL_LockMutex(m_mutex);
+    while(!m_canUpdate)
+    {
+      SDL_CondWait(m_canUpdate, m_mutex);
+    }
     m_emit.update();
-    m_updating = false;
+    SDL_UnlockMutex(m_mutex);
+    SDL_CondSignal(m_canDraw);
   }
   return interval;
 }
 
-Uint32 Window::timerCallback(Uint32 interval, void * param)
+Uint32 Scene::timerCallback(Uint32 interval, void * param)
 {
-  return ((Window*)param)->timerCallback(interval);
+  return ((Scene*)param)->timerCallback(interval);
 }
 
-void Window::resetPos()
+void Scene::resetPos()
 {
   m_rotation = glm::vec2(0.0f,0.0f);
-  m_translation = glm::vec2(0.0f,0.0f);
-  m_zoom = 0.0f;
+  m_translation = glm::vec2(0.0f,-30.0f);
+  m_zoom = 150.0f;
 }
 
-void Window::init()
+void Scene::init()
 {
   if(SDL_Init(SDL_INIT_EVERYTHING) < 0)
   {
@@ -137,15 +138,16 @@ void Window::init()
                             SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE );
   if(!m_sdlWin)
   {
-    ErrorExit("Feailed to create Window");
+    ErrorExit("Feailed to create Scene");
   }
 
   createGLContext();
   initGL();
   ImGui_ImplSdl_Init(m_sdlWin);
+  initStyle();
 }
 
-void Window::initGL() const
+void Scene::initGL() const
 {
   float coeff[3] = {0.0f,0.1f,0.0f};
   float min = 1.0f;
@@ -167,13 +169,13 @@ void Window::initGL() const
   glEnable( GL_BLEND );
 }
 
-void Window::resize() const
+void Scene::resize() const
 {
   glViewport(0,0,m_width,m_height);
   loadProjection(glm::perspective(0.7f,float((float)m_width/m_height),0.1f,1000.0f));
 }
 
-void Window::createGLContext()
+void Scene::createGLContext()
 {
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION,2);
@@ -189,58 +191,62 @@ void Window::createGLContext()
 
 }
 
-void Window::displayGui()
+void Scene::displayGui()
 {
   ImGui_ImplSdl_ProcessEvent(&m_inputEvent);
   ImGui_ImplSdl_NewFrame(m_sdlWin);
-  ImGui::Begin("Controls");
-  displayFireworkGui();
-  displayFlameGui();
-  displayExplosionGui();
-  ImGui::Checkbox("Pause time",&m_pause);
-  ImGui::SameLine();
-  ImGui::Checkbox("Display grid",&m_grid);
-  if(ImGui::Button("Clear System")) m_emit.clearParticles();
-  ImGui::Text("Particle count: %zu / %zu",m_emit.particleCount(),m_emit.maxParticles());
+  if(ImGui::Begin("Controls"))
+  {
+    displayFireworkGui();
+    displayFlameGui();
+    displayExplosionGui();
+    ImGui::Checkbox("Pause time",&m_pause);
+    ImGui::SameLine();
+    ImGui::Checkbox("Display grid",&m_grid);
+    if(ImGui::Button("Clear System")) m_emit.m_clear = true;
+    ImGui::Text("Particle count: %zu / %zu",m_emit.particleCount(),m_emit.maxParticles());
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+  }
   ImGui::End();
 }
-void Window::displayFlameGui()
+
+void Scene::displayFlameGui()
 {
   if(ImGui::CollapsingHeader("Fire"))
   {
     ImGui::Text("Fire colour");
-    ColorSelector("", m_emit.m_fiCol);
+    ColorPicker("", m_emit.m_fiCol);
     ImGui::Checkbox("Ignite flame",&m_emit.m_flame);
     ImGui::Separator();
   }
 }
 
-void Window::displayExplosionGui()
+void Scene::displayExplosionGui()
 {
   if(ImGui::CollapsingHeader("Explosion"))
   {
     ImGui::Text("Explosion colour");
-    ColorSelector("", m_emit.m_expCol);
+    ColorPicker("", m_emit.m_expCol);
     if(ImGui::Button("Detonate Explosion"))
     {
-      m_emit.clearParticles();
+      m_emit.m_clear = true;
       m_emit.m_explosion = 6;
     }
     ImGui::Separator();
   }
 }
 
-void Window::displayFireworkGui()
+void Scene::displayFireworkGui()
 {
   if(ImGui::CollapsingHeader("Firework"))
   {
-    ImGui::Text("Colour");
-    ColorSelector("", m_emit.m_fwCol);
+    ImGui::Text("Firework Colour");
+    ColorPicker("", m_emit.m_fwCol);
     ImGui::SliderAngle("Steepness",&m_emit.m_fwPhi,-90.0f,90.0f);
     ImGui::SliderAngle("Rotation",&m_emit.m_fwTheta,0.0f,360.0f);
     ImGui::SliderFloat("Thrust",&m_emit.m_fwThrust,0.1f,2.0f);
     ImGui::SliderInt("Fuel",&m_emit.m_fwFuel,0,1000);
-    ImGui::SliderInt("Fuse",&m_emit.m_fwFuse,0,200);
+    ImGui::SliderInt("Fuse",&m_emit.m_fwFuse,2,200);
     ImGui::SliderInt("Trail length",&m_emit.m_fwTrail,0,50);
     ImGui::SliderInt("Explosion size",&m_emit.m_fwExpLife,0,200);
     ImGui::Checkbox("Blinking",&m_emit.m_fwBlink);
@@ -252,17 +258,22 @@ void Window::displayFireworkGui()
   }
 }
 
-void Window::tick()
+void Scene::tick()
 {
 
   if(!m_pause && !m_quit)
   {
+    //    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
     m_emit.update();
+    //    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+    //    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+    //    std::cout <<"update func: "<< duration<<'\n';
   }
   makeCurrent();
+  displayGui();
   while(SDL_PollEvent(&m_inputEvent))
   {
-    displayGui();
+
     if(!m_io.WantCaptureMouse)
     {
       if ((m_inputEvent.type == SDL_WINDOWEVENT) &&
@@ -281,10 +292,10 @@ void Window::tick()
         case SDLK_ESCAPE :  m_quit = true; break;
         case SDLK_w : m_pause = !m_pause; break;
         case SDLK_e : m_emit.m_firework = true; break;
-        case SDLK_a : m_emit.clearParticles();m_emit.m_explosion = 6; break;
+        case SDLK_a : m_emit.m_clear = true;m_emit.m_explosion = 6; break;
         case SDLK_r : m_emit.m_flame = !m_emit.m_flame; break;
         case SDLK_t : std::cout<<m_emit.particleCount()<<'\n'; break;
-        case SDLK_y : m_emit.clearParticles(); break;
+        case SDLK_y : m_emit.m_clear = true; break;
         case SDLK_f : resetPos(); break;
         case SDLK_g : m_grid = !m_grid; break;
         default : break;
@@ -298,8 +309,7 @@ void Window::tick()
 
 }
 
-
-void Window::handleMouse()
+void Scene::handleMouse()
 {
   const Uint8 *keystates = SDL_GetKeyboardState(NULL);
   glm::ivec2 newPos;
@@ -337,7 +347,7 @@ void Window::handleMouse()
   m_mousePos = newPos;
 }
 
-void Window::ErrorExit(const std::string &_msg) const
+void Scene::ErrorExit(std::string const&_msg) const
 {
   std::cerr<<_msg<<std::endl;
   std::cerr<<SDL_GetError()<<std::endl;
@@ -345,8 +355,7 @@ void Window::ErrorExit(const std::string &_msg) const
   exit(EXIT_FAILURE);
 }
 
-
-void Window::loadProjection(glm::mat4 _matrix) const
+void Scene::loadProjection(glm::mat4 _matrix) const
 {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -354,35 +363,45 @@ void Window::loadProjection(glm::mat4 _matrix) const
   glMatrixMode(GL_MODELVIEW);
 }
 
-void Window::loadModelView(glm::mat4 _matrix) const
+void Scene::loadModelView(glm::mat4 _matrix) const
 {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glMultMatrixf((const float*)glm::value_ptr(_matrix));
 }
 
-void Window::draw() const
+void Scene::draw() const
 {
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  loadModelView(glm::lookAt(glm::vec3(0,40,-150),glm::vec3(0,30,0),glm::vec3(0,1,0)));
-  glTranslatef(0,0,-m_zoom);
-  glTranslatef(m_translation.x,m_translation.y,0.0f);
+  //loadModelView(glm::lookAt(glm::vec3(0,40,-150),glm::vec3(0,30,0),glm::vec3(0,1,0)));
+  glLoadIdentity();
+  glTranslatef(m_translation.x,m_translation.y,-m_zoom);
   glRotatef(m_rotation.x,1.0f,0.0f,0.0f);
   glRotatef(m_rotation.y,0.0f,1.0f,0.0f);
   if(m_grid)
   {
     drawGrid(5,5);
   }
-  //  while(m_updating);
-  //  m_drawing = true;
+
+  //  SDL_LockMutex(m_mutex);
+  //  while(!m_canDraw)
+  //  {
+  //    SDL_CondWait(m_canDraw, m_mutex);
+  //  }
+  //  std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
   m_emit.draw();
-  //  m_drawing = false;
+  //  std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+  //  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+  //  std::cout <<"draw func: "<< duration<<'\n';
+  //  SDL_UnlockMutex(m_mutex);
+  //  SDL_CondSignal(m_canUpdate);
+
   ImGui::Render();
   SDL_GL_SwapWindow(m_sdlWin);
 }
 
-void Window::drawGrid(int _num, int _step) const
+void Scene::drawGrid(int _num, int _step) const
 {
   glDisable(GL_TEXTURE_2D);
   glColor4f(1.0f,1.0f,1.0f,1.0f);

@@ -8,19 +8,12 @@
 #include "Emitter.h"
 #include "ImGUIImpl.h"
 
-class Window
+class Scene
 {
   //Public functions, constructors and destructor
 public :
-//  enum guiTab
-//  {
-//    FIREWORKTAB,
-//    FLAMETAB,
-//    EXPLOSIONTAB
-//  };
-
-  Window(const std::string &_name, int _x, int _y, int _width, int _height);
-  ~Window();
+  Scene(std::string const&_name, int const&_x, int const&_y, int const&_width, int const&_height);
+  ~Scene();
 
   inline void makeCurrent() const { SDL_GL_MakeCurrent(m_sdlWin,m_glContext);}
   void draw() const;
@@ -33,7 +26,7 @@ private:
   void createGLContext();
   void loadProjection(glm::mat4 _matrix) const;
   void loadModelView(glm::mat4 _matrix) const;
-  void ErrorExit(const std::string &_msg) const;
+  void ErrorExit(std::string const&_msg) const;
   void drawGrid(int _num, int _step) const;
   void resetPos();
   void handleMouse();
@@ -59,24 +52,25 @@ private :
   //Gui members
   ImGuiIO &m_io = ImGui::GetIO();
   ImGuiStyle &m_style = ImGui::GetStyle();
-  ImFontConfig m_fConfig;
-  bool m_tab;
+
   //Window members
-  int m_width;
-  int m_height;
-  glm::ivec2 m_winPos;
+  int m_width = 640;
+  int m_height = 480;
+  glm::ivec2 m_winPos = glm::ivec2(0.0f,0.0f);
   glm::ivec2 m_mousePos;
-  glm::vec2 m_translation;
-  float m_zoom;
-  glm::vec2 m_rotation;
-  std::string m_name;
-  SDL_Window *m_sdlWin;
+  glm::vec2 m_translation = glm::vec2(0.0f,-30.0f);
+  float m_zoom = 150.0f;
+  glm::vec2 m_rotation = glm::vec2(0.0f,0.0f);
+  std::string m_name = "Default";
+  SDL_Window *m_sdlWin = NULL;
   Emitter m_emit;
   SDL_GLContext m_glContext;
   SDL_TimerID m_updateTimerID;
-  bool m_drawing;
-  bool m_updating;
-  bool m_grid;
+  bool m_grid = true;
+
+  SDL_mutex *m_mutex = NULL;
+  SDL_cond *m_canDraw = NULL;
+  SDL_cond *m_canUpdate = NULL;
 
 };
 

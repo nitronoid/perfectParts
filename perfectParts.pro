@@ -2,7 +2,7 @@ TARGET=perfectParts
 DESTDIR=./
 SOURCES+=\
     $$PWD/src/main.cpp \
-    $$PWD/src/Window.cpp \
+    $$PWD/src/Scene.cpp \
     $$PWD/src/Particle.cpp \
     $$PWD/src/FireworkParticle.cpp \
     $$PWD/src/FlameParticle.cpp \
@@ -10,9 +10,9 @@ SOURCES+=\
     $$PWD/src/pngutils.cpp \
     $$PWD/imgui/src/imgui.cpp \
     $$PWD/imgui/src/imgui_draw.cpp \
-    $$PWD/imgui/src/ColourPicker.cpp \
     $$PWD/src/ImGUIImpl.cpp \
-    $$PWD/src/ExplosionParticle.cpp
+    $$PWD/src/ExplosionParticle.cpp \
+    $$PWD/imgui/src/colourpick.cpp
 
 
 CONFIG += c++11
@@ -25,7 +25,7 @@ QT -=xml
 
 
 HEADERS += \
-    $$PWD/include/Window.h \
+    $$PWD/include/Scene.h \
     $$PWD/include/Particle.h \
     $$PWD/include/FireworkParticle.h \
     $$PWD/include/FlameParticle.h \

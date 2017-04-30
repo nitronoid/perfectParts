@@ -6,13 +6,13 @@ FlameParticle::FlameParticle(const glm::vec3 &_pos,
                              const float &_size,
                              const int &_life,
                              const int &_frame,
-                             const bool &_spawn) : Particle( _pos,
-                                                      _vel,
-                                                      _col,
-                                                      _size,
-                                                      _life,
-                                                      _frame,
-                                                      _spawn)
+                             const bool &_spawn) : Particle(_pos,
+                                                            _vel,
+                                                            _col,
+                                                            _size,
+                                                            _life,
+                                                            _frame,
+                                                            _spawn)
 {
   m_type = ParticleType::FLAME;
   m_sizeDelta *= 2.0f;

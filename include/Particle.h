@@ -22,14 +22,13 @@ class Particle
   //Public functions, constructors and destructor
 public:
   Particle() = default;
-
-  Particle(glm::vec3 _pos,
-            glm::vec3 _vel,
-            glm::vec4 _col,
-            float _size,
-            int _life,
-            int _frame,
-            bool _spawn );
+  Particle(const glm::vec3 &_pos,
+           const glm::vec3 &_vel,
+           const glm::vec4 &_col,
+           const float &_size,
+           const int &_life,
+           const int &_frame,
+           const bool &_spawn );
 
   virtual ~Particle();
 
@@ -41,19 +40,19 @@ public:
 
   //Public members
 public:
-  bool m_alive;
-  bool m_spawn;
+  bool m_alive = true;
+  bool m_spawn = false;
 
   //Protected members
 protected:
-  glm::vec3 m_pos;
-  glm::vec3 m_vel;
-  glm::vec3 m_accel;
-  glm::vec4 m_col;
+  glm::vec3 m_pos = glm::vec3(0.0f,0.0f,0.0f);
+  glm::vec3 m_vel = glm::vec3(0.0f,0.0f,0.0f);
+  glm::vec3 m_accel = glm::vec3(0.0f,-0.01f,0.0f);
+  glm::vec4 m_col = glm::vec4(1.0f,1.0f,1.0f,1.0f);
   glm::vec4 m_colDelta;
   float m_sizeDelta;
-  float m_size;
-  int m_life;
+  float m_size = 5.0f;
+  int m_life = 100;
   int m_birthFrame;
   ParticleType m_type;
 };

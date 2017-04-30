@@ -6,6 +6,7 @@ class FlameParticle : public Particle
 {
   //Public functions, constructors and destructor
 public:
+  FlameParticle() = default;
   FlameParticle(const glm::vec3 &_pos,
                 const glm::vec3 &_vel,
                 const glm::vec4 &_col,

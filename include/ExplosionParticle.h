@@ -23,7 +23,7 @@ private:
   glm::vec4 calcCol() const;
 public:
 private:
-  int m_trailLife;
+  int m_trailLife = 20;
 
 };
 

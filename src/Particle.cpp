@@ -1,28 +1,23 @@
 #include "Particle.h"
 
-Particle::Particle(glm::vec3 _pos,
-                   glm::vec3 _vel,
-                   glm::vec4 _col,
-                   float _size,
-                   int _life,
-                   int _frame,
-                   bool _spawn)
+Particle::Particle(const glm::vec3 &_pos,
+                   const glm::vec3 &_vel,
+                   const glm::vec4 &_col,
+                   const float &_size,
+                   const int &_life,
+                   const int &_frame,
+                   const bool &_spawn)
 {
-
-  float sizeDecay = -(_size)/(_life);
-  float colDecay = -_col.a/_life;
-
   m_pos = _pos;
   m_vel = _vel;
-  m_accel = glm::vec3(0.0f,-0.01f,0.0f);
   m_col = _col;
+  float colDecay = -_col.a/_life;
   m_colDelta = glm::vec4(colDecay,colDecay,colDecay,colDecay);
-  m_sizeDelta = sizeDecay;
+  m_sizeDelta = -_size/_life;
   m_size = _size;
   m_life = _life;
   m_birthFrame = _frame;
   m_spawn = _spawn;
-  m_alive = true;
 }
 
 Particle::~Particle()

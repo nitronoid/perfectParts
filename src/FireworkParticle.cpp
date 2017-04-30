@@ -30,7 +30,6 @@ FireworkParticle::FireworkParticle(const int &_fuse,
   {
     m_blinkPeriod = 0;
   }
-  m_exploded = false;
   m_explosionFuse = _fuse + _frame;
   m_trailLife = _trailLife;
   m_explodedLife = _elife;
