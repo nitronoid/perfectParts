@@ -20,7 +20,7 @@ public:
   Emitter(glm::vec3 &&_pos, size_t &&_max);
   ~Emitter();
 
-  void initTextures(std::string texPath = "data/RadialGradient.png") const;
+  void initTextures(std::string texPath = "data\\RadialGradient.png") const;
   void update();
   void draw() const;
 
@@ -52,7 +52,7 @@ public:
   bool m_firework = false;
   glm::vec4 m_fwCol = glm::vec4(1.0f,0.078f,0.576f,1.0f);
   bool m_fwBlink = false;
-  float m_fwTheta = 3.14f;
+  float m_fwTheta = 0.0f;
   float m_fwPhi = 0.0f;
   float m_fwThrust = 1.0f;
   int m_fwFuel = 300;

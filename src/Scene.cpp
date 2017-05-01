@@ -16,7 +16,7 @@ Scene::Scene( std::string const&_name, int const&_x, int const&_y,int const&_wid
   m_height(_height),
   m_winPos(_x,_y),
   m_name(_name),
-  m_emit(glm::vec3(0.0f,0.0f,0.0f),100000)
+  m_emit(glm::vec3(0.0f,0.0f,0.0f),50000)
 {
   SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
   resetPos();
@@ -316,6 +316,7 @@ void Scene::handleMouse()
   float strength = 0.2f;
   Uint32 button = SDL_GetMouseState(&newPos.x, &newPos.y);
   glm::vec2 diff = ((glm::vec2)(newPos - m_mousePos)) * strength;
+  diff.x = -diff.x;
 
   switch(button)
   {
@@ -327,8 +328,8 @@ void Scene::handleMouse()
     }
     else
     {
-      m_rotation.x -= diff.y;
-      m_rotation.y += diff.x;
+      m_rotation.x += diff.y;
+      m_rotation.y -= diff.x;
     }
     break;
   }

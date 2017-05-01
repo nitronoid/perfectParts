@@ -96,7 +96,7 @@ void Emitter::addParticle( Particle*  &&_newParticle)
 {
   auto deadParticle = std::find_if(m_particles.begin()+m_free,
                                    m_particles.end(),
-                                   [](const std::unique_ptr<Particle> &p){return !(p->m_alive);});
+                                   [](std::unique_ptr<Particle> const&_p){return !(_p->m_alive);});
   m_free = deadParticle-m_particles.begin();
   if(deadParticle != m_particles.end())
   {

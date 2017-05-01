@@ -42,6 +42,7 @@ HEADERS += \
     $$PWD/include/ExplosionParticle.h
 
 INCLUDEPATH +=include
+INCLUDEPATH +=data
 INCLUDEPATH +=imgui/include
 
 OTHER_FILES+=imgui.ini
