@@ -1,13 +1,13 @@
 #include "ExplosionParticle.h"
 
-ExplosionParticle::ExplosionParticle(const glm::vec3 &_pos,
-                                     const glm::vec3 &_vel,
-                                     const glm::vec4 &_col,
-                                     const float &_size,
-                                     const int &_life,
-                                     const int &_tLife,
-                                     const int &_frame,
-                                     const bool &_spawn) : Particle(_pos,
+ExplosionParticle::ExplosionParticle( glm::vec3 const&_pos,
+                                      glm::vec3 const&_vel,
+                                      glm::vec4 const&_col,
+                                      float const&_size,
+                                      int const&_life,
+                                      int const&_tLife,
+                                      int const&_frame,
+                                      bool const&_spawn) : Particle(_pos,
                                                                     _vel,
                                                                     _col,
                                                                     _size,
@@ -25,7 +25,7 @@ ExplosionParticle::~ExplosionParticle()
 
 }
 
-void ExplosionParticle::update(int const &_frame)
+void ExplosionParticle::update(int const&_frame)
 {
   if(m_spawn)
   {
@@ -44,12 +44,12 @@ void ExplosionParticle::update(int const &_frame)
   }
 }
 
-int ExplosionParticle::newParts(const int &_frame) const
+int ExplosionParticle::newParts(int const&) const
 {
   return 1;
 }
 
-Particle* ExplosionParticle::createChild(const int &_frame) const
+Particle* ExplosionParticle::createChild( int const&_frame) const
 {
   return new ExplosionParticle ( m_pos + glm::ballRand(0.05f),           //initial position
                                  glm::ballRand(0.01f),                   //initial velocity
@@ -69,7 +69,7 @@ glm::vec4 ExplosionParticle::calcCol() const
                     m_col.a );
 }
 
-void ExplosionParticle::draw(const int &_frame) const
+void ExplosionParticle::draw( int const&) const
 {
   glm::vec4 clampedCol = glm::clamp(calcCol(),0.0f,1.0f);
   glColor4fv((const GLfloat*)glm::value_ptr(clampedCol));

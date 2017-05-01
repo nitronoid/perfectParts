@@ -149,7 +149,7 @@ void Emitter::createFlame()
     addParticle( new FlameParticle(m_pos + newPos,                        //initial position
                                    newVel,                                //initial velocity
                                    m_fiCol,                               //initial colour
-                                   100.0f,                                //initial size
+                                   120.0f,                                //initial size
                                    40,                                    //life span
                                    m_frame,                               //current frame
                                    true));                                //flag for spawning children
@@ -188,7 +188,7 @@ void Emitter::createExplosion()
 {
   for(int i =0; i < 20; ++i)
   {
-    float size = glm::linearRand(40.0f,120.0f);
+    float size = glm::linearRand(40.0f,100.0f);
     float theta = glm::linearRand(0.0f,6.28f);   //radians
     float phi = glm::linearRand(-1.5f,1.5f); //radians
     float radial = glm::linearRand(0.5f,1.2f);

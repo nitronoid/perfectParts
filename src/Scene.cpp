@@ -7,7 +7,7 @@
 #endif
 #include "Scene.h"
 #include <string>
-#include <chrono>
+#include <QDir>
 
 extern bool ColorPicker(const char* label, glm::vec4 &col);
 
@@ -122,8 +122,7 @@ Uint32 Scene::timerCallback(Uint32 interval, void * param)
 void Scene::resetPos()
 {
   m_rotation = glm::vec2(0.0f,0.0f);
-  m_translation = glm::vec2(0.0f,-30.0f);
-  m_zoom = 150.0f;
+  m_translation = glm::vec3(0.0f,-30.0f,150.0f);
 }
 
 void Scene::init()
@@ -204,6 +203,7 @@ void Scene::displayGui()
     ImGui::SameLine();
     ImGui::Checkbox("Display grid",&m_grid);
     if(ImGui::Button("Clear System")) m_emit.m_clear = true;
+    if(ImGui::Button("Screenshot")) m_snap = true;
     ImGui::Text("Particle count: %zu / %zu",m_emit.particleCount(),m_emit.maxParticles());
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
   }
@@ -260,14 +260,14 @@ void Scene::displayFireworkGui()
 
 void Scene::tick()
 {
-
+  if(m_snap)
+  {
+    takeScreencap();
+    m_snap = false;
+  }
   if(!m_pause && !m_quit)
   {
-    //    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
     m_emit.update();
-    //    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-    //    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    //    std::cout <<"update func: "<< duration<<'\n';
   }
   makeCurrent();
   displayGui();
@@ -298,6 +298,7 @@ void Scene::tick()
         case SDLK_y : m_emit.m_clear = true; break;
         case SDLK_f : resetPos(); break;
         case SDLK_g : m_grid = !m_grid; break;
+        case SDLK_0 : m_snap = true; break;
         default : break;
         }
       }
@@ -324,7 +325,8 @@ void Scene::handleMouse()
   {
     if(keystates[SDL_SCANCODE_LALT] || keystates[SDL_SCANCODE_RALT])
     {
-      m_translation -= diff;
+      m_translation.x -= diff.x;
+      m_translation.y -= diff.y;
     }
     else
     {
@@ -335,12 +337,13 @@ void Scene::handleMouse()
   }
   case SDL_BUTTON_RMASK :
   {
-    m_zoom -= diff.y;
+    m_translation.z -= diff.y;
     break;
   }
   case SDL_BUTTON_MMASK :
   {
-    m_translation -= diff;
+    m_translation.x -= diff.x;
+    m_translation.y -= diff.y;
     break;
   }
   default: break;
@@ -371,13 +374,13 @@ void Scene::loadModelView(glm::mat4 _matrix) const
   glMultMatrixf((const float*)glm::value_ptr(_matrix));
 }
 
-void Scene::draw() const
+void Scene::draw()
 {
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   //loadModelView(glm::lookAt(glm::vec3(0,40,-150),glm::vec3(0,30,0),glm::vec3(0,1,0)));
   glLoadIdentity();
-  glTranslatef(m_translation.x,m_translation.y,-m_zoom);
+  glTranslatef(m_translation.x,m_translation.y,-m_translation.z);
   glRotatef(m_rotation.x,1.0f,0.0f,0.0f);
   glRotatef(m_rotation.y,0.0f,1.0f,0.0f);
   if(m_grid)
@@ -390,19 +393,38 @@ void Scene::draw() const
   //  {
   //    SDL_CondWait(m_canDraw, m_mutex);
   //  }
-  //  std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
   m_emit.draw();
-  //  std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-  //  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-  //  std::cout <<"draw func: "<< duration<<'\n';
   //  SDL_UnlockMutex(m_mutex);
   //  SDL_CondSignal(m_canUpdate);
+
 
   ImGui::Render();
   SDL_GL_SwapWindow(m_sdlWin);
 }
 
-void Scene::drawGrid(int _num, int _step) const
+void Scene::takeScreencap() const
+{
+  //get viewport dimensions
+  int dimensions[4];
+  glGetIntegerv(GL_VIEWPORT, dimensions);
+
+  //allocate pixel memory
+  uint8_t* pixels = new uint8_t[3 * dimensions[2] * dimensions[3]];
+
+  //read data into allocated memory
+  glReadPixels(0, 0, dimensions[2], dimensions[3], GL_RGB, GL_UNSIGNED_BYTE, (GLvoid*)pixels);
+
+  //save the data as a .png image
+  QDir snapDir(QDir::currentPath() + "/screenshots");
+  int num = snapDir.count();
+  std::string fname = "screenshots/screencap_" + std::to_string(num-2) + ".png";
+  if (!save_png_libpng(fname.c_str(),pixels,dimensions[2],dimensions[3]))
+  {
+    ErrorExit("Failed to save image"); //if image saving failed, report error
+  }
+}
+
+void Scene::drawGrid( int const&_num, int const&_step) const
 {
   glDisable(GL_TEXTURE_2D);
   glColor4f(1.0f,1.0f,1.0f,1.0f);

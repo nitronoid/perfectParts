@@ -1,12 +1,12 @@
 #include "Particle.h"
 
-Particle::Particle(const glm::vec3 &_pos,
-                   const glm::vec3 &_vel,
-                   const glm::vec4 &_col,
-                   const float &_size,
-                   const int &_life,
-                   const int &_frame,
-                   const bool &_spawn)
+Particle::Particle( glm::vec3 const&_pos,
+                    glm::vec3 const&_vel,
+                    glm::vec4 const&_col,
+                    float const&_size,
+                    int const&_life,
+                    int const&_frame,
+                    bool const&_spawn)
 {
   m_pos = _pos;
   m_vel = _vel;
@@ -25,7 +25,7 @@ Particle::~Particle()
 
 }
 
-void Particle::update(int const &)
+void Particle::update(int const&)
 {
   if(m_alive)
   {

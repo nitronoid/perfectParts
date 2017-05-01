@@ -1,12 +1,12 @@
 #include "FlameParticle.h"
 
-FlameParticle::FlameParticle(const glm::vec3 &_pos,
-                             const glm::vec3 &_vel,
-                             const glm::vec4 &_col,
-                             const float &_size,
-                             const int &_life,
-                             const int &_frame,
-                             const bool &_spawn) : Particle(_pos,
+FlameParticle::FlameParticle( glm::vec3 const&_pos,
+                              glm::vec3 const&_vel,
+                              glm::vec4 const&_col,
+                              float const&_size,
+                              int const&_life,
+                              int const&_frame,
+                              bool const&_spawn) : Particle(_pos,
                                                             _vel,
                                                             _col,
                                                             _size,
@@ -24,7 +24,7 @@ FlameParticle::~FlameParticle()
 
 }
 
-int FlameParticle::newParts(const int &_frame) const
+int FlameParticle::newParts( int const&_frame) const
 {
   float initialMean = 1.75f;
   float deltaMean = -0.1f;
@@ -38,7 +38,7 @@ int FlameParticle::newParts(const int &_frame) const
   return num;
 }
 
-Particle* FlameParticle::createChild(const int &_frame) const
+Particle* FlameParticle::createChild( int const&_frame) const
 {
   return new FlameParticle ( m_pos,                                  //initial position
                              m_vel + glm::ballRand(0.05f),           //initial velocity
@@ -49,7 +49,7 @@ Particle* FlameParticle::createChild(const int &_frame) const
                              false);
 }
 
-void FlameParticle::draw(const int &) const
+void FlameParticle::draw( int const&) const
 {
   glm::vec4 clampedCol = glm::clamp(m_col,0.0f,1.0f);
   glColor4fv((const GLfloat*)glm::value_ptr(clampedCol));

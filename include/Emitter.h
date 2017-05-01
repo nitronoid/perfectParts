@@ -20,7 +20,7 @@ public:
   Emitter(glm::vec3 &&_pos, size_t &&_max);
   ~Emitter();
 
-  void initTextures(std::string texPath = "data\\RadialGradient.png") const;
+  void initTextures(std::string texPath = "textures/RadialGradient.png") const;
   void update();
   void draw() const;
 

@@ -7,18 +7,18 @@ class FlameParticle : public Particle
   //Public functions, constructors and destructor
 public:
   FlameParticle() = default;
-  FlameParticle(const glm::vec3 &_pos,
-                const glm::vec3 &_vel,
-                const glm::vec4 &_col,
-                const float &_size,
-                const int &_life,
-                const int &_frame,
-                const bool &_spawn);
+  FlameParticle( glm::vec3 const&_pos,
+                 glm::vec3 const&_vel,
+                 glm::vec4 const&_col,
+                 float const&_size,
+                 int const&_life,
+                 int const&_frame,
+                 bool const&_spawn);
   ~FlameParticle();
 
-  int newParts(const int &_frame) const override;
-  void draw(const int &) const override;
-  Particle* createChild(const int &_frame) const override;
+  int newParts( int const&_frame) const override;
+  void draw( int const&) const override;
+  Particle* createChild( int const&_frame) const override;
 };
 
 #endif // SMOKEPARTICLE_H

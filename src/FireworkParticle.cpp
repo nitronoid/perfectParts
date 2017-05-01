@@ -1,23 +1,23 @@
 #include "FireworkParticle.h"
 
-FireworkParticle::FireworkParticle(const int &_fuse,
-                                   const glm::vec3 &_pos,
-                                   const glm::vec3 &_vel,
-                                   const glm::vec4 &_col,
-                                   const float &_brightness,
-                                   const float &_size,
-                                   const int &_life,
-                                   const int &_elife,
-                                   const int &_trailLife,
-                                   const int &_frame,
-                                   const bool &_spawn,
-                                   const bool &_blink) : Particle(_pos,
-                                                           _vel,
-                                                           _col,
-                                                           _size,
-                                                           _life,
-                                                           _frame,
-                                                           _spawn)
+FireworkParticle::FireworkParticle( int const&_fuse,
+                                    glm::vec3 const&_pos,
+                                    glm::vec3 const&_vel,
+                                    glm::vec4 const&_col,
+                                    float const&_brightness,
+                                    float const&_size,
+                                    int const&_life,
+                                    int const&_elife,
+                                    int const&_trailLife,
+                                    int const&_frame,
+                                    bool const&_spawn,
+                                    bool const&_blink) : Particle( _pos,
+                                                                   _vel,
+                                                                   _col,
+                                                                   _size,
+                                                                   _life,
+                                                                   _frame,
+                                                                   _spawn)
 {
   m_brightness = _brightness;
   m_type = ParticleType::FIREWORK;
@@ -40,7 +40,7 @@ FireworkParticle::~FireworkParticle()
 
 }
 
-int FireworkParticle::newParts(const int &) const
+int FireworkParticle::newParts( int const&) const
 {
   return 1;
 }
@@ -59,7 +59,7 @@ void FireworkParticle::explode()
   m_colDelta = glm::vec4(colChange,colChange,colChange,colChange);
 }
 
-void FireworkParticle::update(int const &_frame)
+void FireworkParticle::update(int const&_frame)
 {
   Particle::update(_frame);
   m_brightness += m_colDelta.x;
@@ -69,7 +69,7 @@ void FireworkParticle::update(int const &_frame)
   }
 }
 
-glm::vec4 FireworkParticle::calcCol(const int &_frame) const
+glm::vec4 FireworkParticle::calcCol( int const&_frame) const
 {
   if((m_blink && (_frame%m_blinkPeriod <= m_blinkPeriod/2)) || !m_blink)
   {
@@ -81,7 +81,7 @@ glm::vec4 FireworkParticle::calcCol(const int &_frame) const
   return glm::vec4(0.0f,0.0f,0.0f,0.0f);
 }
 
-Particle* FireworkParticle::createChild(const int &_frame) const
+Particle* FireworkParticle::createChild( int const&_frame) const
 {
   return new FireworkParticle (-_frame,                                //we set the fuse to 0 using -frame
                                m_pos,                                  //initial position
@@ -97,7 +97,7 @@ Particle* FireworkParticle::createChild(const int &_frame) const
                                m_blink);                               //blinking
 }
 
-void FireworkParticle::draw(const int &_frame) const
+void FireworkParticle::draw( int const&_frame) const
 {
   glm::vec4 clampedCol = glm::clamp(calcCol(_frame),0.0f,1.0f);
   glColor4fv((const GLfloat*)glm::value_ptr(clampedCol));
