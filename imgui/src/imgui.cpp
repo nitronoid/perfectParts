@@ -6819,9 +6819,11 @@ bool ImGui::DragFloat(const char* label, float* v, float v_speed, float v_min, f
             g.ScalarAsInputTextId = 0;
         }
     }
+/* commented these lines to prevent text input from the user UNCOMMENT FOR TEXT INPUT
+ *
     if (start_text_input || (g.ActiveId == id && g.ScalarAsInputTextId == id))
         return InputScalarAsWidgetReplacement(frame_bb, label, ImGuiDataType_Float, v, id, decimal_precision);
-
+*/
     // Actual drag behavior
     ItemSize(total_bb, style.FramePadding.y);
     const bool value_changed = DragBehavior(frame_bb, id, v, v_speed, v_min, v_max, decimal_precision, power);
@@ -6858,7 +6860,7 @@ bool ImGui::DragFloatN(const char* label, float* v, int components, float v_spee
     }
     PopID();
 
-    TextUnformatted(label, FindRenderedTextEnd(label));
+    //TextUnformatted(label, FindRenderedTextEnd(label));
     EndGroup();
 
     return value_changed;
@@ -7157,6 +7159,53 @@ void ImGui::ProgressBar(float fraction, const ImVec2& size_arg, const char* over
     ImVec2 overlay_size = CalcTextSize(overlay, NULL);
     if (overlay_size.x > 0.0f)
         RenderTextClipped(ImVec2(ImClamp(fill_br.x + style.ItemSpacing.x, bb.Min.x, bb.Max.x - overlay_size.x - style.ItemInnerSpacing.x), bb.Min.y), bb.Max, overlay, NULL, &overlay_size, ImGuiAlign_Left|ImGuiAlign_VCenter, &bb.Min, &bb.Max);
+}
+
+//Source = https://github.com/ocornut/imgui/issues/427
+bool ImGui::Tab(unsigned int index, const char* label, const char* tooltip, int* selected)
+{
+    ImGuiStyle& style = ImGui::GetStyle();
+    ImVec2 itemSpacing = style.ItemSpacing;
+    ImVec4 color = style.Colors[ImGuiCol_Button];
+    ImVec4 colorActive = style.Colors[ImGuiCol_ButtonActive];
+    ImVec4 colorHover = style.Colors[ImGuiCol_ButtonHovered];
+    style.ItemSpacing.x = 1;
+
+    if (index > 0)
+        ImGui::SameLine();
+
+    // push the style
+    if (index == *selected)
+    {
+        style.Colors[ImGuiCol_Button] = colorActive;
+        style.Colors[ImGuiCol_ButtonActive] = colorActive;
+        style.Colors[ImGuiCol_ButtonHovered] = colorActive;
+    }
+    else
+    {
+        style.Colors[ImGuiCol_Button] = color;
+        style.Colors[ImGuiCol_ButtonActive] = colorActive;
+        style.Colors[ImGuiCol_ButtonHovered] = colorHover;
+    }
+
+    // Draw the button
+    if (ImGui::Button(label))
+        *selected = index;
+
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::Text("%s", tooltip);
+        ImGui::EndTooltip();
+    }
+
+    // Restore the style
+    style.Colors[ImGuiCol_Button] = color;
+    style.Colors[ImGuiCol_ButtonActive] = colorActive;
+    style.Colors[ImGuiCol_ButtonHovered] = colorHover;
+    style.ItemSpacing = itemSpacing;
+
+    return *selected == index;
 }
 
 bool ImGui::Checkbox(const char* label, bool* v)

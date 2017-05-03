@@ -1,5 +1,5 @@
 #include "Emitter.h"
-
+//#include <omp.h>
 
 Emitter::Emitter(glm::vec3 &&_pos, size_t &&_max) :
   m_maxParticles(std::forward<size_t>(_max)),
@@ -17,6 +17,21 @@ Emitter::~Emitter()
 void Emitter::update()
 {
   createObjects();
+//  #pragma omp parallel for
+//  for(size_t i = 0; i < m_particles.size(); ++i)
+//  {
+//    if((m_particles[i])->m_alive)
+//    {
+//      (m_particles[i])->update(m_frame);
+//      #pragma omp critical
+//      if((!(m_particles[i])->m_alive))
+//      {
+//        --m_particleCount;
+//        m_freeStack.push(i);
+
+//      }
+//    }
+//  }
   for(auto p = m_particles.begin(); p != m_particles.end(); ++p)
   {
     if((*p)->m_alive)
@@ -24,11 +39,7 @@ void Emitter::update()
       (*p)->update(m_frame);
       if((!(*p)->m_alive))
       {
-        int index = p-m_particles.begin();
-        if(index < m_free )
-        {
-          m_free = index;
-        }
+        m_freeStack.push(p-m_particles.begin());
         --m_particleCount;
       }
     }
@@ -94,18 +105,15 @@ void Emitter::removeParticles()
 
 void Emitter::addParticle( Particle*  &&_newParticle)
 {
-  auto deadParticle = std::find_if(m_particles.begin()+m_free,
-                                   m_particles.end(),
-                                   [](std::unique_ptr<Particle> const&_p){return !(_p->m_alive);});
-  m_free = deadParticle-m_particles.begin();
-  if(deadParticle != m_particles.end())
+  if(m_freeStack.empty())
   {
-    (*deadParticle).reset(_newParticle);
-    ++m_free;
+    m_particles.emplace_back(std::unique_ptr<Particle>(_newParticle));
   }
   else
   {
-    m_particles.emplace_back(std::unique_ptr<Particle>(_newParticle));
+    auto deadP = m_particles.begin() + m_freeStack.top();
+    (*deadP).reset(_newParticle);
+    m_freeStack.pop();
   }
   ++m_particleCount;
 }
@@ -128,6 +136,7 @@ void Emitter::clearParticles()
   m_flame = false;
   m_particles.clear();
   m_particleCount = 0;
+  std::stack<int>().swap(m_freeStack);
 }
 
 void Emitter::createFlame()
@@ -137,6 +146,10 @@ void Emitter::createFlame()
 
     glm::vec2 disk = glm::diskRand(2.0f);
     glm::vec3 newPos = glm::vec3(disk.x,0.0f,disk.y);
+
+
+    int life = 40;
+    life = glm::linearRand(life-20,life+20);
 
     float theta = glm::linearRand(0.0f,6.28f);   //radians
     float phi = glm::linearRand(-0.26f,0.26f); //radians
@@ -150,7 +163,7 @@ void Emitter::createFlame()
                                    newVel,                                //initial velocity
                                    m_fiCol,                               //initial colour
                                    120.0f,                                //initial size
-                                   40,                                    //life span
+                                   life,                                    //life span
                                    m_frame,                               //current frame
                                    true));                                //flag for spawning children
   }

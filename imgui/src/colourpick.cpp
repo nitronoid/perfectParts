@@ -1,131 +1,289 @@
-// [src] https://github.com/ocornut/imgui/issues/346
+#include "imgui.h"
+#include "imgui_internal.h"
+#include <glm/glm.hpp>
 
-#include <imgui.h>
-#include <glm/vec4.hpp>
+// based on https://gist.github.com/thennequin/a21d5769bdcaa4d0992e
 
-bool ColorPicker(const char* label, glm::vec4 &col)
+ImVec4 glmColorToImVec4(const glm::vec4 &_c)
 {
-    static const float HUE_PICKER_WIDTH = 20.0f;
-    static const float CROSSHAIR_SIZE = 7.0f;
-    static const ImVec2 SV_PICKER_SIZE = ImVec2(200, 200);
+  return ImVec4(_c.r,_c.g,_c.b,_c.a);
+}
 
-    ImColor color(col.r, col.g, col.b);
-    bool value_changed = false;
+bool ColorSelector(const char* pLabel, glm::vec4 &oRGBA)
+{
+  const ImU32 c_oColorGrey = ImGui::ColorConvertFloat4ToU32(ImVec4(0.75f,0.75f,0.75f,1.f));
+  const ImU32 c_oColorBlack = ImGui::ColorConvertFloat4ToU32(ImVec4(0.f,0.f,0.f,1.f));
+  const ImU32 c_oColorBlackTransparent = ImGui::ColorConvertFloat4ToU32(ImVec4(0.f,0.f,0.f,0.f));
+  const ImU32 c_oColorWhite = ImGui::ColorConvertFloat4ToU32(ImVec4(1.f,1.f,1.f,1.f));
 
-    ImDrawList* draw_list = ImGui::GetWindowDrawList();
+  ImGui::PushID(pLabel);
+  bool bRet = false;
+  ImGuiID iID = ImGui::GetID(pLabel);
+  ImGuiWindow* pWindow = ImGui::GetCurrentWindow();
 
-    ImVec2 picker_pos = ImGui::GetCursorScreenPos();
+  const ImGuiID iStorageOpen = iID + ImGui::GetID("ColorSelector_Open");
 
-    ImColor colors[] = { ImColor(255, 0, 0),
-        ImColor(255, 255, 0),
-        ImColor(0, 255, 0),
-        ImColor(0, 255, 255),
-        ImColor(0, 0, 255),
-        ImColor(255, 0, 255),
-        ImColor(255, 0, 0) };
+  const ImGuiID iStorageStartColorR = iID + ImGui::GetID("ColorSelector_StartColor_R");
+  const ImGuiID iStorageStartColorG = iID + ImGui::GetID("ColorSelector_StartColor_G");
+  const ImGuiID iStorageStartColorB = iID + ImGui::GetID("ColorSelector_StartColor_B");
 
-    for (int i = 0; i < 6; ++i)
+  const ImGuiID iStorageCurrentColorH = iID + ImGui::GetID("ColorSelector_CurrentColor_H");
+  const ImGuiID iStorageCurrentColorS = iID + ImGui::GetID("ColorSelector_CurrentColor_S");
+  const ImGuiID iStorageCurrentColorV = iID + ImGui::GetID("ColorSelector_CurrentColor_V");
+
+
+  //pWindow->StateStorage.SetFloat(iID);
+
+  ImDrawList* pDrawList = ImGui::GetWindowDrawList();
+
+  if (ImGui::InvisibleButton("Picker", ImVec2(16,16)))
+  {
+    pWindow->StateStorage.SetInt(iStorageOpen, 1);
+
+    pWindow->StateStorage.SetFloat(iStorageStartColorR, oRGBA.r);
+    pWindow->StateStorage.SetFloat(iStorageStartColorG, oRGBA.g);
+    pWindow->StateStorage.SetFloat(iStorageStartColorB, oRGBA.b);
+
+    float fHue, fSat, fVal;
+    ImGui::ColorConvertRGBtoHSV( oRGBA.r, oRGBA.g, oRGBA.b, fHue, fSat, fVal );
+
+    pWindow->StateStorage.SetFloat(iStorageCurrentColorH, fHue);
+    pWindow->StateStorage.SetFloat(iStorageCurrentColorS, fSat);
+    pWindow->StateStorage.SetFloat(iStorageCurrentColorV, fVal);
+  }
+
+  for (int iX = 0; iX < 2; ++iX)
+  {
+    for (int iY = 0; iY < 2; ++iY)
     {
-        draw_list->AddRectFilledMultiColor(
-            ImVec2(picker_pos.x + SV_PICKER_SIZE.x + 10, picker_pos.y + i * (SV_PICKER_SIZE.y / 6)),
-            ImVec2(picker_pos.x + SV_PICKER_SIZE.x + 10 + HUE_PICKER_WIDTH,
-            picker_pos.y + (i + 1) * (SV_PICKER_SIZE.y / 6)),
-            colors[i],
-            colors[i],
-            colors[i + 1],
-            colors[i + 1]);
+      ImVec2 oA(ImGui::GetItemRectMin().x + iX * 8.f, ImGui::GetItemRectMin().y + iY * 8.f);
+      ImVec2 oB(ImGui::GetItemRectMin().x + (1+iX) * 8.f, ImGui::GetItemRectMin().y + (1+iY) * 8.f);
+      pDrawList->AddRectFilled( oA, oB, (0 == (iX+iY)%2) ? c_oColorGrey : c_oColorWhite );
+    }
+  }
+  pDrawList->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), ImGui::ColorConvertFloat4ToU32(glmColorToImVec4(oRGBA)));
+
+  ImVec2 oRectMin = ImGui::GetItemRectMin();
+  ImVec2 oRectMax = ImGui::GetItemRectMax();
+
+  const ImVec2 oPopupSize(175,350);
+  //ImGui::SetNextWindowSize(oPopupSize, ImGuiSetCond_Always);
+  ImGui::SetNextWindowPos(ImVec2(oRectMin.x, oRectMax.y + 5), ImGuiSetCond_Appearing);
+  if (pWindow->StateStorage.GetInt(iStorageOpen, 0) == 1 && ImGui::Begin(pLabel, NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize))
+  {
+    bRet = false;
+    const int iCheckboardTileSize = 10;
+
+    ImDrawList* pDrawList = ImGui::GetWindowDrawList();
+
+    ImVec2 oColorPreviewSize(160, 20);
+    ImGui::Dummy(oColorPreviewSize);
+    ImVec2 oColorAreaMin = ImGui::GetItemRectMin();
+    ImVec2 oColorAreaMax = ImGui::GetItemRectMax();
+
+    int iTileHCount = (int)oColorPreviewSize.x / iCheckboardTileSize;
+    int iTileVCount = (int)oColorPreviewSize.y / iCheckboardTileSize;
+
+    for (int iX = 0; iX < iTileHCount; ++iX)
+    {
+      for (int iY = 0; iY < iTileVCount; ++iY)
+      {
+        pDrawList->AddRectFilled(
+          ImVec2(oColorAreaMin.x + iX * iCheckboardTileSize, oColorAreaMin.y + iY * iCheckboardTileSize),
+          ImVec2(oColorAreaMin.x + (1+iX) * iCheckboardTileSize, oColorAreaMin.y + (1+iY) * iCheckboardTileSize),
+          (0 == (iX+iY)%2) ? c_oColorGrey : c_oColorWhite );
+      }
     }
 
-    float hue, saturation, value;
-    ImGui::ColorConvertRGBtoHSV(
-        color.Value.x, color.Value.y, color.Value.z, hue, saturation, value);
+    pDrawList->AddRectFilled(oColorAreaMin, oColorAreaMax, ImGui::ColorConvertFloat4ToU32(glmColorToImVec4(oRGBA)));
 
-    draw_list->AddLine(
-        ImVec2(picker_pos.x + SV_PICKER_SIZE.x + 8, picker_pos.y + hue * SV_PICKER_SIZE.y),
-        ImVec2(picker_pos.x + SV_PICKER_SIZE.x + 12 + HUE_PICKER_WIDTH, picker_pos.y + hue * SV_PICKER_SIZE.y),
-        ImColor(255, 255, 255));
+    float fHue = pWindow->StateStorage.GetFloat(iStorageCurrentColorH);
+    float fSat = pWindow->StateStorage.GetFloat(iStorageCurrentColorS);
+    float fVal = pWindow->StateStorage.GetFloat(iStorageCurrentColorV);
 
+    ImGui::Text("HSV");
+    ImGui::Separator();
     {
-        const int step = 5;
-        ImVec2 pos = ImVec2(0, 0);
+      //Saturation
+      {
+        const ImVec2 oSaturationAreaSize(128,128);
+        ImGui::InvisibleButton("##SaturationArea", oSaturationAreaSize);
+        ImVec2 oSaturationAreaMin = ImGui::GetItemRectMin();
+        ImVec2 oSaturationAreaMax = ImGui::GetItemRectMax();
 
-        ImVec4 c00(1, 1, 1, 1);
-        ImVec4 c10(1, 1, 1, 1);
-        ImVec4 c01(1, 1, 1, 1);
-        ImVec4 c11(1, 1, 1, 1);
-        for (int y = 0; y < step; y++) {
-            for (int x = 0; x < step; x++) {
-                float s0 = (float)x / (float)step;
-                float s1 = (float)(x + 1) / (float)step;
-                float v0 = 1.0 - (float)(y) / (float)step;
-                float v1 = 1.0 - (float)(y + 1) / (float)step;
+        if (ImGui::IsItemActive())
+        {
+          bRet = true;
+          ImVec2 oCursorPos = ImGui::GetMousePos();
+          ImVec2 oNewValue((oCursorPos.x - oSaturationAreaMin.x) / oSaturationAreaSize.x, (oCursorPos.y - oSaturationAreaMin.y) / oSaturationAreaSize.y);
+          oNewValue.x = ImClamp(oNewValue.x, 0.f, 1.f);
+          oNewValue.y =ImClamp(oNewValue.y, 0.f, 1.f);
+          fSat =  oNewValue.x;
+          fVal =  1.f - oNewValue.y;
+          ImGui::ColorConvertHSVtoRGB( fHue, fSat, fVal, oRGBA.r, oRGBA.g, oRGBA.b );
 
-                ImGui::ColorConvertHSVtoRGB(hue, s0, v0, c00.x, c00.y, c00.z);
-                ImGui::ColorConvertHSVtoRGB(hue, s1, v0, c10.x, c10.y, c10.z);
-                ImGui::ColorConvertHSVtoRGB(hue, s0, v1, c01.x, c01.y, c01.z);
-                ImGui::ColorConvertHSVtoRGB(hue, s1, v1, c11.x, c11.y, c11.z);
+          ImVec4 oToolTipColor = glmColorToImVec4(oRGBA);
+          oToolTipColor.w = 1.f;
 
-                draw_list->AddRectFilledMultiColor(
-                    ImVec2(picker_pos.x + pos.x, picker_pos.y + pos.y),
-                    ImVec2(picker_pos.x + pos.x + SV_PICKER_SIZE.x / step, picker_pos.y + pos.y + SV_PICKER_SIZE.y / step),
-                    ImGui::ColorConvertFloat4ToU32(c00),
-                    ImGui::ColorConvertFloat4ToU32(c10),
-                    ImGui::ColorConvertFloat4ToU32(c11),
-                    ImGui::ColorConvertFloat4ToU32(c01));
-
-                pos.x += SV_PICKER_SIZE.x / step;
-            }
-            pos.x = 0;
-            pos.y += SV_PICKER_SIZE.y / step;
+          ImGui::BeginTooltip();
+          ImGui::Dummy(ImVec2(32,32));
+          ImVec2 oDummyAreaMin = ImGui::GetItemRectMin();
+          ImVec2 oDummyAreaMax = ImGui::GetItemRectMax();
+          ImDrawList* pDummyDrawList = ImGui::GetWindowDrawList();
+          pDummyDrawList->AddRectFilled( oDummyAreaMin, oDummyAreaMax, ImGui::ColorConvertFloat4ToU32(oToolTipColor));
+          ImGui::EndTooltip();
         }
+
+        ImVec4 cHueValue(1, 1, 1, 1);
+        ImGui::ColorConvertHSVtoRGB(fHue, 1, 1, cHueValue.x, cHueValue.y, cHueValue.z);
+        ImU32 oHueColor = ImGui::ColorConvertFloat4ToU32(cHueValue);
+
+        pDrawList->AddRectFilledMultiColor(
+          oSaturationAreaMin,
+          oSaturationAreaMax,
+          c_oColorWhite,
+          oHueColor,
+          oHueColor,
+          c_oColorWhite
+          );
+
+        pDrawList->AddRectFilledMultiColor(
+          oSaturationAreaMin,
+          oSaturationAreaMax,
+          c_oColorBlackTransparent,
+          c_oColorBlackTransparent,
+          c_oColorBlack,
+          c_oColorBlack
+          );
+
+        pDrawList->AddCircle(ImVec2(oSaturationAreaMin.x + oSaturationAreaSize.x * fSat, oSaturationAreaMin.y + oSaturationAreaSize.y * (1.f - fVal)), 4, c_oColorBlack, 6);
+      }
+      ImGui::SameLine();
+      //Hue
+      {
+        const ImVec2 oHueAreaSize(20,128);
+        ImGui::InvisibleButton("##HueArea", oHueAreaSize);
+        //TODO tooltip
+        ImVec2 oHueAreaMin = ImGui::GetItemRectMin();
+        ImVec2 oHueAreaMax = ImGui::GetItemRectMax();
+
+        if (ImGui::IsItemActive())
+        {
+          bRet = true;
+          fHue = (ImGui::GetMousePos().y - oHueAreaMin.y) / oHueAreaSize.y;
+          fHue = ImClamp(fHue, 0.f, 1.f);
+          ImGui::ColorConvertHSVtoRGB( fHue, fSat, fVal, oRGBA.r, oRGBA.g, oRGBA.b );
+
+          ImGui::BeginTooltip();
+          ImGui::Dummy(ImVec2(32,32));
+          ImVec2 oDummyAreaMin = ImGui::GetItemRectMin();
+          ImVec2 oDummyAreaMax = ImGui::GetItemRectMax();
+          ImDrawList* pDummyDrawList = ImGui::GetWindowDrawList();
+          ImVec4 oNewHueRGB;
+          oNewHueRGB.w = 1.f;
+          ImGui::ColorConvertHSVtoRGB( fHue, 1.f, 1.f, oNewHueRGB.x, oNewHueRGB.y, oNewHueRGB.z );
+          pDummyDrawList->AddRectFilled( oDummyAreaMin, oDummyAreaMax, ImGui::ColorConvertFloat4ToU32(oNewHueRGB));
+          ImGui::EndTooltip();
+        }
+
+        ImVec4 c0(1, 1, 1, 1);
+        ImVec4 c1(1, 1, 1, 1);
+
+        const int iStepCount = 8;
+        for (int iStep = 0; iStep < iStepCount; iStep++)
+        {
+          float h0 = (float)iStep / (float)iStepCount;
+          float h1 = (float)(iStep + 1.f) / (float)iStepCount;
+          ImGui::ColorConvertHSVtoRGB(h0, 1.f, 1.f, c0.x, c0.y, c0.z);
+          ImGui::ColorConvertHSVtoRGB(h1, 1.f, 1.f, c1.x, c1.y, c1.z);
+
+          pDrawList->AddRectFilledMultiColor(
+            ImVec2(oHueAreaMin.x, oHueAreaMin.y + oHueAreaSize.y * h0),
+            ImVec2(oHueAreaMax.x, oHueAreaMin.y + oHueAreaSize.y * h1),
+            ImGui::ColorConvertFloat4ToU32(c0),
+            ImGui::ColorConvertFloat4ToU32(c0),
+            ImGui::ColorConvertFloat4ToU32(c1),
+            ImGui::ColorConvertFloat4ToU32(c1)
+            );
+        }
+
+        pDrawList->AddLine(
+          ImVec2(oHueAreaMin.x, oHueAreaMin.y + oHueAreaSize.y * fHue),
+          ImVec2(oHueAreaMax.x, oHueAreaMin.y + oHueAreaSize.y * fHue),
+          c_oColorWhite
+          );
+      }
     }
 
-    float x = saturation * SV_PICKER_SIZE.x;
-    float y = (1 -value) * SV_PICKER_SIZE.y;
-    ImVec2 p(picker_pos.x + x, picker_pos.y + y);
-    draw_list->AddLine(ImVec2(p.x - CROSSHAIR_SIZE, p.y), ImVec2(p.x - 2, p.y), ImColor(255, 255, 255));
-    draw_list->AddLine(ImVec2(p.x + CROSSHAIR_SIZE, p.y), ImVec2(p.x + 2, p.y), ImColor(255, 255, 255));
-    draw_list->AddLine(ImVec2(p.x, p.y + CROSSHAIR_SIZE), ImVec2(p.x, p.y + 2), ImColor(255, 255, 255));
-    draw_list->AddLine(ImVec2(p.x, p.y - CROSSHAIR_SIZE), ImVec2(p.x, p.y - 2), ImColor(255, 255, 255));
-
-    ImGui::InvisibleButton("saturation_value_selector", SV_PICKER_SIZE);
-
-    if (ImGui::IsItemActive() && ImGui::GetIO().MouseDown[0])
+    //RGBA Sliders
+    ImGui::Text("RGBA");
+    ImGui::Separator();
     {
-        ImVec2 mouse_pos_in_canvas = ImVec2(
-            ImGui::GetIO().MousePos.x - picker_pos.x, ImGui::GetIO().MousePos.y - picker_pos.y);
+      int r = (int)(ImSaturate( oRGBA.r )*255.f);
+      int g = (int)(ImSaturate( oRGBA.g )*255.f);
+      int b = (int)(ImSaturate( oRGBA.b )*255.f);
+      bool bChange = false;
+      ImGui::PushItemWidth(130.f);
+      bChange |= ImGui::SliderInt("R", &r, 0, 255);
+      bChange |= ImGui::SliderInt("G", &g, 0, 255);
+      bChange |= ImGui::SliderInt("B", &b, 0, 255);
+      ImGui::PopItemWidth();
+      if (bChange)
+      {
+        bRet = true;
+        oRGBA.r = (float)r/255.f;
+        oRGBA.g = (float)g/255.f;
+        oRGBA.b = (float)b/255.f;
 
-        /**/ if( mouse_pos_in_canvas.x <                     0 ) mouse_pos_in_canvas.x = 0;
-        else if( mouse_pos_in_canvas.x >= SV_PICKER_SIZE.x - 1 ) mouse_pos_in_canvas.x = SV_PICKER_SIZE.x - 1;
-
-        /**/ if( mouse_pos_in_canvas.y <                     0 ) mouse_pos_in_canvas.y = 0;
-        else if( mouse_pos_in_canvas.y >= SV_PICKER_SIZE.y - 1 ) mouse_pos_in_canvas.y = SV_PICKER_SIZE.y - 1;
-
-        value = 1 - (mouse_pos_in_canvas.y / (SV_PICKER_SIZE.y - 1));
-        saturation = mouse_pos_in_canvas.x / (SV_PICKER_SIZE.x - 1);
-        value_changed = true;
+        ImGui::ColorConvertRGBtoHSV( oRGBA.r, oRGBA.g, oRGBA.b, fHue, fSat, fVal );
+      }
     }
 
-    ImGui::SetCursorScreenPos(ImVec2(picker_pos.x + SV_PICKER_SIZE.x + 10, picker_pos.y));
-    ImGui::InvisibleButton("hue_selector", ImVec2(HUE_PICKER_WIDTH, SV_PICKER_SIZE.y));
-
-    if( (ImGui::IsItemHovered()||ImGui::IsItemActive()) && ImGui::GetIO().MouseDown[0])
+    if (bRet)
     {
-        ImVec2 mouse_pos_in_canvas = ImVec2(
-            ImGui::GetIO().MousePos.x - picker_pos.x, ImGui::GetIO().MousePos.y - picker_pos.y);
-
-        /* Previous horizontal bar will represent hue=1 (bottom) as hue=0 (top). Since both colors are red, we clamp at (-2, above edge) to avoid visual continuities */
-        /**/ if( mouse_pos_in_canvas.y <                     0 ) mouse_pos_in_canvas.y = 0;
-        else if( mouse_pos_in_canvas.y >= SV_PICKER_SIZE.y - 2 ) mouse_pos_in_canvas.y = SV_PICKER_SIZE.y - 2;
-
-        hue = mouse_pos_in_canvas.y / (SV_PICKER_SIZE.y - 1 );
-        value_changed = true;
+      pWindow->StateStorage.SetFloat(iStorageCurrentColorH, fHue);
+      pWindow->StateStorage.SetFloat(iStorageCurrentColorS, fSat);
+      pWindow->StateStorage.SetFloat(iStorageCurrentColorV, fVal);
     }
 
-    color = ImColor::HSV(hue > 0 ? hue : 1e-6, saturation > 0 ? saturation : 1e-6, value > 0 ? value : 1e-6);
-    col.r = color.Value.x;
-    col.g = color.Value.y;
-    col.b = color.Value.z;
-    float colA [3] = {col.r,col.g,col.b};
-    return value_changed | ImGui::ColorEdit3(label, colA);
+    if (ImGui::Button("Ok"))
+    {
+      pWindow->StateStorage.SetInt(iStorageOpen, 0);
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Cancel"))
+    {
+      pWindow->StateStorage.SetInt(iStorageOpen, 0);
+      oRGBA.r = pWindow->StateStorage.GetFloat(iStorageStartColorR);
+      oRGBA.g = pWindow->StateStorage.GetFloat(iStorageStartColorG);
+      oRGBA.b = pWindow->StateStorage.GetFloat(iStorageStartColorB);
+
+      bRet = true;
+    }
+    ImGui::End();
+  }
+
+  ImGui::SameLine();
+
+  float fValues[3] = {oRGBA.r, oRGBA.g, oRGBA.b};
+  if (ImGui::DragFloat3(pLabel, fValues, 0.01f))
+  {
+    oRGBA.r = fValues[0];
+    oRGBA.g = fValues[1];
+    oRGBA.b = fValues[2];
+    bRet = true;
+  }
+
+  ImGui::PopID();
+  return bRet;
+}
+
+bool ColorSelector(const char* pLabel, glm::vec3 &oRGB)
+{
+  glm::vec4 newRGB(oRGB,1.0f);
+  bool bRet = ColorSelector(pLabel,newRGB);
+  oRGB.r=newRGB.r;
+  oRGB.g=newRGB.g;
+  oRGB.b=newRGB.b;
+  return bRet;
 }

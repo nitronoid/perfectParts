@@ -8,15 +8,16 @@
 #include "Scene.h"
 #include <string>
 #include <QDir>
+#include <chrono>
 
-extern bool ColorPicker(const char* label, glm::vec4 &col);
+extern bool ColorSelector(const char* pLabel, glm::vec4 &oRGBA);
 
 Scene::Scene( std::string const&_name, int const&_x, int const&_y,int const&_width, int const&_height) :
   m_width(_width),
   m_height(_height),
   m_winPos(_x,_y),
   m_name(_name),
-  m_emit(glm::vec3(0.0f,0.0f,0.0f),50000)
+  m_emit(glm::vec3(0.0f,0.0f,0.0f),100000)
 {
   SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
   resetPos();
@@ -196,65 +197,70 @@ void Scene::displayGui()
   ImGui_ImplSdl_NewFrame(m_sdlWin);
   if(ImGui::Begin("Controls"))
   {
-    displayFireworkGui();
-    displayFlameGui();
-    displayExplosionGui();
-    ImGui::Checkbox("Pause time",&m_pause);
-    ImGui::SameLine();
-    ImGui::Checkbox("Display grid",&m_grid);
-    if(ImGui::Button("Clear System")) m_emit.m_clear = true;
-    if(ImGui::Button("Screenshot")) m_snap = true;
-    ImGui::Text("Particle count: %zu / %zu",m_emit.particleCount(),m_emit.maxParticles());
-    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+    ImGui::Tab(0,"Firework","Firework controls",&m_tab);
+    ImGui::Tab(1,"Flame","Flame controls",&m_tab);
+    ImGui::Tab(2,"Explosion","Explosion controls",&m_tab);
+    ImGui::Tab(3,"System","System controls",&m_tab);
+    ImGui::Separator();
+    ImGui::NewLine();
+
+    switch (m_tab)
+    {
+    case 0: {displayFireworkGui(); break;}
+    case 1: {displayFlameGui(); break;}
+    case 2: {displayExplosionGui(); break;}
+    case 3: {displaySystem(); break;}
+    default: {break;}
+    }
   }
   ImGui::End();
 }
 
+void Scene::displaySystem()
+{
+  ImGui::Checkbox("Pause time",&m_pause);
+  ImGui::SameLine();
+  ImGui::Checkbox("Display grid",&m_grid);
+  if(ImGui::Button("Clear System")) m_emit.m_clear = true;
+  if(ImGui::Button("Screenshot")) m_snap = true;
+  ImGui::Text("Particle count: %zu / %zu",m_emit.particleCount(),m_emit.maxParticles());
+  ImGui::Text("Frame time: %.3f ms/frame ", 1000.0f / ImGui::GetIO().Framerate);
+  ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+}
+
 void Scene::displayFlameGui()
 {
-  if(ImGui::CollapsingHeader("Fire"))
-  {
-    ImGui::Text("Fire colour");
-    ColorPicker("", m_emit.m_fiCol);
-    ImGui::Checkbox("Ignite flame",&m_emit.m_flame);
-    ImGui::Separator();
-  }
+  ImGui::Text("Fire colour");
+  ColorSelector("Fire colour", m_emit.m_fiCol);
+  ImGui::Checkbox("Ignite flame",&m_emit.m_flame);
 }
 
 void Scene::displayExplosionGui()
 {
-  if(ImGui::CollapsingHeader("Explosion"))
+  ImGui::Text("Explosion colour");
+  ColorSelector("Explosion colour", m_emit.m_expCol);
+  if(ImGui::Button("Detonate Explosion"))
   {
-    ImGui::Text("Explosion colour");
-    ColorPicker("", m_emit.m_expCol);
-    if(ImGui::Button("Detonate Explosion"))
-    {
-      m_emit.m_clear = true;
-      m_emit.m_explosion = 6;
-    }
-    ImGui::Separator();
+    m_emit.m_explosion = 6;
   }
 }
 
 void Scene::displayFireworkGui()
 {
-  if(ImGui::CollapsingHeader("Firework"))
+  ImGui::Text("Firework Colour");
+  ColorSelector("Firework colour", m_emit.m_fwCol);
+
+  ImGui::SliderAngle("Steepness",&m_emit.m_fwPhi,-90.0f,90.0f);
+  ImGui::SliderAngle("Rotation",&m_emit.m_fwTheta,0.0f,360.0f);
+  ImGui::SliderFloat("Thrust",&m_emit.m_fwThrust,0.1f,2.0f);
+  ImGui::SliderInt("Fuel",&m_emit.m_fwFuel,0,1000);
+  ImGui::SliderInt("Fuse",&m_emit.m_fwFuse,2,200);
+  ImGui::SliderInt("Trail length",&m_emit.m_fwTrail,0,50);
+  ImGui::SliderInt("Explosion size",&m_emit.m_fwExpLife,0,200);
+  ImGui::Checkbox("Blinking",&m_emit.m_fwBlink);
+  if(ImGui::Button("Launch Firework"))
   {
-    ImGui::Text("Firework Colour");
-    ColorPicker("", m_emit.m_fwCol);
-    ImGui::SliderAngle("Steepness",&m_emit.m_fwPhi,-90.0f,90.0f);
-    ImGui::SliderAngle("Rotation",&m_emit.m_fwTheta,0.0f,360.0f);
-    ImGui::SliderFloat("Thrust",&m_emit.m_fwThrust,0.1f,2.0f);
-    ImGui::SliderInt("Fuel",&m_emit.m_fwFuel,0,1000);
-    ImGui::SliderInt("Fuse",&m_emit.m_fwFuse,2,200);
-    ImGui::SliderInt("Trail length",&m_emit.m_fwTrail,0,50);
-    ImGui::SliderInt("Explosion size",&m_emit.m_fwExpLife,0,200);
-    ImGui::Checkbox("Blinking",&m_emit.m_fwBlink);
-    if(ImGui::Button("Launch Firework"))
-    {
-      m_emit.m_firework = true;
-    }
-    ImGui::Separator();
+    m_emit.m_firework = true;
   }
 }
 
@@ -267,10 +273,13 @@ void Scene::tick()
   }
   if(!m_pause && !m_quit)
   {
+//    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
     m_emit.update();
+//    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+//    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+//    std::cout <<"update func: "<< duration<<'\n';
   }
   makeCurrent();
-  displayGui();
   while(SDL_PollEvent(&m_inputEvent))
   {
 
@@ -292,7 +301,7 @@ void Scene::tick()
         case SDLK_ESCAPE :  m_quit = true; break;
         case SDLK_w : m_pause = !m_pause; break;
         case SDLK_e : m_emit.m_firework = true; break;
-        case SDLK_a : m_emit.m_clear = true;m_emit.m_explosion = 6; break;
+        case SDLK_a : m_emit.m_explosion = 6; break;
         case SDLK_r : m_emit.m_flame = !m_emit.m_flame; break;
         case SDLK_t : std::cout<<m_emit.particleCount()<<'\n'; break;
         case SDLK_y : m_emit.m_clear = true; break;
@@ -307,6 +316,7 @@ void Scene::tick()
       }
     }
   }
+  displayGui();
 
 }
 
@@ -376,9 +386,7 @@ void Scene::loadModelView(glm::mat4 _matrix) const
 
 void Scene::draw()
 {
-
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  //loadModelView(glm::lookAt(glm::vec3(0,40,-150),glm::vec3(0,30,0),glm::vec3(0,1,0)));
   glLoadIdentity();
   glTranslatef(m_translation.x,m_translation.y,-m_translation.z);
   glRotatef(m_rotation.x,1.0f,0.0f,0.0f);
@@ -393,10 +401,13 @@ void Scene::draw()
   //  {
   //    SDL_CondWait(m_canDraw, m_mutex);
   //  }
+//  std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
   m_emit.draw();
+//  std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+//  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+  //std::cout <<"draw func: "<< duration<<'\n';
   //  SDL_UnlockMutex(m_mutex);
   //  SDL_CondSignal(m_canUpdate);
-
 
   ImGui::Render();
   SDL_GL_SwapWindow(m_sdlWin);
@@ -417,7 +428,7 @@ void Scene::takeScreencap() const
   //save the data as a .png image
   QDir snapDir(QDir::currentPath() + "/screenshots");
   int num = snapDir.count();
-  std::string fname = "screenshots/screencap_" + std::to_string(num-2) + ".png";
+  std::string fname = QDir::currentPath().toStdString() + "/screenshots/screencap_" + std::to_string(num-2) + ".png";
   if (!save_png_libpng(fname.c_str(),pixels,dimensions[2],dimensions[3]))
   {
     ErrorExit("Failed to save image"); //if image saving failed, report error

@@ -68,3 +68,6 @@ linux-clang* {
                 DEFINES +=GL_GLEXT_PROTOTYPES
                 LIBS+=-lGLU
 }
+
+#QMAKE_CXXFLAGS += -fopenmp
+#LIBS += -fopenmp

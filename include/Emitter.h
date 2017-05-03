@@ -2,6 +2,7 @@
 #define EMITTER_H
 #include <memory>
 #include <vector>
+#include <stack>
 #include <algorithm>
 #include <glm/glm.hpp>
 #include <QImage>
@@ -20,7 +21,7 @@ public:
   Emitter(glm::vec3 &&_pos, size_t &&_max);
   ~Emitter();
 
-  void initTextures(std::string texPath = "textures/RadialGradient.png") const;
+  void initTextures(std::string texPath = "/home/nitro/Documents/cpp/perfectParts/textures/RadialGradient.png") const;
   void update();
   void draw() const;
 
@@ -72,7 +73,7 @@ private:
   size_t m_maxParticles = 50000;
   glm::vec3 m_pos = glm::vec3(0.0f,0.0f,0.0f);
   int m_frame = 0;
-  int m_free = 0;
+  std::stack<int> m_freeStack;
 };
 
 #endif // EMITTER_H

@@ -41,6 +41,7 @@ private:
   void displayFlameGui();
   void displayExplosionGui();
   void displayFireworkGui();
+  void displaySystem();
 
   //Public members
 public:
@@ -57,6 +58,7 @@ private :
   //Gui members
   ImGuiIO &m_io = ImGui::GetIO();
   ImGuiStyle &m_style = ImGui::GetStyle();
+  int m_tab = 0;
 
   //Window members
   int m_width = 640;
