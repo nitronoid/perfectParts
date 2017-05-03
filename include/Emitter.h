@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include <QImage>
 #include <QtOpenGL/QGLWidget>
+#include <QDir>
 #include "pngutils.h"
 #include "Particle.h"
 #include "FlameParticle.h"
@@ -21,7 +22,7 @@ public:
   Emitter(glm::vec3 &&_pos, size_t &&_max);
   ~Emitter();
 
-  void initTextures(std::string texPath = "/home/nitro/Documents/cpp/perfectParts/textures/RadialGradient.png") const;
+  void initTextures(std::string texPath = QDir::currentPath().toStdString() + "/textures/RadialGradient.png") const;
   void update();
   void draw() const;
 

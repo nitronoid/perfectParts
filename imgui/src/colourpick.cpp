@@ -67,10 +67,11 @@ bool ColorSelector(const char* pLabel, glm::vec4 &oRGBA)
   ImVec2 oRectMax = ImGui::GetItemRectMax();
 
   const ImVec2 oPopupSize(175,350);
-  //ImGui::SetNextWindowSize(oPopupSize, ImGuiSetCond_Always);
+  ImGui::SetNextWindowSize(oPopupSize, ImGuiSetCond_Always);
   ImGui::SetNextWindowPos(ImVec2(oRectMin.x, oRectMax.y + 5), ImGuiSetCond_Appearing);
-  if (pWindow->StateStorage.GetInt(iStorageOpen, 0) == 1 && ImGui::Begin(pLabel, NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize))
+  if (pWindow->StateStorage.GetInt(iStorageOpen, 0) == 1 )
   {
+    ImGui::Begin(pLabel, NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
     bRet = false;
     const int iCheckboardTileSize = 10;
 

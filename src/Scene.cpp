@@ -17,7 +17,7 @@ Scene::Scene( std::string const&_name, int const&_x, int const&_y,int const&_wid
   m_height(_height),
   m_winPos(_x,_y),
   m_name(_name),
-  m_emit(glm::vec3(0.0f,0.0f,0.0f),100000)
+  m_emit(glm::vec3(0.0f,0.0f,0.0f),1000000)
 {
   SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
   resetPos();
@@ -26,9 +26,9 @@ Scene::Scene( std::string const&_name, int const&_x, int const&_y,int const&_wid
   //  m_mutex = SDL_CreateMutex();
   //  m_canDraw = SDL_CreateCond();
   //  m_canUpdate = SDL_CreateCond();
-  //  m_updateTimerID = SDL_AddTimer(10, /*elapsed time in milliseconds*/
-  //                                 timerCallback, /*callback function*/
-  //                                 this /*pointer to the object*/);
+//    m_updateTimerID = SDL_AddTimer(10, /*elapsed time in milliseconds*/
+//                                   timerCallback, /*callback function*/
+//                                   this /*pointer to the object*/);
 }
 
 Scene::~Scene()

@@ -48,7 +48,7 @@ INCLUDEPATH +=imgui/include
 OTHER_FILES+=imgui.ini
 
 QMAKE_CXXFLAGS+= -msse -msse2 -msse3
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++11 -O2
 
 linux-g++:QMAKE_CXXFLAGS +=  -march=native
 linux-g++-64:QMAKE_CXXFLAGS +=  -march=native
