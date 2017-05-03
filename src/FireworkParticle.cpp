@@ -20,7 +20,6 @@ FireworkParticle::FireworkParticle( int const&_fuse,
                                                                    _spawn)
 {
   m_brightness = _brightness;
-  m_type = ParticleType::FIREWORK;
   m_blink = _blink;
   if(_blink)
   {

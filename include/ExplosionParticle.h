@@ -15,10 +15,10 @@ public:
                      bool const&_spawn);
   ~ExplosionParticle();
 
-  virtual int newParts( int const&) const override;
+  int newParts( int const&) const override;
   void update( int const&_frame) override;
-  virtual Particle* createChild(int const&_frame) const override;
-  virtual void draw(int const&) const override;
+  Particle* createChild(int const&_frame) const override;
+  void draw(int const&) const override;
 private:
   glm::vec4 calcCol() const;
 public:

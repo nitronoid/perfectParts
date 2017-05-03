@@ -14,7 +14,6 @@ FlameParticle::FlameParticle( glm::vec3 const&_pos,
                                                             _frame,
                                                             _spawn)
 {
-  m_type = ParticleType::FLAME;
   m_sizeDelta *= 2.0f;
   m_colDelta.r = 0.0f;
   m_colDelta.b = 0.15f/_life;

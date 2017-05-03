@@ -1,9 +1,8 @@
 #ifndef EMITTER_H
 #define EMITTER_H
-#include <memory>
+
 #include <vector>
 #include <stack>
-#include <algorithm>
 #include <glm/glm.hpp>
 #include <QImage>
 #include <QtOpenGL/QGLWidget>
@@ -14,67 +13,219 @@
 #include "FireworkParticle.h"
 #include "ExplosionParticle.h"
 
+//------------------------------------------------------------------------------------------------------------------------
+/// \file Emitter.h
+/// \author Jack Diver
+/// \version 5.2
+/// \date Last Revision 03/05/17 Updated to NCCA coding standard \n
+
+/// Revision History: \n
+/// 03/05/17 Fixed crash when double clicking on colour selector window header \n
+/// 03/05/17 Implemented a free stack which holds the indexes of dead particles to reset,
+/// this replaces the search method, implemented GUI tabs \n
+/// 01/05/17 Added screenshot feature \n
+/// 30/04/17 Experimenting with threads, and improved GUI with more functionality \n
+/// 24/04/17 Fixed texture bug, gui now functional \n
+/// 23/04/17 Successfully implemented ImGui, TODO: Fix GUI texture bug \n
+/// 20/04/17 Significant performance increase by keeping track of free particle index, using it to limit search \n
+/// 18/04/17 Implemented point attenuation, points now scale with distance \n
+/// 17/04/17 Used new implementation of scene rotation to fix gimbal lock issues \n
+/// 15/04/17 Fixed SDL event queue spamming by replacing if statement with while loop \n
+/// 08/04/17 Implemented scene navigation, TODO: fix gimbal locking \n
+/// 08/04/17 Added grid to scene for easier navigation \n
+/// 28/03/17 Added point sprite texturing and clanged blend function to additive \n
+/// 23/03/17 Refactored header files \n
+/// 23/03/17 Repurposed Smoke class, now Flame class \n
+/// 22/03/17 Fixed Smoke ejection angles \n
+/// 20/03/17 Fixed spawning issues \n
+/// Initial Version 20/03/17
+
+/// \class Emitter
+/// \brief encapsulates a particle emitter
+/// \todo add more variables for gui
+//------------------------------------------------------------------------------------------------------------------------
+
+
 class Emitter
 {
-  //Public functions, contructors and destructor
 public:
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Flag used to spawn flame into the system
+  //----------------------------------------------------------------------------------------------------------------------
+  bool           m_flame = false;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Colour that the new flame will be
+  //----------------------------------------------------------------------------------------------------------------------
+  glm::vec4      m_flCol = glm::vec4(1.0f,0.67f,0.0f,1.0f);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Flag used to spawn a firework into the system
+  //----------------------------------------------------------------------------------------------------------------------
+  bool           m_firework = false;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Colour of the new firework
+  //----------------------------------------------------------------------------------------------------------------------
+  glm::vec4      m_fwCol = glm::vec4(1.0f,0.078f,0.576f,1.0f);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Flag used to make new firework blink
+  //----------------------------------------------------------------------------------------------------------------------
+  bool           m_fwBlink = false;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Angle of steepness between -180 and 180 degrees, that firework is ejected
+  //----------------------------------------------------------------------------------------------------------------------
+  float          m_fwTheta = 0.0f;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Angle of rotation between 0 and 360 degrees, that firework is ejected
+  //----------------------------------------------------------------------------------------------------------------------
+  float          m_fwPhi = 0.0f;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Initial velocity of firework
+  //----------------------------------------------------------------------------------------------------------------------
+  float          m_fwThrust = 1.0f;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Amount of spawning particles in firework
+  //----------------------------------------------------------------------------------------------------------------------
+  int            m_fwFuel = 300;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Lifespan of firework trail particles
+  //----------------------------------------------------------------------------------------------------------------------
+  int            m_fwTrail = 20;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Fuse timer in frames before firework explodes
+  //----------------------------------------------------------------------------------------------------------------------
+  int            m_fwFuse = 95;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Lifespan of spawning particles in firework after explosion
+  //----------------------------------------------------------------------------------------------------------------------
+  int            m_fwExpLife = 80;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Amount of explosions to detonate
+  //----------------------------------------------------------------------------------------------------------------------
+  int            m_explosion = 0;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Colour of new explosion
+  //----------------------------------------------------------------------------------------------------------------------
+  glm::vec4      m_expCol = glm::vec4(0.647f,0.306f,0.2f,1.0f);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Flag to clear the system
+  //----------------------------------------------------------------------------------------------------------------------
+  bool           m_clear = false;
+
+public:
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Default constructor that initialises member variables to default values
+  //----------------------------------------------------------------------------------------------------------------------
   Emitter() = default;
-  Emitter(glm::vec3 &&_pos, size_t &&_max);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Constructor using a passed position and particle limit
+  /// @param[in] _pos the position of the emitter
+  /// @param[in] _max the particle limit
+  //----------------------------------------------------------------------------------------------------------------------
+  Emitter(glm::vec3 const&_pos, size_t const&_max);
   ~Emitter();
 
-  void initTextures(std::string texPath = QDir::currentPath().toStdString() + "/textures/RadialGradient.png") const;
-  void update();
-  void draw() const;
-
-  //Accessors
-  inline size_t particleCount() const { return m_particleCount; }
-  inline size_t maxParticles() const { return m_maxParticles;}
+  //accessors
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Returns the current amount of particles in the system
+  //----------------------------------------------------------------------------------------------------------------------
+  inline std::size_t particleCount() const { return m_particleCount; }
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Returns the maximum number of particles allowed to be in the system
+  //----------------------------------------------------------------------------------------------------------------------
+  inline std::size_t maxParticles() const { return m_maxParticles;}
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Returns the current position
+  //----------------------------------------------------------------------------------------------------------------------
   inline glm::vec3 pos() const { return m_pos; }
 
-  //Mutators
-  inline void setPos(glm::vec3 &_pos) { m_pos=_pos; }
-  inline void setMaxParticles(size_t &_max) { m_maxParticles = _max; }
+  //mutators
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Sets the current position to the provided position
+  /// @param[in] _pos the new position
+  //----------------------------------------------------------------------------------------------------------------------
+  inline void setPos(const glm::vec3 &_pos) { m_pos=_pos; }
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Sets the particle limit to the provided size provided
+  /// @param[in] _max the new particle limit
+  //----------------------------------------------------------------------------------------------------------------------
+  inline void setMaxParticles(const size_t &_max) { m_maxParticles = _max; }
 
-  //Private functions
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Initialises textures at the provided filepath
+  /// @param[in] _texPath the filepath to the texture
+  //----------------------------------------------------------------------------------------------------------------------
+  void initTextures(std::string const&_texPath = QDir::currentPath().toStdString() + "/textures/RadialGradient.png") const;
+
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Updates all particles in the system
+  //----------------------------------------------------------------------------------------------------------------------
+  void update();
+
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Draws all particles in the system
+  //----------------------------------------------------------------------------------------------------------------------
+  void draw() const;
+
 private:
-  void addParticle(Particle *&&_newParticle);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief A vector of smart unique pointers to particles within the system
+  /// Pointers are used to take advantage of polymorphism and use one vector
+  /// for all particles of differing types.
+  //----------------------------------------------------------------------------------------------------------------------
+  std::vector <std::unique_ptr<Particle>>  m_particles;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief The current amount of particles in the system
+  //----------------------------------------------------------------------------------------------------------------------
+  std::size_t                              m_particleCount = 0;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief The particle limit for the system
+  //----------------------------------------------------------------------------------------------------------------------
+  std::size_t                              m_maxParticles = 50000;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief The position of the emitter
+  //----------------------------------------------------------------------------------------------------------------------
+  glm::vec3                                m_pos = glm::vec3(0.0f,0.0f,0.0f);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief The current frame of the system
+  //----------------------------------------------------------------------------------------------------------------------
+  int                                      m_frame = 0;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief A stack which holds the indexes of free particles to be reset
+  //----------------------------------------------------------------------------------------------------------------------
+  std::stack<std::size_t>                  m_freeStack;
+
+private:
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Adds the given particle to the m_particles vector
+  /// @param[in] _newParticle is an rValue reference to a pointer,
+  /// which points to the new particle to add. The rValue reference is
+  /// used to avoid making a deep copy of the particle
+  //----------------------------------------------------------------------------------------------------------------------
+  void addParticle(Particle* &&_newParticle);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Spawns new particles into the system
+  //----------------------------------------------------------------------------------------------------------------------
   void spawnParticles();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Spawns a flame into the system
+  //----------------------------------------------------------------------------------------------------------------------
   void createFlame();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Spawns a firework into the system
+  //----------------------------------------------------------------------------------------------------------------------
   void createFirework();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Spawns an explosion into the system
+  //----------------------------------------------------------------------------------------------------------------------
   void createExplosion();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Calls the specific create functions to spawn all new particle objects
+  //----------------------------------------------------------------------------------------------------------------------
   void createObjects();
-  void removeParticles();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Clears m_particles, stops spawning and clears m_freeStack
+  //----------------------------------------------------------------------------------------------------------------------
   void clearParticles();
 
-  //Public members
-public:
-  bool m_flame = false;
-  glm::vec4 m_fiCol = glm::vec4(1.0f,0.67f,0.0f,1.0f);
-
-  bool m_firework = false;
-  glm::vec4 m_fwCol = glm::vec4(1.0f,0.078f,0.576f,1.0f);
-  bool m_fwBlink = false;
-  float m_fwTheta = 0.0f;
-  float m_fwPhi = 0.0f;
-  float m_fwThrust = 1.0f;
-  int m_fwFuel = 300;
-  int m_fwTrail = 20;
-  int m_fwFuse = 95;
-  int m_fwExpLife = 80;
-
-  int m_explosion = 0;
-  glm::vec4 m_expCol = glm::vec4(0.647f,0.306f,0.2f,1.0f);
-
-
-  bool m_clear = false;
-  //Private members
-private:
-  std::vector <std::unique_ptr<Particle>> m_particles;
-  size_t m_particleCount = 0;
-  size_t m_maxParticles = 50000;
-  glm::vec3 m_pos = glm::vec3(0.0f,0.0f,0.0f);
-  int m_frame = 0;
-  std::stack<int> m_freeStack;
-};
+};//end class
 
 #endif // EMITTER_H

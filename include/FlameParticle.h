@@ -1,5 +1,5 @@
-#ifndef SMOKEPARTICLE_H
-#define SMOKEPARTICLE_H
+#ifndef FLAMEPARTICLE_H
+#define FLAMEPARTICLE_H
 #include "Particle.h"
 
 class FlameParticle : public Particle
@@ -21,4 +21,4 @@ public:
   Particle* createChild( int const&_frame) const override;
 };
 
-#endif // SMOKEPARTICLE_H
+#endif // FLAMEPARTICLE_H

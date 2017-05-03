@@ -36,7 +36,6 @@ public:
   virtual void update( int const&);
   virtual Particle* createChild( int const&_frame) const = 0;
   virtual void draw( int const&_frame) const = 0;
-  inline ParticleType type() const { return m_type; }
 
   //Public members
 public:
@@ -54,7 +53,6 @@ protected:
   float m_size = 5.0f;
   int m_life = 100;
   int m_birthFrame;
-  ParticleType m_type;
 };
 
 

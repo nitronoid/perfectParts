@@ -1,8 +1,7 @@
-#ifndef WINDOW_H__
-#define WINDOW_H__
+#ifndef SCENE_H
+#define SCENE_H
 #include <SDL2/SDL.h>
 #include <string>
-#include <iostream>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "Emitter.h"
@@ -32,8 +31,6 @@ private:
   void handleMouse();
   void resize() const;
   void takeScreencap() const;
-  Uint32 timerCallback(Uint32 interval);
-  static Uint32 timerCallback(Uint32 interval, void *param);
 
   //Gui functions
   void initStyle();
@@ -72,12 +69,6 @@ private :
   Emitter m_emit;
   SDL_GLContext m_glContext;
   SDL_TimerID m_updateTimerID;
-
-
-  SDL_mutex *m_mutex = NULL;
-  SDL_cond *m_canDraw = NULL;
-  SDL_cond *m_canUpdate = NULL;
-
 };
 
-#endif
+#endif // SCENE_H

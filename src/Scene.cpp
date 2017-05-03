@@ -8,7 +8,7 @@
 #include "Scene.h"
 #include <string>
 #include <QDir>
-#include <chrono>
+#include <iostream>
 
 extern bool ColorSelector(const char* pLabel, glm::vec4 &oRGBA);
 
@@ -17,27 +17,18 @@ Scene::Scene( std::string const&_name, int const&_x, int const&_y,int const&_wid
   m_height(_height),
   m_winPos(_x,_y),
   m_name(_name),
-  m_emit(glm::vec3(0.0f,0.0f,0.0f),1000000)
+  m_emit(glm::vec3(0.0f,0.0f,0.0f),100000)
 {
   SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
   resetPos();
   init();
   m_emit.initTextures();
-  //  m_mutex = SDL_CreateMutex();
-  //  m_canDraw = SDL_CreateCond();
-  //  m_canUpdate = SDL_CreateCond();
-//    m_updateTimerID = SDL_AddTimer(10, /*elapsed time in milliseconds*/
-//                                   timerCallback, /*callback function*/
-//                                   this /*pointer to the object*/);
 }
 
 Scene::~Scene()
 {
   ImGui_ImplSdl_Shutdown();
   SDL_RemoveTimer(m_updateTimerID);
-  //  SDL_DestroyMutex(m_mutex);
-  //  SDL_DestroyCond(m_canDraw);
-  //  SDL_DestroyCond(m_canUpdate);
   SDL_GL_DeleteContext(m_glContext);
   SDL_DestroyWindow(m_sdlWin);
   SDL_Quit();
@@ -97,27 +88,6 @@ void Scene::initStyle()
 
   m_style.WindowRounding = 0.0f;
   m_style.Alpha = 0.75f;
-}
-
-Uint32 Scene::timerCallback(Uint32 interval)
-{
-  if(!m_pause && !m_quit)
-  {
-    SDL_LockMutex(m_mutex);
-    while(!m_canUpdate)
-    {
-      SDL_CondWait(m_canUpdate, m_mutex);
-    }
-    m_emit.update();
-    SDL_UnlockMutex(m_mutex);
-    SDL_CondSignal(m_canDraw);
-  }
-  return interval;
-}
-
-Uint32 Scene::timerCallback(Uint32 interval, void * param)
-{
-  return ((Scene*)param)->timerCallback(interval);
 }
 
 void Scene::resetPos()
@@ -231,7 +201,7 @@ void Scene::displaySystem()
 void Scene::displayFlameGui()
 {
   ImGui::Text("Fire colour");
-  ColorSelector("Fire colour", m_emit.m_fiCol);
+  ColorSelector("Fire colour", m_emit.m_flCol);
   ImGui::Checkbox("Ignite flame",&m_emit.m_flame);
 }
 
@@ -250,13 +220,13 @@ void Scene::displayFireworkGui()
   ImGui::Text("Firework Colour");
   ColorSelector("Firework colour", m_emit.m_fwCol);
 
-  ImGui::SliderAngle("Steepness",&m_emit.m_fwPhi,-90.0f,90.0f);
+  ImGui::SliderAngle("Incline",&m_emit.m_fwPhi,-90.0f,90.0f);
   ImGui::SliderAngle("Rotation",&m_emit.m_fwTheta,0.0f,360.0f);
   ImGui::SliderFloat("Thrust",&m_emit.m_fwThrust,0.1f,2.0f);
   ImGui::SliderInt("Fuel",&m_emit.m_fwFuel,0,1000);
   ImGui::SliderInt("Fuse",&m_emit.m_fwFuse,2,200);
-  ImGui::SliderInt("Trail length",&m_emit.m_fwTrail,0,50);
-  ImGui::SliderInt("Explosion size",&m_emit.m_fwExpLife,0,200);
+  ImGui::SliderInt("Tail",&m_emit.m_fwTrail,0,50);
+  ImGui::SliderInt("Size",&m_emit.m_fwExpLife,0,200);
   ImGui::Checkbox("Blinking",&m_emit.m_fwBlink);
   if(ImGui::Button("Launch Firework"))
   {
@@ -271,13 +241,9 @@ void Scene::tick()
     takeScreencap();
     m_snap = false;
   }
-  if(!m_pause && !m_quit)
+  if(!m_pause)
   {
-//    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
     m_emit.update();
-//    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-//    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-//    std::cout <<"update func: "<< duration<<'\n';
   }
   makeCurrent();
   while(SDL_PollEvent(&m_inputEvent))
@@ -303,7 +269,6 @@ void Scene::tick()
         case SDLK_e : m_emit.m_firework = true; break;
         case SDLK_a : m_emit.m_explosion = 6; break;
         case SDLK_r : m_emit.m_flame = !m_emit.m_flame; break;
-        case SDLK_t : std::cout<<m_emit.particleCount()<<'\n'; break;
         case SDLK_y : m_emit.m_clear = true; break;
         case SDLK_f : resetPos(); break;
         case SDLK_g : m_grid = !m_grid; break;

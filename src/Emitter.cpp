@@ -1,12 +1,12 @@
 #include "Emitter.h"
 //#include <omp.h>
 
-Emitter::Emitter(glm::vec3 &&_pos, size_t &&_max) :
-  m_maxParticles(std::forward<size_t>(_max)),
-  m_pos(std::forward<glm::vec3>(_pos))
+Emitter::Emitter(const glm::vec3 &_pos, const size_t &_max) :
+  m_maxParticles(_max),
+  m_pos(_pos)
 
 {
-  m_particles.reserve(std::forward<size_t>(_max));
+  m_particles.reserve(_max);
 }
 
 Emitter::~Emitter()
@@ -88,21 +88,6 @@ void Emitter::spawnParticles()
   }
 }
 
-void Emitter::removeParticles()
-{
-  for(auto it = m_particles.begin(); it != m_particles.end();)
-  {
-    if(!((*it)->m_alive))
-    {
-      it = m_particles.erase(it);
-    }
-    else
-    {
-      ++it;
-    }
-  }
-}
-
 void Emitter::addParticle( Particle*  &&_newParticle)
 {
   if(m_freeStack.empty())
@@ -134,9 +119,10 @@ void Emitter::draw() const
 void Emitter::clearParticles()
 {
   m_flame = false;
+  m_explosion = 0;
   m_particles.clear();
   m_particleCount = 0;
-  std::stack<int>().swap(m_freeStack);
+  std::stack<std::size_t>().swap(m_freeStack);
 }
 
 void Emitter::createFlame()
@@ -161,7 +147,7 @@ void Emitter::createFlame()
 
     addParticle( new FlameParticle(m_pos + newPos,                        //initial position
                                    newVel,                                //initial velocity
-                                   m_fiCol,                               //initial colour
+                                   m_flCol,                               //initial colour
                                    120.0f,                                //initial size
                                    life,                                    //life span
                                    m_frame,                               //current frame
@@ -221,10 +207,10 @@ void Emitter::createExplosion()
   }
 }
 
-void Emitter::initTextures(std::string texPath) const
+void Emitter::initTextures(std::string const &_texPath) const
 {
   GLuint texID;
-  QImage texImage = QImage(texPath.c_str());
+  QImage texImage = QImage(_texPath.c_str());
   QImage texData = QGLWidget::convertToGLFormat(texImage);
   glActiveTexture(GL_TEXTURE0);
   glGenTextures(1, &texID);

@@ -35,7 +35,7 @@ private:
   //Private members
 private:
   int m_explosionFuse = 100;
-  int m_blinkPeriod;
+  int m_blinkPeriod = 0;
   bool m_blink = false;
   bool m_exploded = false;
   float m_brightness = 1.0f;

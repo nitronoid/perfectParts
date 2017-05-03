@@ -16,7 +16,6 @@ ExplosionParticle::ExplosionParticle( glm::vec3 const&_pos,
                                                                     _spawn)
 {
   m_trailLife = _tLife;
-  m_type = ParticleType::EXPLOSION;
   m_sizeDelta *= 1.6f;
 }
 
@@ -51,14 +50,14 @@ int ExplosionParticle::newParts(int const&) const
 
 Particle* ExplosionParticle::createChild( int const&_frame) const
 {
-  return new ExplosionParticle ( m_pos + glm::ballRand(0.05f),           //initial position
-                                 glm::ballRand(0.01f),                   //initial velocity
-                                 m_col,                                  //initial colour
-                                 m_size,                                 //initial size
-                                 m_life,                                 //life span
-                                 0,                                      //trail life
+  return new ExplosionParticle ( m_pos + glm::ballRand(0.05f),           //Child particle takes current position with degree of randomness
+                                 glm::ballRand(0.01f),                   //Intial velocity of child is small random value
+                                 m_col,                                  //initial colour inherited
+                                 m_size,                                 //initial size inherited
+                                 m_life,                                 //life span inherited
+                                 0,                                      //trail life is zero as this won't spawn children
                                  _frame,                                 //current frame
-                                 false);                                 //spawn
+                                 false);                                 //Set to false so we don't spawn from the child
 }
 
 glm::vec4 ExplosionParticle::calcCol() const
