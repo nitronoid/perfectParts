@@ -30,7 +30,6 @@ HEADERS += \
     $$PWD/include/FireworkParticle.h \
     $$PWD/include/FlameParticle.h \
     $$PWD/include/Emitter.h \
-    $$PWD/include/ParticleType.h \
     $$PWD/include/pngutils.h \
     $$PWD/imgui/include/imgui.h \
     $$PWD/imgui/include/stb_rect_pack.h \

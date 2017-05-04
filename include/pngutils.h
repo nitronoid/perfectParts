@@ -3,6 +3,8 @@
 
 #include <GL/gl.h>
 
+/// @note modified using pnglib code to allow saving a png
+/// [Accessed 2017]. Available from: "http://www.labbookpages.co.uk/software/imgProc/libPNG.html"
 /** @file */
 
 /// Determine the width, height and raw data size of the png with the given filename
