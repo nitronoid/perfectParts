@@ -7,8 +7,9 @@
 #endif
 #include "Scene.h"
 #include <string>
-#include <QDir>
 #include <iostream>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 extern bool ColorSelector(const char* pLabel, glm::vec4 &oRGBA);
 
@@ -28,7 +29,6 @@ Scene::Scene( std::string const&_name, int const&_x, int const&_y,int const&_wid
 Scene::~Scene()
 {
   ImGui_ImplSdl_Shutdown();
-  SDL_RemoveTimer(m_updateTimerID);
   SDL_GL_DeleteContext(m_glContext);
   SDL_DestroyWindow(m_sdlWin);
   SDL_Quit();
@@ -179,14 +179,14 @@ void Scene::displayGui()
     case 0: {displayFireworkGui(); break;}
     case 1: {displayFlameGui(); break;}
     case 2: {displayExplosionGui(); break;}
-    case 3: {displaySystem(); break;}
+    case 3: {displaySystemGui(); break;}
     default: {break;}
     }
   }
   ImGui::End();
 }
 
-void Scene::displaySystem()
+void Scene::displaySystemGui()
 {
   ImGui::Checkbox("Pause time",&m_pause);
   ImGui::SameLine();
@@ -220,8 +220,8 @@ void Scene::displayFireworkGui()
   ImGui::Text("Firework Colour");
   ColorSelector("Firework colour", m_emit.m_fwCol);
 
-  ImGui::SliderAngle("Incline",&m_emit.m_fwPhi,-90.0f,90.0f);
-  ImGui::SliderAngle("Rotation",&m_emit.m_fwTheta,0.0f,360.0f);
+  ImGui::SliderAngle("Incline",&m_emit.m_fwIncline,-90.0f,90.0f);
+  ImGui::SliderAngle("Rotation",&m_emit.m_fwRotation,0.0f,360.0f);
   ImGui::SliderFloat("Thrust",&m_emit.m_fwThrust,0.1f,2.0f);
   ImGui::SliderInt("Fuel",&m_emit.m_fwFuel,0,1000);
   ImGui::SliderInt("Fuse",&m_emit.m_fwFuse,2,200);
@@ -334,7 +334,7 @@ void Scene::ErrorExit(std::string const&_msg) const
   exit(EXIT_FAILURE);
 }
 
-void Scene::loadProjection(glm::mat4 _matrix) const
+void Scene::loadProjection(glm::mat4 const&_matrix) const
 {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -342,7 +342,7 @@ void Scene::loadProjection(glm::mat4 _matrix) const
   glMatrixMode(GL_MODELVIEW);
 }
 
-void Scene::loadModelView(glm::mat4 _matrix) const
+void Scene::loadModelView(glm::mat4 const&_matrix) const
 {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -360,20 +360,7 @@ void Scene::draw()
   {
     drawGrid(5,5);
   }
-
-  //  SDL_LockMutex(m_mutex);
-  //  while(!m_canDraw)
-  //  {
-  //    SDL_CondWait(m_canDraw, m_mutex);
-  //  }
-//  std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
   m_emit.draw();
-//  std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
-//  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-  //std::cout <<"draw func: "<< duration<<'\n';
-  //  SDL_UnlockMutex(m_mutex);
-  //  SDL_CondSignal(m_canUpdate);
-
   ImGui::Render();
   SDL_GL_SwapWindow(m_sdlWin);
 }
@@ -390,10 +377,16 @@ void Scene::takeScreencap() const
   //read data into allocated memory
   glReadPixels(0, 0, dimensions[2], dimensions[3], GL_RGB, GL_UNSIGNED_BYTE, (GLvoid*)pixels);
 
-  //save the data as a .png image
+  //find current directory
   QDir snapDir(QDir::currentPath() + "/screenshots");
+
+  //count number of existing screenshots
   int num = snapDir.count();
+
+  //append number to the file path
   std::string fname = QDir::currentPath().toStdString() + "/screenshots/screencap_" + std::to_string(num-2) + ".png";
+
+  //save the data as a .png image
   if (!save_png_libpng(fname.c_str(),pixels,dimensions[2],dimensions[3]))
   {
     ErrorExit("Failed to save image"); //if image saving failed, report error

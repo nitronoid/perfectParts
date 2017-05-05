@@ -11,18 +11,13 @@ Particle::Particle( glm::vec3 const&_pos,
   m_pos = _pos;
   m_vel = _vel;
   m_col = _col;
-  float colDecay = -_col.a/_life;
+  GLfloat colDecay = -_col.a/_life;
   m_colDelta = glm::vec4(colDecay,colDecay,colDecay,colDecay);
   m_sizeDelta = -_size/_life;
   m_size = _size;
   m_life = _life;
   m_birthFrame = _frame;
   m_spawn = _spawn;
-}
-
-Particle::~Particle()
-{
-
 }
 
 void Particle::update(int const&)

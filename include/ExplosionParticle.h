@@ -1,6 +1,21 @@
 #ifndef EXPLOSIONPARTICLE_H
 #define EXPLOSIONPARTICLE_H
+
 #include "Particle.h"
+
+//------------------------------------------------------------------------------------------------------------------------
+/// \file ExplosionParticle.h
+/// \author Jack Diver
+/// \version 1.1
+/// \date Last Revision 03/05/17 Updated to NCCA coding standard \n
+
+/// Revision History: \n
+/// 30/04/17 Updated all functions to pass by const& \n
+/// Initial Version 24/03/17
+
+/// \class ExplosionParticle
+/// \brief encapsulates an explosion particle
+//------------------------------------------------------------------------------------------------------------------------
 
 class ExplosionParticle : public Particle
 {
@@ -29,12 +44,12 @@ public:
                      int const&_frame,
                      bool const&_spawn);
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Virtual destructor for particle, neccessary to prevent memory leak
+  /// @brief Default Virtual destructor for particle, neccessary to prevent memory leak
   //----------------------------------------------------------------------------------------------------------------------
-  virtual ~ExplosionParticle();
+  virtual ~ExplosionParticle() = default;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Returns the amount of child particles to spawn
-  /// @param[in] ?????????
+  /// @param[in] parameter is unused, but required to allow polymorphism across all particles
   //----------------------------------------------------------------------------------------------------------------------
   virtual int newParts( int const&) const override;
   //----------------------------------------------------------------------------------------------------------------------
@@ -49,7 +64,7 @@ public:
   virtual Particle* createChild(int const&_frame) const override;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Draws the particle
-  /// @param[in] ??????????????
+  /// @param[in] parameter is unused, but required to allow polymorphism across all particles
   //----------------------------------------------------------------------------------------------------------------------
   virtual void draw(int const&) const override;
 
@@ -65,6 +80,6 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   glm::vec4 calcCol() const;
 
-};
+}; // class end
 
 #endif // EXPLOSIONPARTICLE_H

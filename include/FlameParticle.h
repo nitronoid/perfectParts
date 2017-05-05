@@ -1,6 +1,26 @@
 #ifndef FLAMEPARTICLE_H
 #define FLAMEPARTICLE_H
+
 #include "Particle.h"
+
+//------------------------------------------------------------------------------------------------------------------------
+/// \file FlameParticle.h
+/// \author Jack Diver
+/// \version 3.4
+/// \date Last Revision 03/05/17 Updated to NCCA coding standard \n
+
+/// Revision History: \n
+/// 18/04/17 Implemented point attenuation, points now scale with distance \n
+/// 28/03/17 Added point sprite texturing and clanged blend function to additive \n
+/// 23/03/17 Refactored header files \n
+/// 23/03/17 Repurposed Smoke class, now Flame class \n
+/// 22/03/17 Fixed Smoke ejection angles \n
+/// 20/03/17 Fixed spawning issues \n
+/// Initial Version 20/03/17
+
+/// \class FlameParticle
+/// \brief encapsulates a flame particle
+//------------------------------------------------------------------------------------------------------------------------
 
 class FlameParticle : public Particle
 {
@@ -27,9 +47,9 @@ public:
                  int const&_frame,
                  bool const&_spawn);
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Virtual destructor for particle, neccessary to prevent memory leak
+  /// @brief Default Virtual destructor for particle, neccessary to prevent memory leak
   //----------------------------------------------------------------------------------------------------------------------
-  virtual ~FlameParticle();
+  virtual ~FlameParticle() = default;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Returns the amount of child particles to spawn
   /// @param[in] _frame the current frame
@@ -37,7 +57,7 @@ public:
   virtual int newParts( int const&_frame) const override;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Draws the particle
-  /// @param[in] ?????????????????
+  /// @param[in] parameter is unused, but required to allow polymorphism across all particles
   //----------------------------------------------------------------------------------------------------------------------
   virtual void draw( int const&) const override;
   //----------------------------------------------------------------------------------------------------------------------
@@ -46,6 +66,6 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   virtual Particle* createChild( int const&_frame) const override;
 
-};
+}; // class end
 
 #endif // FLAMEPARTICLE_H

@@ -14,7 +14,6 @@ SOURCES+=\
     $$PWD/src/ExplosionParticle.cpp \
     $$PWD/imgui/src/colourpick.cpp
 
-
 CONFIG += c++11
 CONFIG-=app_bundle
 CONFIG += debug
@@ -22,7 +21,6 @@ CONFIG += debug
 QT += opengl
 QT -= core
 QT -=xml
-
 
 HEADERS += \
     $$PWD/include/Scene.h \
@@ -67,6 +65,3 @@ linux-clang* {
                 DEFINES +=GL_GLEXT_PROTOTYPES
                 LIBS+=-lGLU
 }
-
-#QMAKE_CXXFLAGS += -fopenmp
-#LIBS += -fopenmp

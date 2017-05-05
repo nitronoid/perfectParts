@@ -1,5 +1,6 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
+
 #if defined (__linux__) || defined (WIN32)
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -7,14 +8,22 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #endif
-#include "glm/gtc/type_ptr.hpp"
-#include <random>
-#include <chrono>
 #include <glm/glm.hpp>
-#include <memory>
-#include <cmath>
-#include <glm/gtc/random.hpp>
-#include <glm/gtx/polar_coordinates.hpp>
+
+//------------------------------------------------------------------------------------------------------------------------
+/// \file Particle.h
+/// \author Jack Diver
+/// \version 1.1
+/// \date Last Revision 03/05/17 Updated to NCCA coding standard \n
+
+/// Revision History: \n
+/// 28/03/17 Added point sprite texturing and clanged blend function to additive \n
+/// 23/03/17 Refactored header files \n
+/// Initial Version 20/03/17
+
+/// \class Particle
+/// \brief encapsulates a particle
+//------------------------------------------------------------------------------------------------------------------------
 
 class Particle
 {
@@ -52,9 +61,9 @@ public:
             bool const&_spawn );
 
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Virtual destructor for particle, neccessary to prevent memory leak
+  /// @brief Default Virtual destructor for particle, neccessary to prevent memory leak
   //----------------------------------------------------------------------------------------------------------------------
-  virtual ~Particle();
+  virtual ~Particle() = default;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Returns the amount of child particles to spawn
   /// @param[in] _frame the current frame
@@ -62,7 +71,7 @@ public:
   virtual int newParts( int const&_frame) const = 0;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Updates the particle properties
-  /// @param[in] ??????????
+  /// @param[in] parameter is unused, but required to allow polymorphism across all particles
   //----------------------------------------------------------------------------------------------------------------------
   virtual void update( int const&);
   //----------------------------------------------------------------------------------------------------------------------
@@ -100,11 +109,11 @@ protected:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief The rate of size change
   //----------------------------------------------------------------------------------------------------------------------
-  float          m_sizeDelta;
+  GLfloat          m_sizeDelta;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief The size of the particle
   //----------------------------------------------------------------------------------------------------------------------
-  float          m_size = 5.0f;
+  GLfloat          m_size = 5.0f;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief The remaining life span in frames
   //----------------------------------------------------------------------------------------------------------------------

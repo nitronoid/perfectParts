@@ -7175,7 +7175,7 @@ bool ImGui::Tab(unsigned int index, const char* label, const char* tooltip, int*
         ImGui::SameLine();
 
     // push the style
-    if (index == *selected)
+    if (static_cast<int>(index) == *selected)
     {
         style.Colors[ImGuiCol_Button] = colorActive;
         style.Colors[ImGuiCol_ButtonActive] = colorActive;
@@ -7205,7 +7205,7 @@ bool ImGui::Tab(unsigned int index, const char* label, const char* tooltip, int*
     style.Colors[ImGuiCol_ButtonHovered] = colorHover;
     style.ItemSpacing = itemSpacing;
 
-    return *selected == index;
+    return *selected == static_cast<int>(index);
 }
 
 bool ImGui::Checkbox(const char* label, bool* v)

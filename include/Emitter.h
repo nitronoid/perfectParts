@@ -1,41 +1,27 @@
 #ifndef EMITTER_H
 #define EMITTER_H
 
+#include <memory>
 #include <vector>
 #include <stack>
 #include <glm/glm.hpp>
-#include <QImage>
-#include <QtOpenGL/QGLWidget>
 #include <QDir>
 #include "pngutils.h"
 #include "Particle.h"
-#include "FlameParticle.h"
-#include "FireworkParticle.h"
-#include "ExplosionParticle.h"
 
 //------------------------------------------------------------------------------------------------------------------------
 /// \file Emitter.h
 /// \author Jack Diver
-/// \version 5.2
+/// \version 3.1
 /// \date Last Revision 03/05/17 Updated to NCCA coding standard \n
 
 /// Revision History: \n
-/// 03/05/17 Fixed crash when double clicking on colour selector window header \n
 /// 03/05/17 Implemented a free stack which holds the indexes of dead particles to reset,
-/// this replaces the search method, implemented GUI tabs \n
-/// 01/05/17 Added screenshot feature \n
-/// 30/04/17 Experimenting with threads, and improved GUI with more functionality \n
+/// this replaces the search method \n
+/// 30/04/17 Experimenting with threads\n
 /// 24/04/17 Fixed texture bug, gui now functional \n
-/// 23/04/17 Successfully implemented ImGui, TODO: Fix GUI texture bug \n
 /// 20/04/17 Significant performance increase by keeping track of free particle index, using it to limit search \n
-/// 18/04/17 Implemented point attenuation, points now scale with distance \n
-/// 17/04/17 Used new implementation of scene rotation to fix gimbal lock issues \n
-/// 15/04/17 Fixed SDL event queue spamming by replacing if statement with while loop \n
-/// 08/04/17 Implemented scene navigation, TODO: fix gimbal locking \n
-/// 08/04/17 Added grid to scene for easier navigation \n
-/// 28/03/17 Added point sprite texturing and clanged blend function to additive \n
 /// 23/03/17 Refactored header files \n
-/// 23/03/17 Repurposed Smoke class, now Flame class \n
 /// 22/03/17 Fixed Smoke ejection angles \n
 /// 20/03/17 Fixed spawning issues \n
 /// Initial Version 20/03/17
@@ -72,11 +58,11 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Angle of steepness between -180 and 180 degrees, that firework is ejected
   //----------------------------------------------------------------------------------------------------------------------
-  float          m_fwTheta = 0.0f;
+  float          m_fwRotation = 0.0f;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Angle of rotation between 0 and 360 degrees, that firework is ejected
   //----------------------------------------------------------------------------------------------------------------------
-  float          m_fwPhi = 0.0f;
+  float          m_fwIncline = 0.0f;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Initial velocity of firework
   //----------------------------------------------------------------------------------------------------------------------
@@ -203,7 +189,7 @@ private:
   /// which points to the new particle to add. The rValue reference is
   /// used to avoid making a deep copy of the particle
   //----------------------------------------------------------------------------------------------------------------------
-  void addParticle(Particle* &&_newParticle);
+  void addParticle(Particle * const &_newParticle);
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Spawns new particles into the system
   //----------------------------------------------------------------------------------------------------------------------
@@ -229,6 +215,6 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   void clearParticles();
 
-};//end class
+}; //end class
 
 #endif // EMITTER_H

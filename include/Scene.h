@@ -1,11 +1,38 @@
 #ifndef SCENE_H
 #define SCENE_H
+
 #include <SDL2/SDL.h>
 #include <string>
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
+#include <glm/glm.hpp>
 #include "Emitter.h"
 #include "ImGUIImpl.h"
+
+//------------------------------------------------------------------------------------------------------------------------
+/// \file Scene.h
+/// \author Jack Diver
+/// \version 5.2
+/// \date Last Revision 03/05/17 Updated to NCCA coding standard \n
+
+/// Revision History: \n
+/// 03/05/17 Fixed crash when double clicking on colour selector window header \n
+/// 03/05/17 Implemented GUI tabs \n
+/// 01/05/17 Added screenshot feature \n
+/// 30/04/17 Experimenting with threads, and improved GUI with more functionality \n
+/// 24/04/17 Fixed texture bug, gui now functional \n
+/// 23/04/17 Successfully implemented ImGui, TODO: Fix GUI texture bug \n
+/// 18/04/17 Implemented point attenuation, points now scale with distance \n
+/// 17/04/17 Used new implementation of scene rotation to fix gimbal lock issues \n
+/// 15/04/17 Fixed SDL event queue spamming by replacing if statement with while loop \n
+/// 08/04/17 Implemented scene navigation, TODO: fix gimbal locking \n
+/// 08/04/17 Added grid to scene for easier navigation \n
+/// 28/03/17 Added point sprite texturing and changed blend function to additive \n
+/// 23/03/17 Refactored header files \n
+/// Initial Version 20/03/17
+
+/// \class Scene
+/// \brief encapsulates a 3D OpenGL Scene
+/// \todo extend GUI functionality
+//------------------------------------------------------------------------------------------------------------------------
 
 class Scene
 {
@@ -119,24 +146,75 @@ private :
   SDL_GLContext m_glContext;
 
 private:
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Initialises SDL and calls other initialisation functions
+  //----------------------------------------------------------------------------------------------------------------------
   void init();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Initialises OpenGL to draw textured, point sprites with attenuation
+  //----------------------------------------------------------------------------------------------------------------------
   void initGL() const;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Creates an OpenGL contex and links to our SDL window
+  //----------------------------------------------------------------------------------------------------------------------
   void createGLContext();
-  void loadProjection(glm::mat4 _matrix) const;
-  void loadModelView(glm::mat4 _matrix) const;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Loads a projection matrix into OpenGL
+  //----------------------------------------------------------------------------------------------------------------------
+  void loadProjection(const glm::mat4 &_matrix) const;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Loads a model view matrix into OpenGL
+  //----------------------------------------------------------------------------------------------------------------------
+  void loadModelView(glm::mat4 const&_matrix) const;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Prints the provided string, and error caught by SDL, then exits
+  //----------------------------------------------------------------------------------------------------------------------
   void ErrorExit(std::string const&_msg) const;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Draws a grid
+  //----------------------------------------------------------------------------------------------------------------------
   void drawGrid(int const&_num, int const&_step) const;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Resets the OpenGL view to our default settings
+  //----------------------------------------------------------------------------------------------------------------------
   void resetPos();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Converts mouse events to scene navigation
+  //----------------------------------------------------------------------------------------------------------------------
   void handleMouse();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Resizes the OpenGL viewport, then loads a new projection based on window dimensions
+  //----------------------------------------------------------------------------------------------------------------------
   void resize() const;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Reads the OpenGL pixel data and saves a .png file in /screenshots folder
+  //----------------------------------------------------------------------------------------------------------------------
   void takeScreencap() const;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Sets the style of the ImGui interface
+  //----------------------------------------------------------------------------------------------------------------------
   void initStyle();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Draws all ImGui elements
+  //----------------------------------------------------------------------------------------------------------------------
   void displayGui();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Draws the flame GUI
+  //----------------------------------------------------------------------------------------------------------------------
   void displayFlameGui();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Draws the explosion GUI
+  //----------------------------------------------------------------------------------------------------------------------
   void displayExplosionGui();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Draws the firework GUI
+  //----------------------------------------------------------------------------------------------------------------------
   void displayFireworkGui();
-  void displaySystem();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Draws the system information GUI
+  //----------------------------------------------------------------------------------------------------------------------
+  void displaySystemGui();
 
-};
+}; // class end
 
 #endif // SCENE_H

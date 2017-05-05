@@ -1,6 +1,23 @@
 #ifndef FIREWORKPARTICLE_H
 #define FIREWORKPARTICLE_H
+
 #include "Particle.h"
+
+//------------------------------------------------------------------------------------------------------------------------
+/// \file FireworkParticle.h
+/// \author Jack Diver
+/// \version 2.1
+/// \date Last Revision 03/05/17 Updated to NCCA coding standard \n
+
+/// Revision History: \n
+/// 18/04/17 Implemented point attenuation, points now scale with distance \n
+/// 28/03/17 Added point sprite texturing and changed blend function to additive \n
+/// 23/03/17 Refactored header files \n
+/// Initial Version 20/03/17
+
+/// \class FireworkParticle
+/// \brief encapsulates a firework particle
+//------------------------------------------------------------------------------------------------------------------------
 
 class FireworkParticle : public Particle
 {
@@ -38,12 +55,12 @@ public:
                     bool const&_blink);
 
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Virtual destructor for particle, neccessary to prevent memory leak
+  /// @brief Default Virtual destructor for particle, neccessary to prevent memory leak
   //----------------------------------------------------------------------------------------------------------------------
-  virtual ~FireworkParticle();
+  virtual ~FireworkParticle() = default;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Returns the amount of child particles to spawn
-  /// @param[in] ?????????
+  /// @param[in] parameter is unused, but required to allow polymorphism across all particles
   //----------------------------------------------------------------------------------------------------------------------
   virtual int newParts( int const&) const override;
   //----------------------------------------------------------------------------------------------------------------------
@@ -102,6 +119,6 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   glm::vec4 calcCol( int const&_frame) const;
 
-};
+}; // class end
 
 #endif // FIREWORKPARTICLE_H
