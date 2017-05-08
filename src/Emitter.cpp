@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QtOpenGL/QGLWidget>
 #include <glm/gtc/random.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 //-------------------------------------------------------------------------------------------------------------------------
 /// @file Emitter.cpp
@@ -116,6 +117,9 @@ void Emitter::addParticle( Particle* const&_newParticle)
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::draw() const
 {
+  glPushMatrix();
+  //glLoadIdentity();
+  glMultMatrixf((const GLfloat*)glm::value_ptr(m_transform));
   //Enable point sprite texturing
   glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE );
   //Draw all living particles
@@ -128,6 +132,7 @@ void Emitter::draw() const
   }
   //disable point sprite texturing so GUI draws correctly
   glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_FALSE );
+  glPopMatrix();
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::clearParticles()

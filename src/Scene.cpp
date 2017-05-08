@@ -10,6 +10,7 @@
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include "ImGuizmo.h"
 
 //-------------------------------------------------------------------------------------------------------------------------
 /// @file Particle.cpp
@@ -193,6 +194,7 @@ void Scene::displayGui()
   //proccess input in gui
   ImGui_ImplSdl_ProcessEvent(&m_inputEvent);
   ImGui_ImplSdl_NewFrame(m_sdlWin);
+  ImGuizmo::BeginFrame();
   //gui window
   if(ImGui::Begin("Controls"))
   {
@@ -201,6 +203,7 @@ void Scene::displayGui()
     ImGui::Tab(1,"Flame","Flame controls",&m_tab);
     ImGui::Tab(2,"Explosion","Explosion controls",&m_tab);
     ImGui::Tab(3,"System","System controls",&m_tab);
+    ImGui::Tab(4,"Edit","Edit controls",&m_tab);
     ImGui::Separator();
     ImGui::NewLine();
     //display active tab gui
@@ -210,10 +213,62 @@ void Scene::displayGui()
     case 1: {displayFlameGui(); break;}
     case 2: {displayExplosionGui(); break;}
     case 3: {displaySystemGui(); break;}
+    case 4: {EditTransform();break;}
     default: {break;}
     }
   }
   ImGui::End(); // end of window
+
+}
+//-------------------------------------------------------------------------------------------------------------------------
+void Scene::EditTransform()
+{
+  /// The following section is modified from :-
+  /// Omar Cornut (April 4, 2017). Immediate mode 3D gizmo for scene editing [online].
+  /// [Accessed 2017]. Available from: "https://github.com/CedricGuillemet/ImGuizmo"
+  float mv[16];
+  float pm[16];
+  float *matrix = new float[16];
+  matrix = (float*)glm::value_ptr(m_emit.m_transform);
+  glGetFloatv(GL_MODELVIEW_MATRIX, mv);
+  glGetFloatv(GL_PROJECTION_MATRIX, pm);
+
+  static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::ROTATE);
+  static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+
+  if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
+  {
+    mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+  }
+  ImGui::SameLine();
+  if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
+  {
+    mCurrentGizmoOperation = ImGuizmo::ROTATE;
+  }
+
+  float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+  ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
+  ImGui::DragFloat3("Translate", matrixTranslation);
+  ImGui::DragFloat3("Rotate",matrixRotation,1.0f,0.0f,360.0f);
+  ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
+
+  if (mCurrentGizmoOperation != ImGuizmo::SCALE)
+  {
+    if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
+      mCurrentGizmoMode = ImGuizmo::LOCAL;
+    ImGui::SameLine();
+    if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
+      mCurrentGizmoMode = ImGuizmo::WORLD;
+  }
+
+  m_io = ImGui::GetIO();
+  ImGuizmo::SetRect(0, 0, m_io.DisplaySize.x, m_io.DisplaySize.y);
+  ImGuizmo::Manipulate(mv, pm, mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL);
+  m_emit.m_transform = glm::make_mat4(matrix);
+  if(ImGui::Button("Reset"))
+  {
+    m_emit.m_transform = glm::mat4(1.0f);
+  }
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::displaySystemGui()
@@ -288,7 +343,7 @@ void Scene::tick()
   while(SDL_PollEvent(&m_inputEvent))
   {
     //if the mouse isn't over the GUI process movement, and key press (need this for typing)
-    if(!m_io.WantCaptureMouse)
+    if(!m_io.WantCaptureMouse && !ImGuizmo::IsUsing())
     {
       //resize window
       if ((m_inputEvent.type == SDL_WINDOWEVENT) &&
@@ -315,6 +370,8 @@ void Scene::tick()
         case SDLK_f : resetPos(); break;
         case SDLK_g : m_grid = !m_grid; break;
         case SDLK_s : m_snap = true; break;
+        case SDLK_LEFT : m_emit.setPos(m_emit.pos() + glm::vec3(-0.5f,0.0f,0.0f)); break;
+        case SDLK_RIGHT : m_emit.setPos(m_emit.pos() + glm::vec3(0.5f,0.0f,0.0f)); break;
         default : break;
         }
       }
@@ -472,7 +529,8 @@ void Scene::drawGrid( int const&_num, int const&_step) const
     glVertex3f(i,0.0f,-_num*_step);
   }
   glEnd();
-  //enable textyres again
+  //enable textures again
   glEnable(GL_TEXTURE_2D);
 }
 //-------------------------------------------------------------------------------------------------------------------------
+
