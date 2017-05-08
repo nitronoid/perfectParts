@@ -9,8 +9,7 @@
 /// \version 1.1
 /// \date Last Revision 03/05/17 Updated to NCCA coding standard \n
 
-/// Revision History: \n
-/// 30/04/17 Updated all functions to pass by const& \n
+/// Revision History: See "https://github.com/nitronoid/perfectParts"
 /// Initial Version 24/03/17
 
 /// \class ExplosionParticle

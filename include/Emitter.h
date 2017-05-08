@@ -15,15 +15,7 @@
 /// \version 3.1
 /// \date Last Revision 03/05/17 Updated to NCCA coding standard \n
 
-/// Revision History: \n
-/// 03/05/17 Implemented a free stack which holds the indexes of dead particles to reset,
-/// this replaces the search method \n
-/// 30/04/17 Experimenting with threads\n
-/// 24/04/17 Fixed texture bug, gui now functional \n
-/// 20/04/17 Significant performance increase by keeping track of free particle index, using it to limit search \n
-/// 23/03/17 Refactored header files \n
-/// 22/03/17 Fixed Smoke ejection angles \n
-/// 20/03/17 Fixed spawning issues \n
+/// Revision History: See "https://github.com/nitronoid/perfectParts"
 /// Initial Version 20/03/17
 
 /// \class Emitter
@@ -84,7 +76,7 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   int            m_fwExpLife = 80;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Amount of explosions to detonate
+  /// @brief We detonate explosions over multiple frames to simulate a chain explosion, this give a more realistic look
   //----------------------------------------------------------------------------------------------------------------------
   int            m_explosion = 0;
   //----------------------------------------------------------------------------------------------------------------------
@@ -112,6 +104,20 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   ~Emitter();
 
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Initialises textures at the provided filepath
+  /// @param[in] _texPath the filepath to the texture
+  //----------------------------------------------------------------------------------------------------------------------
+  void initTextures(std::string const&_texPath = QDir::currentPath().toStdString() + "/textures/RadialGradient.png") const;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Updates all particles in the system
+  //----------------------------------------------------------------------------------------------------------------------
+  void update();
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Draws all particles in the system
+  //----------------------------------------------------------------------------------------------------------------------
+  void draw() const;
+
   //accessors
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Returns the current amount of particles in the system
@@ -137,22 +143,6 @@ public:
   /// @param[in] _max the new particle limit
   //----------------------------------------------------------------------------------------------------------------------
   inline void setMaxParticles(const size_t &_max) { m_maxParticles = _max; }
-
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Initialises textures at the provided filepath
-  /// @param[in] _texPath the filepath to the texture
-  //----------------------------------------------------------------------------------------------------------------------
-  void initTextures(std::string const&_texPath = QDir::currentPath().toStdString() + "/textures/RadialGradient.png") const;
-
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Updates all particles in the system
-  //----------------------------------------------------------------------------------------------------------------------
-  void update();
-
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Draws all particles in the system
-  //----------------------------------------------------------------------------------------------------------------------
-  void draw() const;
 
 private:
   //----------------------------------------------------------------------------------------------------------------------

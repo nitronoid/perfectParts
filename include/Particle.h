@@ -16,9 +16,7 @@
 /// \version 1.1
 /// \date Last Revision 03/05/17 Updated to NCCA coding standard \n
 
-/// Revision History: \n
-/// 28/03/17 Added point sprite texturing and clanged blend function to additive \n
-/// 23/03/17 Refactored header files \n
+/// Revision History: See "https://github.com/nitronoid/perfectParts"
 /// Initial Version 20/03/17
 
 /// \class Particle

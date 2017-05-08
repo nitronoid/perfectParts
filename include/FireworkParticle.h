@@ -9,10 +9,7 @@
 /// \version 2.1
 /// \date Last Revision 03/05/17 Updated to NCCA coding standard \n
 
-/// Revision History: \n
-/// 18/04/17 Implemented point attenuation, points now scale with distance \n
-/// 28/03/17 Added point sprite texturing and changed blend function to additive \n
-/// 23/03/17 Refactored header files \n
+/// Revision History: See "https://github.com/nitronoid/perfectParts"
 /// Initial Version 20/03/17
 
 /// \class FireworkParticle

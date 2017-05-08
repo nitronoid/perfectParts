@@ -9,13 +9,7 @@
 /// \version 3.4
 /// \date Last Revision 03/05/17 Updated to NCCA coding standard \n
 
-/// Revision History: \n
-/// 18/04/17 Implemented point attenuation, points now scale with distance \n
-/// 28/03/17 Added point sprite texturing and clanged blend function to additive \n
-/// 23/03/17 Refactored header files \n
-/// 23/03/17 Repurposed Smoke class, now Flame class \n
-/// 22/03/17 Fixed Smoke ejection angles \n
-/// 20/03/17 Fixed spawning issues \n
+/// Revision History: See "https://github.com/nitronoid/perfectParts"
 /// Initial Version 20/03/17
 
 /// \class FlameParticle

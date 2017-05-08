@@ -13,20 +13,7 @@
 /// \version 5.2
 /// \date Last Revision 03/05/17 Updated to NCCA coding standard \n
 
-/// Revision History: \n
-/// 03/05/17 Fixed crash when double clicking on colour selector window header \n
-/// 03/05/17 Implemented GUI tabs \n
-/// 01/05/17 Added screenshot feature \n
-/// 30/04/17 Experimenting with threads, and improved GUI with more functionality \n
-/// 24/04/17 Fixed texture bug, gui now functional \n
-/// 23/04/17 Successfully implemented ImGui, TODO: Fix GUI texture bug \n
-/// 18/04/17 Implemented point attenuation, points now scale with distance \n
-/// 17/04/17 Used new implementation of scene rotation to fix gimbal lock issues \n
-/// 15/04/17 Fixed SDL event queue spamming by replacing if statement with while loop \n
-/// 08/04/17 Implemented scene navigation, TODO: fix gimbal locking \n
-/// 08/04/17 Added grid to scene for easier navigation \n
-/// 28/03/17 Added point sprite texturing and changed blend function to additive \n
-/// 23/03/17 Refactored header files \n
+/// Revision History: See "https://github.com/nitronoid/perfectParts"
 /// Initial Version 20/03/17
 
 /// \class Scene
