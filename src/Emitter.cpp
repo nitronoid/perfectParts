@@ -6,7 +6,7 @@
 #include <QtOpenGL/QGLWidget>
 #include <glm/gtc/random.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <ctime>
+#include <chrono>
 #include <iostream>
 
 //-------------------------------------------------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ Emitter::~Emitter()
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::update()
 {
-  std::clock_t begin = std::clock();
+  auto begin = std::chrono::high_resolution_clock::now();
   //create new particles based on user input
   createObjects();
   //update all particles
@@ -55,13 +55,13 @@ void Emitter::update()
   spawnParticles();
   //increment frame counter
   ++m_frame;
-
-  std::clock_t end = std::clock();
-  double elapsed = double(end - begin) / CLOCKS_PER_SEC;
-  double projected = (0.075*m_particleCount+500.0)/1000000.0;
-  //std::cout<<elapsed<<'\t'<<projected<<'\n';
+  //end time of update
+  auto end = std::chrono::high_resolution_clock::now();
+  //calculate time taken vs estimated time
+  auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end-begin).count();
+  long estimate = 25*m_particleCount+650000;
   //If we have no living particles, but are wasting memory on storing them, we clean up
-  if(((m_particleCount <= 0) && (m_particles.size() > 0)) || (elapsed > projected))
+  if(((m_particleCount <= 0) && (m_particles.size() > 0)) || (elapsed > estimate))
   {
     removeParticles();
   }

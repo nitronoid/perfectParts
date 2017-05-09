@@ -25,7 +25,7 @@ Scene::Scene( std::string const&_name, int const&_x, int const&_y,int const&_wid
   m_height(_height),
   m_winPos(_x,_y),
   m_name(_name),
-  m_emit(glm::vec3(0.0f,0.0f,0.0f),100000)
+  m_emit(glm::vec3(0.0f,0.0f,0.0f),200000)
 {
   //initialise mouse position
   SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
@@ -35,16 +35,55 @@ Scene::Scene( std::string const&_name, int const&_x, int const&_y,int const&_wid
   init();
   //load textures
   m_emit.initTextures();
+  //mutex and conditions to prevent two threads from accessing the particle data at the same time
+  m_mutex = SDL_CreateMutex();
+  m_canDraw = SDL_CreateCond();
+  m_canUpdate = SDL_CreateCond();
+  //Use an SDL Timer to update the system regularly in a seperate thread
+  m_updateTimerID = SDL_AddTimer(15, /*elapsed time in milliseconds*/
+                                 timerCallback, /*callback function*/
+                                 this /*pointer to the object*/);
 }
 //-------------------------------------------------------------------------------------------------------------------------
 Scene::~Scene()
 {
   //shut down ImGui
   ImGui_ImplSdl_Shutdown();
+  //remove mutex and conditions
+  SDL_DestroyMutex(m_mutex);
+  SDL_DestroyCond(m_canDraw);
+  SDL_DestroyCond(m_canUpdate);
+  //remove our SDL Timer
+  SDL_RemoveTimer(m_updateTimerID);
   //Remove SDL and OpenGL
   SDL_GL_DeleteContext(m_glContext);
   SDL_DestroyWindow(m_sdlWin);
   SDL_Quit();
+}
+//-------------------------------------------------------------------------------------------------------------------------
+Uint32 Scene::updateCallback(Uint32 interval)
+{
+  //Use mutex's to ensure we don't interfere with drawing
+  if(!m_pause && !m_quit) //if the scene isn't paused
+  {
+    SDL_LockMutex(m_mutex);
+    while(!m_canUpdate)
+    {
+      SDL_CondWait(m_canUpdate, m_mutex);
+    }
+    //update the particle system
+    m_emit.update();
+    //allow drawing to resume
+    SDL_UnlockMutex(m_mutex);
+    SDL_CondSignal(m_canDraw);
+  }
+  return interval;
+}
+//-------------------------------------------------------------------------------------------------------------------------
+Uint32 Scene::timerCallback(Uint32 interval, void * param)
+{
+  //use this static function to cast the pointer to our actual function to execute
+  return ((Scene*)param)->updateCallback(interval);
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::initStyle()
@@ -112,6 +151,7 @@ void Scene::initStyle()
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::resetPos()
 {
+  //default rotation and translation
   m_rotation = glm::vec2(0.0f,0.0f);
   m_translation = glm::vec3(0.0f,-30.0f,150.0f);
 }
@@ -345,10 +385,10 @@ void Scene::tick()
     m_snap = false;
   }
   //update
-  if(!m_pause)
-  {
-    m_emit.update();
-  }
+//  if(!m_pause)
+//  {
+//    m_emit.update();
+//  }
   makeCurrent();
   //process user input
   while(SDL_PollEvent(&m_inputEvent))
@@ -404,7 +444,7 @@ void Scene::handleMouse()
   float strength = 0.2f;
   //get mouse state
   Uint32 button = SDL_GetMouseState(&newPos.x, &newPos.y);
-  //calculate distance moved by mouse
+  //calculate distance moved by mozuse
   glm::vec2 diff = ((glm::vec2)(newPos - m_mousePos)) * strength;
   diff.x = -diff.x;
   if(keystates[SDL_SCANCODE_LCTRL] || keystates[SDL_SCANCODE_RCTRL])
@@ -488,8 +528,17 @@ void Scene::draw()
   {
     drawGrid(5,5);
   }
-  //draw particles
+  //use Mutex's to ensure we don't interfere with updating
+  SDL_LockMutex(m_mutex);
+  while(!m_canDraw)
+  {
+    SDL_CondWait(m_canDraw, m_mutex);
+  }
+  //Draw the particles
   m_emit.draw();
+  //allow updating to resume
+  SDL_UnlockMutex(m_mutex);
+  SDL_CondSignal(m_canUpdate);
   //draw GUI
   ImGui::Render();
   //swap the newly drawn window
