@@ -6,6 +6,8 @@
 #include <QtOpenGL/QGLWidget>
 #include <glm/gtc/random.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <ctime>
+#include <iostream>
 
 //-------------------------------------------------------------------------------------------------------------------------
 /// @file Emitter.cpp
@@ -14,8 +16,8 @@
 
 //-------------------------------------------------------------------------------------------------------------------------
 Emitter::Emitter(const glm::vec3 &_pos, const size_t &_max) :
-                                                              m_maxParticles(_max),
-                                                              m_pos(_pos)
+  m_maxParticles(_max),
+  m_pos(_pos)
 
 {
   //Reserve space for our particles to avoid resizing during execution
@@ -30,6 +32,7 @@ Emitter::~Emitter()
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::update()
 {
+  std::clock_t begin = std::clock();
   //create new particles based on user input
   createObjects();
   //update all particles
@@ -52,6 +55,29 @@ void Emitter::update()
   spawnParticles();
   //increment frame counter
   ++m_frame;
+
+  std::clock_t end = std::clock();
+  double elapsed = double(end - begin) / CLOCKS_PER_SEC;
+  double projected = (0.075*m_particleCount+500.0)/1000000.0;
+  //std::cout<<elapsed<<'\t'<<projected<<'\n';
+  //If we have no living particles, but are wasting memory on storing them, we clean up
+  if(((m_particleCount <= 0) && (m_particles.size() > 0)) || (elapsed > projected))
+  {
+    removeParticles();
+  }
+}
+//-------------------------------------------------------------------------------------------------------------------------
+void Emitter::removeParticles()
+{
+  //The following function call uses a lambda expression which ranges over the entire
+  //vector of particles, and finds the ones that meet our condition, in this case that
+  //the particle is dead, we then erase those particles
+  m_particles.erase(std::remove_if(m_particles.begin(),
+                                   m_particles.end(),
+                                   [](const std::unique_ptr<Particle>& p) {return !(p->m_alive);}),
+                                   m_particles.end());
+  //Since we have no dead particles left we clear our stack
+  std::stack<std::size_t>().swap(m_freeStack);
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::createObjects()
@@ -81,8 +107,9 @@ void Emitter::createObjects()
 void Emitter::spawnParticles()
 {
   int newSpawn;
+  size_t psize = m_particles.size();
   //for all particles that are both alive and allowed to spawn, we spawn new particles
-  for(size_t it = 0; it < m_particles.size(); ++it )
+  for(size_t it = 0; it < psize; ++it )
   {
     if(m_particles[it]->m_alive && m_particles[it]->m_spawn)
     {

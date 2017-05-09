@@ -226,49 +226,60 @@ void Scene::EditTransform()
   /// The following section is modified from :-
   /// Omar Cornut (April 4, 2017). Immediate mode 3D gizmo for scene editing [online].
   /// [Accessed 2017]. Available from: "https://github.com/CedricGuillemet/ImGuizmo"
-  float mv[16];
-  float pm[16];
-  float *matrix = new float[16];
-  matrix = (float*)glm::value_ptr(m_emit.m_transform);
-  glGetFloatv(GL_MODELVIEW_MATRIX, mv);
-  glGetFloatv(GL_PROJECTION_MATRIX, pm);
+  const Uint8 *keystates = SDL_GetKeyboardState(NULL);
 
-  static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::ROTATE);
-  static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+    float mv[16];
+    float pm[16];
+    float *matrix = new float[16];
+    matrix = (float*)glm::value_ptr(m_emit.m_transform);
+    glGetFloatv(GL_MODELVIEW_MATRIX, mv);
+    glGetFloatv(GL_PROJECTION_MATRIX, pm);
 
-  if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
-  {
-    mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-  }
-  ImGui::SameLine();
-  if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
-  {
-    mCurrentGizmoOperation = ImGuizmo::ROTATE;
-  }
+    static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::ROTATE);
+    static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
 
-  float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-  ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
-  ImGui::DragFloat3("Translate", matrixTranslation);
-  ImGui::DragFloat3("Rotate",matrixRotation,1.0f,0.0f,360.0f);
-  ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
-
-  if (mCurrentGizmoOperation != ImGuizmo::SCALE)
-  {
-    if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
-      mCurrentGizmoMode = ImGuizmo::LOCAL;
+    if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
+    {
+      mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+    }
     ImGui::SameLine();
-    if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
-      mCurrentGizmoMode = ImGuizmo::WORLD;
-  }
+    if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
+    {
+      mCurrentGizmoOperation = ImGuizmo::ROTATE;
+    }
 
-  m_io = ImGui::GetIO();
-  ImGuizmo::SetRect(0, 0, m_io.DisplaySize.x, m_io.DisplaySize.y);
-  ImGuizmo::Manipulate(mv, pm, mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL);
-  m_emit.m_transform = glm::make_mat4(matrix);
-  if(ImGui::Button("Reset"))
-  {
-    m_emit.m_transform = glm::mat4(1.0f);
-  }
+    float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+    ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
+    ImGui::DragFloat3("Translate", matrixTranslation);
+    ImGui::DragFloat3("Rotate",matrixRotation,1.0f,0.0f,360.0f);
+    ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
+
+    if (mCurrentGizmoOperation != ImGuizmo::SCALE)
+    {
+      if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
+        mCurrentGizmoMode = ImGuizmo::LOCAL;
+      ImGui::SameLine();
+      if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
+        mCurrentGizmoMode = ImGuizmo::WORLD;
+    }
+    if(keystates[SDL_SCANCODE_LCTRL] || keystates[SDL_SCANCODE_RCTRL])
+    {
+      ImGuizmo::Enable(false);
+    }
+    else
+    {
+      ImGuizmo::Enable(true);
+    }
+    m_io = ImGui::GetIO();
+    ImGuizmo::SetRect(0, 0, m_io.DisplaySize.x, m_io.DisplaySize.y);
+    ImGuizmo::Manipulate(mv, pm, mCurrentGizmoOperation, mCurrentGizmoMode, matrix);
+
+    m_emit.m_transform = glm::make_mat4(matrix);
+    if(ImGui::Button("Reset"))
+    {
+      m_emit.m_transform = glm::mat4(1.0f);
+    }
+
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::displaySystemGui()
@@ -375,7 +386,7 @@ void Scene::tick()
         default : break;
         }
       }
-      //move scene based on mouse
+        //move scene based on mouse
       case SDL_MOUSEMOTION : handleMouse(); break;
       default : break;
       }
@@ -383,7 +394,6 @@ void Scene::tick()
   }
   //show GUI
   displayGui();
-
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::handleMouse()
@@ -397,39 +407,41 @@ void Scene::handleMouse()
   //calculate distance moved by mouse
   glm::vec2 diff = ((glm::vec2)(newPos - m_mousePos)) * strength;
   diff.x = -diff.x;
-
-  switch(button)
+  if(keystates[SDL_SCANCODE_LCTRL] || keystates[SDL_SCANCODE_RCTRL])
   {
-  case SDL_BUTTON_LMASK :
-  {
-    //translate from left mouse and alt key
-    if(keystates[SDL_SCANCODE_LALT] || keystates[SDL_SCANCODE_RALT])
+    switch(button)
+    {
+    case SDL_BUTTON_LMASK :
+    {
+      //translate from left mouse and alt key
+      if(keystates[SDL_SCANCODE_LALT] || keystates[SDL_SCANCODE_RALT])
+      {
+        m_translation.x -= diff.x;
+        m_translation.y -= diff.y;
+      }
+      else
+      {
+        //rotate from left mouse
+        m_rotation.x += diff.y;
+        m_rotation.y -= diff.x;
+      }
+      break;
+    }
+      //zoom from right mouse
+    case SDL_BUTTON_RMASK :
+    {
+      m_translation.z -= diff.y;
+      break;
+    }
+      //translate from middle mouse
+    case SDL_BUTTON_MMASK :
     {
       m_translation.x -= diff.x;
       m_translation.y -= diff.y;
+      break;
     }
-    else
-    {
-      //rotate from left mouse
-      m_rotation.x += diff.y;
-      m_rotation.y -= diff.x;
+    default: break;
     }
-    break;
-  }
-    //zoom from right mouse
-  case SDL_BUTTON_RMASK :
-  {
-    m_translation.z -= diff.y;
-    break;
-  }
-    //translate from middle mouse
-  case SDL_BUTTON_MMASK :
-  {
-    m_translation.x -= diff.x;
-    m_translation.y -= diff.y;
-    break;
-  }
-  default: break;
   }
   //save mouse position
   m_mousePos = newPos;
