@@ -47,7 +47,7 @@ void Emitter::update()
       if((!(*p)->m_alive))
       {
         m_freeStack.push(p-m_particles.begin());
-        --m_particleCount;
+        --m_particleCount; //decrement particle count
       }
     }
   }
@@ -59,11 +59,13 @@ void Emitter::update()
   auto end = std::chrono::high_resolution_clock::now();
   //calculate time taken vs estimated time
   auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end-begin).count();
+  //Estimate is based on performance testing
   long estimate = 25*m_particleCount+650000;
   //If we have no living particles, but are wasting memory on storing them, we clean up
+  //If the update has taken less than average time we can spare extra time to clean up
   if(((m_particleCount <= 0) && (m_particles.size() > 0)) || (elapsed > estimate))
   {
-    removeParticles();
+    removeParticles(); //remove dead particles
   }
 }
 //-------------------------------------------------------------------------------------------------------------------------
@@ -129,6 +131,7 @@ void Emitter::addParticle( Particle* const&_newParticle)
   //if our stack is empty, there are no dead particles to reset so we push back onto the vector
   if(m_freeStack.empty())
   {
+    //We emplace back to avoid making a copy
     m_particles.emplace_back(std::unique_ptr<Particle>(_newParticle));
   }
   else
@@ -139,18 +142,19 @@ void Emitter::addParticle( Particle* const&_newParticle)
     //remove the index we just used
     m_freeStack.pop();
   }
-  ++m_particleCount;
+  ++m_particleCount; //increment particle count
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::draw() const
 {
+  //Save current view matrix by pushing it onto the stack
   glPushMatrix();
-  //glLoadIdentity();
+  //Manipulate the view with our transformation matrix
   glMultMatrixf((const GLfloat*)glm::value_ptr(m_transform));
   //Enable point sprite texturing
   glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE );
   //Draw all living particles
-  for(auto &p : m_particles)
+  for(auto const&p : m_particles)
   {
     if(p->m_alive)
     {
@@ -159,6 +163,7 @@ void Emitter::draw() const
   }
   //disable point sprite texturing so GUI draws correctly
   glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_FALSE );
+  //Revert to our saved view
   glPopMatrix();
 }
 //-------------------------------------------------------------------------------------------------------------------------
@@ -197,7 +202,7 @@ void Emitter::createFlame()
                                  speed * glm::cos(incline),
                                  speed * glm::sin(incline) * glm::sin(rotation));
 
-
+    //Add the particle to our vector
     addParticle( new FlameParticle(m_pos + newPos,                        //initial position
                                    newVel,                                //initial velocity
                                    m_flCol,                               //initial colour
@@ -254,7 +259,7 @@ void Emitter::createExplosion()
                                  speed * glm::cos(incline),
                                  speed * glm::sin(incline) * glm::sin(rotation));
 
-
+    //Add the particle to our vector
     addParticle( new ExplosionParticle(m_pos,                             //initial position
                                        newVel,                            //initial velocity
                                        m_expCol,                          //initial colour

@@ -25,7 +25,7 @@ Scene::Scene( std::string const&_name, int const&_x, int const&_y,int const&_wid
   m_height(_height),
   m_winPos(_x,_y),
   m_name(_name),
-  m_emit(glm::vec3(0.0f,0.0f,0.0f),200000)
+  m_emit(glm::vec3(0.0f,0.0f,0.0f),100000)
 {
   //initialise mouse position
   SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
@@ -266,60 +266,73 @@ void Scene::EditTransform()
   /// The following section is modified from :-
   /// Omar Cornut (April 4, 2017). Immediate mode 3D gizmo for scene editing [online].
   /// [Accessed 2017]. Available from: "https://github.com/CedricGuillemet/ImGuizmo"
+
+  //get current keys being pressed
   const Uint8 *keystates = SDL_GetKeyboardState(NULL);
+  //get the current projection and modelview matrices
+  float mv[16];
+  float pm[16];
+  glGetFloatv(GL_MODELVIEW_MATRIX, mv);
+  glGetFloatv(GL_PROJECTION_MATRIX, pm);
+  //convert our 4x4 Matrix to a float array that ImGuizmo can manipulate
+  float *matrix = new float[16];
+  matrix = (float*)glm::value_ptr(m_emit.m_transform);
 
-    float mv[16];
-    float pm[16];
-    float *matrix = new float[16];
-    matrix = (float*)glm::value_ptr(m_emit.m_transform);
-    glGetFloatv(GL_MODELVIEW_MATRIX, mv);
-    glGetFloatv(GL_PROJECTION_MATRIX, pm);
+  //Declare the current operation and mode
+  static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
+  static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
 
-    static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::ROTATE);
-    static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
+  //Buttons to select current operation
+  if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
+  {
+    mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+  }
+  ImGui::SameLine(); //buttons on the same line
+  if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
+  {
+    mCurrentGizmoOperation = ImGuizmo::ROTATE;
+  }
 
-    if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
-    {
-      mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-    }
-    ImGui::SameLine();
-    if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
-    {
-      mCurrentGizmoOperation = ImGuizmo::ROTATE;
-    }
+  //extract the components from our matrix
+  float matrixTranslation[3], matrixRotation[3], matrixScale[3];
+  ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
+  ImGui::DragFloat3("Translate", matrixTranslation); //edit the extracted translation
+  ImGui::DragFloat3("Rotate",matrixRotation,1.0f,0.0f,360.0f);//edit the extracted rotation
+  //Use the edited components to rebuild our matrix
+  ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
 
-    float matrixTranslation[3], matrixRotation[3], matrixScale[3];
-    ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
-    ImGui::DragFloat3("Translate", matrixTranslation);
-    ImGui::DragFloat3("Rotate",matrixRotation,1.0f,0.0f,360.0f);
-    ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
+  //Buttons to select current mode
+  if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
+  {
+    mCurrentGizmoMode = ImGuizmo::LOCAL;
+  }
+  ImGui::SameLine();//buttons on the same line
+  if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
+  {
+    mCurrentGizmoMode = ImGuizmo::WORLD;
+  }
 
-    if (mCurrentGizmoOperation != ImGuizmo::SCALE)
-    {
-      if (ImGui::RadioButton("Local", mCurrentGizmoMode == ImGuizmo::LOCAL))
-        mCurrentGizmoMode = ImGuizmo::LOCAL;
-      ImGui::SameLine();
-      if (ImGui::RadioButton("World", mCurrentGizmoMode == ImGuizmo::WORLD))
-        mCurrentGizmoMode = ImGuizmo::WORLD;
-    }
-    if(keystates[SDL_SCANCODE_LCTRL] || keystates[SDL_SCANCODE_RCTRL])
-    {
-      ImGuizmo::Enable(false);
-    }
-    else
-    {
-      ImGuizmo::Enable(true);
-    }
-    m_io = ImGui::GetIO();
-    ImGuizmo::SetRect(0, 0, m_io.DisplaySize.x, m_io.DisplaySize.y);
-    ImGuizmo::Manipulate(mv, pm, mCurrentGizmoOperation, mCurrentGizmoMode, matrix);
-
-    m_emit.m_transform = glm::make_mat4(matrix);
-    if(ImGui::Button("Reset"))
-    {
-      m_emit.m_transform = glm::mat4(1.0f);
-    }
-
+  //If our mouse is being used to rotate the scene we disable the gizmo
+  if(keystates[SDL_SCANCODE_LCTRL] || keystates[SDL_SCANCODE_RCTRL])
+  {
+    ImGuizmo::Enable(false);
+  }
+  else
+  {
+    ImGuizmo::Enable(true);
+  }
+  //Get current input
+  m_io = ImGui::GetIO();
+  ImGuizmo::SetRect(0, 0, m_io.DisplaySize.x, m_io.DisplaySize.y);
+  //Transform the gizmo and matrix
+  ImGuizmo::Manipulate(mv, pm, mCurrentGizmoOperation, mCurrentGizmoMode, matrix);
+  //Convert the float array back to our 4x4 Matrix
+  m_emit.m_transform = glm::make_mat4(matrix);
+  //Reset the matrix to identity
+  if(ImGui::Button("Reset"))
+  {
+    m_emit.m_transform = glm::mat4(1.0f);
+  }
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::displaySystemGui()
@@ -385,10 +398,10 @@ void Scene::tick()
     m_snap = false;
   }
   //update
-//  if(!m_pause)
-//  {
-//    m_emit.update();
-//  }
+  //  if(!m_pause)
+  //  {
+  //    m_emit.update();
+  //  }
   makeCurrent();
   //process user input
   while(SDL_PollEvent(&m_inputEvent))
