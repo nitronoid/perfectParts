@@ -26,7 +26,7 @@ Emitter::Emitter(const glm::vec3 &_pos, const size_t &_max) :
 //-------------------------------------------------------------------------------------------------------------------------
 Emitter::~Emitter()
 {
-  //clear the particle vector
+  //clear the particle vector and free stack
   clearParticles();
 }
 //-------------------------------------------------------------------------------------------------------------------------
@@ -58,9 +58,11 @@ void Emitter::update()
   //end time of update
   auto end = std::chrono::high_resolution_clock::now();
   //calculate time taken vs estimated time
-  auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end-begin).count();
+  auto elapsed = (end-begin).count();
   //Estimate is based on performance testing
   long estimate = 25*m_particleCount+650000;
+
+  std::cout<<elapsed<<'\t'<<estimate<<'\n';
   //If we have no living particles, but are wasting memory on storing them, we clean up
   //If the update has taken less than average time we can spare extra time to clean up
   if(((m_particleCount <= 0) && (m_particles.size() > 0)) || (elapsed > estimate))
