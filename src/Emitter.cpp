@@ -32,9 +32,8 @@ Emitter::~Emitter()
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::update()
 {
-  auto begin = std::chrono::high_resolution_clock::now();
-  //create new particles based on user input
-  createObjects();
+  //begin timing the update
+  auto begin = std::chrono::steady_clock::now();
   //update all particles
   for(auto p = m_particles.begin(); p != m_particles.end(); ++p)
   {
@@ -53,19 +52,18 @@ void Emitter::update()
   }
   //spawn new particles into the system
   spawnParticles();
+  //create new particles based on user input
+  createObjects();
   //increment frame counter
   ++m_frame;
   //end time of update
-  auto end = std::chrono::high_resolution_clock::now();
-  //calculate time taken vs estimated time
+  auto end = std::chrono::steady_clock::now();
+  //calculate time taken to update
   auto elapsed = (end-begin).count();
-  //Estimate is based on performance testing
-  long estimate = 25*m_particleCount+650000;
-
-  std::cout<<elapsed<<'\t'<<estimate<<'\n';
   //If we have no living particles, but are wasting memory on storing them, we clean up
   //If the update has taken less than average time we can spare extra time to clean up
-  if(((m_particleCount <= 0) && (m_particles.size() > 0)) || (elapsed > estimate))
+  if( m_reduceMemory && (m_particles.size() > 0) &&
+     ((m_particleCount <= 0) || (elapsed < static_cast<long>( m_particles.size() * 20 ))))
   {
     removeParticles(); //remove dead particles
   }
@@ -73,9 +71,9 @@ void Emitter::update()
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::removeParticles()
 {
-  //The following function call uses a lambda expression which ranges over the entire
-  //vector of particles, and finds the ones that meet our condition, in this case that
-  //the particle is dead, we then erase those particles
+  //The following function call uses remove_if which ranges over the entire
+  //vector of particles, and pushes them through our lambda expression to check if they are dead,
+  //if this condition is met, the particle is erased from the vector
   m_particles.erase(std::remove_if(m_particles.begin(),
                                    m_particles.end(),
                                    [](const std::unique_ptr<Particle>& p) {return !(p->m_alive);}),
@@ -184,25 +182,23 @@ void Emitter::clearParticles()
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::createFlame()
 {
-  for(int i =0; i < 10; ++i)
+  for(int i =0; i < m_flDensity; ++i)
   {
     //random position in disk of size 2
-    glm::vec2 disk = glm::diskRand(2.0f);
+    glm::vec2 disk = glm::diskRand(m_flSpread);
     glm::vec3 newPos = glm::vec3(disk.x,0.0f,disk.y);
 
     //life is 40 +- 20
-    int life = 40;
-    life = glm::linearRand(life-20,life+20);
+    int life = glm::linearRand(m_flLife-20,m_flLife+20);
 
     //get rotation, incline and speed
     float rotation = glm::linearRand(0.0f,6.28f);   //radians
-    float incline = glm::linearRand(-0.26f,0.26f);   //radians
-    float speed = 1.2f;
+    float incline = glm::linearRand(-m_flSteepness,m_flSteepness);   //radians
 
-    //initial velocity from polar co-ordinates
-    glm::vec3 newVel = glm::vec3(speed * glm::sin(incline) * glm::cos(rotation),
-                                 speed * glm::cos(incline),
-                                 speed * glm::sin(incline) * glm::sin(rotation));
+    //calculate intial velocity with a conversion from spherical to cartesian coodinates
+    glm::vec3 newVel = glm::vec3(m_flSpeed * glm::sin(incline) * glm::cos(rotation),
+                                 m_flSpeed * glm::cos(incline),
+                                 m_flSpeed * glm::sin(incline) * glm::sin(rotation));
 
     //Add the particle to our vector
     addParticle( new FlameParticle(m_pos + newPos,                        //initial position
@@ -217,7 +213,7 @@ void Emitter::createFlame()
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::createFirework()
 {
-  //initial velocity from polar co-ordinates
+  //calculate intial velocity with a conversion from spherical to cartesian coodinates
   glm::vec3 newVel = glm::vec3(m_fwThrust * glm::sin(m_fwIncline) * glm::cos(m_fwRotation),
                                m_fwThrust * glm::cos(m_fwIncline),
                                m_fwThrust * glm::sin(m_fwIncline) * glm::sin(m_fwRotation));
@@ -252,11 +248,11 @@ void Emitter::createExplosion()
   {
     //get random size, rotation, incline and speed
     float size = glm::linearRand(40.0f,100.0f);
-    float rotation = glm::linearRand(0.0f,6.28f);    //radians
+    float rotation = glm::linearRand(0.0f,6.28f);    //radians, aproximately 2pi
     float incline = glm::linearRand(-1.5f,1.5f);     //radians
     float speed = glm::linearRand(0.5f,1.2f);
 
-    //calculate intial velocity
+    //calculate intial velocity with a conversion from spherical to cartesian coodinates
     glm::vec3 newVel = glm::vec3(speed * glm::sin(incline) * glm::cos(rotation),
                                  speed * glm::cos(incline),
                                  speed * glm::sin(incline) * glm::sin(rotation));

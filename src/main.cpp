@@ -16,7 +16,7 @@ int main()
   while(!world.m_quit) //exit when prompted
   {
     //update and draw
-    world.tick();
+    world.handleInput();
     world.draw();
   }
   return EXIT_SUCCESS;

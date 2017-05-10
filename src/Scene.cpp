@@ -98,8 +98,9 @@ void Scene::initStyle()
   ImVec4 col_back = ImColor::HSV(0.56f, 0.231f, 0.157f);
   ImVec4 col_area = ImColor::HSV(0.56f, 0.486f, 0.392f);
 
+  //load current style
   m_style = ImGui::GetStyle();
-
+  //modify the style colours
   m_style.Colors[ImGuiCol_Text]                  = ImVec4(col_text.x, col_text.y, col_text.z, 1.00f);
   m_style.Colors[ImGuiCol_TextDisabled]          = ImVec4(col_text.x, col_text.y, col_text.z, 0.58f);
   m_style.Colors[ImGuiCol_WindowBg]              = ImVec4(col_back.x, col_back.y, col_back.z, 1.00f);
@@ -143,6 +144,7 @@ void Scene::initStyle()
   m_style.Colors[ImGuiCol_TextSelectedBg]        = ImVec4(col_main.x, col_main.y, col_main.z, 0.43f);
   m_style.Colors[ImGuiCol_ModalWindowDarkening]  = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
 
+  //Sharp window edges and semi transparent GUI
   m_style.WindowRounding = 0.0f;
   m_style.Alpha = 0.75f;
 
@@ -338,14 +340,17 @@ void Scene::EditTransform()
 void Scene::displaySystemGui()
 {
   //System GUI for performance stats and options
-  ImGui::Checkbox("Pause time",&m_pause);
+  ImGui::Checkbox("Pause",&m_pause);
   ImGui::SameLine();
-  ImGui::Checkbox("Display grid",&m_grid);
+  ImGui::Checkbox("Grid",&m_grid);
+  ImGui::SameLine();
+  ImGui::Checkbox("Reduce memory",&m_emit.m_reduceMemory);
   if(ImGui::Button("Clear System")) m_emit.m_clear = true;
   if(ImGui::Button("Screenshot")) m_snap = true;
   ImGui::Text("Particle count: %zu / %zu",m_emit.particleCount(),m_emit.maxParticles());
   ImGui::Text("Frame time: %.3f ms/frame ", 1000.0f / ImGui::GetIO().Framerate);
   ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+  ImGui::Text("Particle memory usage: %zu", m_emit.vectorSize());
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::displayFlameGui()
@@ -353,6 +358,11 @@ void Scene::displayFlameGui()
   //Flame GUI
   ImGui::Text("Fire colour");
   ColorSelector("Fire colour", m_emit.m_flCol);
+  ImGui::SliderFloat("Speed",&m_emit.m_flSpeed,0.1f,2.0f);
+  ImGui::SliderFloat("Base spread",&m_emit.m_flSpread,0.1f,10.0f);
+  ImGui::SliderAngle("Steepness",&m_emit.m_flSteepness,0.0f,90.0f);
+  ImGui::SliderInt("Life",&m_emit.m_flLife,0,100);
+  ImGui::SliderInt("Density",&m_emit.m_flDensity,0,20);
   //when selected flame will be emitted
   ImGui::Checkbox("Ignite flame",&m_emit.m_flame);
 }
@@ -389,7 +399,7 @@ void Scene::displayFireworkGui()
   }
 }
 //-------------------------------------------------------------------------------------------------------------------------
-void Scene::tick()
+void Scene::handleInput()
 {
   //take a screenshot
   if(m_snap)
@@ -397,11 +407,6 @@ void Scene::tick()
     takeScreencap();
     m_snap = false;
   }
-  //update
-  //  if(!m_pause)
-  //  {
-  //    m_emit.update();
-  //  }
   makeCurrent();
   //process user input
   while(SDL_PollEvent(&m_inputEvent))
@@ -514,7 +519,7 @@ void Scene::loadProjection(glm::mat4 const&_matrix) const
   //change to projection mode and load matrix
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glMultMatrixf((const float*)glm::value_ptr(_matrix));
+  glMultMatrixf(glm::value_ptr(_matrix));
   //change back to modelview mode
   glMatrixMode(GL_MODELVIEW);
 }
@@ -523,8 +528,10 @@ void Scene::loadModelView(glm::mat4 const&_matrix) const
 {
   //make sure we are in modelview mode
   glMatrixMode(GL_MODELVIEW);
+  //load the identity matrix before applying our own
   glLoadIdentity();
-  glMultMatrixf((const float*)glm::value_ptr(_matrix));
+  //value_ptr returns a const float* to the matrix
+  glMultMatrixf(glm::value_ptr(_matrix));
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::draw()
@@ -595,6 +602,7 @@ void Scene::drawGrid( int const&_num, int const&_step) const
   glLineWidth(1.0f);
   //draw lines
   glBegin(GL_LINES);
+  //_num is the dimensions or number of rows and columns the grid contains, step is the spacing between them
   for(int i = -_num*_step; i <= _num*_step; i+=_step)
   {
     glVertex3f(_num*_step,0.0f,i);
