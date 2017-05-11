@@ -345,8 +345,8 @@ void Scene::displaySystemGui()
   ImGui::Checkbox("Grid",&m_grid);
   ImGui::SameLine();
   ImGui::Checkbox("Reduce memory",&m_emit.m_reduceMemory);
-  if(ImGui::Button("Clear System")) m_emit.m_clear = true;
-  if(ImGui::Button("Screenshot")) m_snap = true;
+  if(ImGui::Button("Clear System")) {m_emit.m_clear = true;}
+  if(ImGui::Button("Screenshot")) {m_snap = true;}
   ImGui::Text("Particle count: %zu / %zu",m_emit.particleCount(),m_emit.maxParticles());
   ImGui::Text("Frame time: %.3f ms/frame ", 1000.0f / ImGui::GetIO().Framerate);
   ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
@@ -358,6 +358,7 @@ void Scene::displayFlameGui()
   //Flame GUI
   ImGui::Text("Fire colour");
   ColorSelector("Fire colour", m_emit.m_flCol);
+  ImGui::SliderFloat("Size",&m_emit.m_flSize,2.0f,200.0f);
   ImGui::SliderFloat("Speed",&m_emit.m_flSpeed,0.1f,2.0f);
   ImGui::SliderFloat("Base spread",&m_emit.m_flSpread,0.1f,10.0f);
   ImGui::SliderAngle("Steepness",&m_emit.m_flSteepness,0.0f,90.0f);
@@ -369,14 +370,17 @@ void Scene::displayFlameGui()
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::displayExplosionGui()
 {
+  int density = 20;
   //Explosion GUI
   ImGui::Text("Explosion colour");
   ColorSelector("Explosion colour", m_emit.m_expCol);
+  ImGui::SliderInt("Density",&density,0,40);
   if(ImGui::Button("Detonate Explosion"))
   {
     //explode for 6 frames
     m_emit.m_explosion = 6;
   }
+
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::displayFireworkGui()

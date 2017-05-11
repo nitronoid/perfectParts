@@ -27,6 +27,10 @@
 class Emitter
 {
 public:
+
+                /*The following variables are used as settings for creating particle objects,
+                 * they are public to allow the user to manipulate them using the GUI
+                 */
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Flag used to determine whether the emitter should clear dead particles from m_particles when unused,
   /// this will save memory but could slow down the system
@@ -60,6 +64,10 @@ public:
   /// @brief Emitter angle for the flame particles
   //----------------------------------------------------------------------------------------------------------------------
   float          m_flSteepness = 0.26f;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Emitter angle for the flame particles
+  //----------------------------------------------------------------------------------------------------------------------
+  float          m_flSize = 120.0f;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Flag used to spawn a firework into the system
   //----------------------------------------------------------------------------------------------------------------------

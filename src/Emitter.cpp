@@ -182,14 +182,15 @@ void Emitter::clearParticles()
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::createFlame()
 {
-  for(int i =0; i < m_flDensity; ++i)
+  //create the user specified number of flame particles if the system has enough space to add them
+  for(int i =0; (i < m_flDensity) && (m_particleCount < m_maxParticles); ++i)
   {
     //random position in disk of size 2
     glm::vec2 disk = glm::diskRand(m_flSpread);
     glm::vec3 newPos = glm::vec3(disk.x,0.0f,disk.y);
 
-    //life is 40 +- 20
-    int life = glm::linearRand(m_flLife-20,m_flLife+20);
+    //we vary the life by +-half
+    int life = glm::linearRand(m_flLife/2,3*m_flLife/2);
 
     //get rotation, incline and speed
     float rotation = glm::linearRand(0.0f,6.28f);   //radians
@@ -204,7 +205,7 @@ void Emitter::createFlame()
     addParticle( new FlameParticle(m_pos + newPos,                        //initial position
                                    newVel,                                //initial velocity
                                    m_flCol,                               //initial colour
-                                   120.0f,                                //initial size
+                                   m_flSize,                              //initial size
                                    life,                                  //life span
                                    m_frame,                               //current frame
                                    true));                                //flag for spawning children
@@ -244,7 +245,7 @@ void Emitter::createFirework()
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::createExplosion()
 {
-  for(int i =0; i < 20; ++i)
+  for(int i =0; (i < 20) && (m_particleCount < m_maxParticles); ++i)
   {
     //get random size, rotation, incline and speed
     float size = glm::linearRand(40.0f,100.0f);

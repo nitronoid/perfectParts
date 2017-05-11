@@ -6514,12 +6514,12 @@ bool ImGui::SliderFloat(const char* label, float* v, float v_min, float v_max, c
     {
         SetActiveID(id, window);
         FocusWindow(window);
-
-        if (tab_focus_requested || g.IO.KeyCtrl)
-        {
-            start_text_input = true;
-            g.ScalarAsInputTextId = 0;
-        }
+///Modified to disallow text input by Jack Diver [11/05/17]
+//        if (tab_focus_requested || g.IO.KeyCtrl)
+//        {
+//            start_text_input = true;
+//            g.ScalarAsInputTextId = 0;
+//        }
     }
     if (start_text_input || (g.ActiveId == id && g.ScalarAsInputTextId == id))
         return InputScalarAsWidgetReplacement(frame_bb, label, ImGuiDataType_Float, v, id, decimal_precision);
