@@ -227,7 +227,7 @@ private:
   void displaySystemGui();
 
 
-  void EditTransform();
+  void transformView();
 
 }; // class end
 

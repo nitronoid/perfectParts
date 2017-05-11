@@ -245,13 +245,15 @@ void Emitter::createFirework()
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::createExplosion()
 {
-  for(int i =0; (i < 20) && (m_particleCount < m_maxParticles); ++i)
+  for(int i =0; (i < m_expDensity) && (m_particleCount < m_maxParticles); ++i)
   {
     //get random size, rotation, incline and speed
-    float size = glm::linearRand(40.0f,100.0f);
+    float size = glm::linearRand(m_expSize/2,3*m_expSize/2);
     float rotation = glm::linearRand(0.0f,6.28f);    //radians, aproximately 2pi
-    float incline = glm::linearRand(-1.5f,1.5f);     //radians
-    float speed = glm::linearRand(0.5f,1.2f);
+    float incline = glm::linearRand(-m_expIncline,m_expIncline);     //radians
+    float speed = glm::linearRand(m_expSpeed/2,3*m_expSpeed/2);
+
+    int life = glm::linearRand(m_expLife/2,3*m_expLife/2);
 
     //calculate intial velocity with a conversion from spherical to cartesian coodinates
     glm::vec3 newVel = glm::vec3(speed * glm::sin(incline) * glm::cos(rotation),
@@ -263,7 +265,7 @@ void Emitter::createExplosion()
                                        newVel,                            //initial velocity
                                        m_expCol,                          //initial colour
                                        size,                              //initial size
-                                       80,                                //life span
+                                       life,                              //life span
                                        20,                                //trail life span
                                        m_frame,                           //current frame
                                        true));                            //flag for spawning trails

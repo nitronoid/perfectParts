@@ -145,7 +145,7 @@ void Scene::initStyle()
   m_style.Colors[ImGuiCol_ModalWindowDarkening]  = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
 
   //Sharp window edges and semi transparent GUI
-  m_style.WindowRounding = 0.0f;
+  m_style.WindowRounding = 10.0f;
   m_style.Alpha = 0.75f;
 
   ///end of citation
@@ -245,7 +245,7 @@ void Scene::displayGui()
     ImGui::Tab(1,"Flame","Flame controls",&m_tab);
     ImGui::Tab(2,"Explosion","Explosion controls",&m_tab);
     ImGui::Tab(3,"System","System controls",&m_tab);
-    ImGui::Tab(4,"Edit","Edit controls",&m_tab);
+    ImGui::Tab(4,"View","View controls",&m_tab);
     ImGui::Separator();
     ImGui::NewLine();
     //display active tab gui
@@ -255,7 +255,7 @@ void Scene::displayGui()
     case 1: {displayFlameGui(); break;}
     case 2: {displayExplosionGui(); break;}
     case 3: {displaySystemGui(); break;}
-    case 4: {EditTransform();break;}
+    case 4: {transformView();break;}
     default: {break;}
     }
   }
@@ -263,12 +263,20 @@ void Scene::displayGui()
 
 }
 //-------------------------------------------------------------------------------------------------------------------------
-void Scene::EditTransform()
+void Scene::transformView()
 {
+  //Scene position and rotation
+  ImGui::Text("Scene transform");
+  ImGui::SliderFloat("X rotation",&m_rotation.x,0.0f,359.999f);
+  ImGui::SliderFloat("Y rotation",&m_rotation.y,0.0f,359.999f);
+  ImGui::SliderFloat3("Position",glm::value_ptr(m_translation),-1000.0f,1000.0f);
+  ImGui::Separator();
+
   /// The following section is modified from :-
   /// Omar Cornut (April 4, 2017). Immediate mode 3D gizmo for scene editing [online].
   /// [Accessed 2017]. Available from: "https://github.com/CedricGuillemet/ImGuizmo"
 
+  ImGui::Text("Object transform");
   //get current keys being pressed
   const Uint8 *keystates = SDL_GetKeyboardState(NULL);
   //get the current projection and modelview matrices
@@ -331,7 +339,7 @@ void Scene::EditTransform()
   //Convert the float array back to our 4x4 Matrix
   m_emit.m_transform = glm::make_mat4(matrix);
   //Reset the matrix to identity
-  if(ImGui::Button("Reset"))
+  if(ImGui::Button("Reset transform"))
   {
     m_emit.m_transform = glm::mat4(1.0f);
   }
@@ -370,11 +378,14 @@ void Scene::displayFlameGui()
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::displayExplosionGui()
 {
-  int density = 20;
   //Explosion GUI
   ImGui::Text("Explosion colour");
   ColorSelector("Explosion colour", m_emit.m_expCol);
-  ImGui::SliderInt("Density",&density,0,40);
+  ImGui::SliderFloat("Speed",&m_emit.m_expSpeed,0.1f,2.0f);
+  ImGui::SliderFloat("Base spread",&m_emit.m_expSize,2.0f,100.0f);
+  ImGui::SliderAngle("Steepness",&m_emit.m_expIncline,0.0f,90.0f);
+  ImGui::SliderInt("Life",&m_emit.m_expLife,0,100);
+  ImGui::SliderInt("Density",&m_emit.m_expDensity,0,40);
   if(ImGui::Button("Detonate Explosion"))
   {
     //explode for 6 frames
@@ -505,6 +516,11 @@ void Scene::handleMouse()
     default: break;
     }
   }
+  //bounds checking for rotation to keep it between 0 and 360 degrees
+  if(m_rotation.x >= 360.0f) {m_rotation.x -= 360.0f;}
+  else if(m_rotation.x < 0.0f) {m_rotation.x += 360.0f;}
+  if(m_rotation.y >= 360.0f) {m_rotation.y -= 360.0f;}
+  else if(m_rotation.y < 0.0f) {m_rotation.y += 360.0f;}
   //save mouse position
   m_mousePos = newPos;
 }
