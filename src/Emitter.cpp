@@ -26,7 +26,7 @@ Emitter::Emitter(const glm::vec3 &_pos, const size_t &_max) :
 //-------------------------------------------------------------------------------------------------------------------------
 Emitter::~Emitter()
 {
-  //clear the particle vector and free stack
+  //clear the particle vector
   clearParticles();
 }
 //-------------------------------------------------------------------------------------------------------------------------
@@ -35,19 +35,27 @@ void Emitter::update()
   //begin timing the update
   auto begin = std::chrono::steady_clock::now();
   //update all particles
-  for(auto p = m_particles.begin(); p != m_particles.end(); ++p)
+  for(size_t it = 0; it < m_particleCount;)
   {
-    //only update living particles
-    if((*p)->m_alive)
+    m_particles[it]->update(m_frame);
+    //if particle has died we swap with the last alive particle
+    if(!(m_particles[it]->m_alive))
     {
-      (*p)->update(m_frame);
-
-      //if particle has died from update we push it's index onto our free stack
-      if((!(*p)->m_alive))
+      //check that there are other living ones to swap with
+      if(it < m_particleCount-1)
       {
-        m_freeStack.push(p-m_particles.begin());
-        --m_particleCount; //decrement particle count
+        //we don't increment 'it' here as we will need to update the particle we just swapped to this index
+        m_particles[it].swap(m_particles[m_particleCount-1]);
       }
+      else
+      {
+        ++it; //increment when no swap was made
+      }
+      --m_particleCount; //decrement particle count
+    }
+    else
+    {
+      ++it; //increment when we don't swap the particle
     }
   }
   //spawn new particles into the system
@@ -71,15 +79,10 @@ void Emitter::update()
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::removeParticles()
 {
-  //The following function call uses remove_if which ranges over the entire
-  //vector of particles, and pushes them through our lambda expression to check if they are dead,
-  //if this condition is met, the particle is erased from the vector
-  m_particles.erase(std::remove_if(m_particles.begin(),
-                                   m_particles.end(),
-                                   [](const std::unique_ptr<Particle>& p) {return !(p->m_alive);}),
-                                   m_particles.end());
-  //Since we have no dead particles left we clear our stack
-  std::stack<std::size_t>().swap(m_freeStack);
+  //We crop the vector to a size that only contains living particles,
+  //this can be done as all living particles are guarenteed to be stored
+  //at the begining of the vector, with all dead particles stored after
+  m_particles.resize(m_particleCount);
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::createObjects()
@@ -92,15 +95,18 @@ void Emitter::createObjects()
   }
   if(m_flame)
   {
+    //emit flame
     createFlame();
   }
   if(m_firework)
   {
+    //launch a firework
     createFirework();
     m_firework = false;
   }
   if(m_explosion > 0)
   {
+    //detonate an explosion
     createExplosion();
     m_explosion--;
   }
@@ -109,11 +115,12 @@ void Emitter::createObjects()
 void Emitter::spawnParticles()
 {
   int newSpawn;
-  size_t psize = m_particles.size();
   //for all particles that are both alive and allowed to spawn, we spawn new particles
-  for(size_t it = 0; it < psize; ++it )
+  //we pre-calculate the number of living particles as spawning will increase the count
+  size_t currentNum = m_particleCount;
+  for(size_t it = 0; it < currentNum; ++it )
   {
-    if(m_particles[it]->m_alive && m_particles[it]->m_spawn)
+    if(m_particles[it]->m_spawn)
     {
       //obtain the amount of new particles to spawn
       newSpawn = m_particles[it]->newParts(m_frame);
@@ -128,19 +135,16 @@ void Emitter::spawnParticles()
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::addParticle( Particle* const&_newParticle)
 {
-  //if our stack is empty, there are no dead particles to reset so we push back onto the vector
-  if(m_freeStack.empty())
+  //if the vector contains dead particles we reset the first dead one
+  if(m_particleCount < m_particles.size() )
   {
-    //We emplace back to avoid making a copy
-    m_particles.emplace_back(std::unique_ptr<Particle>(_newParticle));
+    m_particles[m_particleCount].reset(_newParticle);
   }
   else
   {
-    //if the stack isn't empty we ge the index from the top of the stack and reset the dead particle
-    auto deadP = m_particles.begin() + m_freeStack.top();
-    (*deadP).reset(_newParticle);
-    //remove the index we just used
-    m_freeStack.pop();
+    //if the vector is full of living particles, we emplace back onto the vector
+    //emplace_back is used over_push back to avoid making a copy
+    m_particles.emplace_back(std::unique_ptr<Particle>(_newParticle));
   }
   ++m_particleCount; //increment particle count
 }
@@ -154,12 +158,9 @@ void Emitter::draw() const
   //Enable point sprite texturing
   glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE );
   //Draw all living particles
-  for(auto const&p : m_particles)
+  for(size_t it = 0; it < m_particleCount; ++it )
   {
-    if(p->m_alive)
-    {
-      p->draw(m_frame);
-    }
+    m_particles[it]->draw(m_frame);
   }
   //disable point sprite texturing so GUI draws correctly
   glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_FALSE );
@@ -176,8 +177,6 @@ void Emitter::clearParticles()
   m_particles.clear();
   //set particle count to zero
   m_particleCount = 0;
-  //clear stack
-  std::stack<std::size_t>().swap(m_freeStack);
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Emitter::createFlame()

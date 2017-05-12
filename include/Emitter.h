@@ -3,7 +3,6 @@
 
 #include <memory>
 #include <vector>
-#include <stack>
 #include <glm/glm.hpp>
 #include <QDir>
 #include "pngutils.h"
@@ -229,17 +228,12 @@ private:
   /// @brief The current frame of the system
   //----------------------------------------------------------------------------------------------------------------------
   int                                      m_frame = 0;
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief A stack which holds the indexes of free particles to be reset
-  //----------------------------------------------------------------------------------------------------------------------
-  std::stack<std::size_t>                  m_freeStack;
 
 private:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Adds the given particle to the m_particles vector
-  /// @param[in] _newParticle is an rValue reference to a pointer,
-  /// which points to the new particle to add. The rValue reference is
-  /// used to avoid making a deep copy of the particle
+  /// @param[in] _newParticle a const reference to a pointer, which
+  /// we will use to create a new unique_ptr, or reset an exisiting one
   //----------------------------------------------------------------------------------------------------------------------
   void addParticle(Particle * const &_newParticle);
   //----------------------------------------------------------------------------------------------------------------------
@@ -263,7 +257,7 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   void createObjects();
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Clears m_particles, stops spawning and clears m_freeStack
+  /// @brief Clears m_particles and stops spawning
   //----------------------------------------------------------------------------------------------------------------------
   void clearParticles();
   //----------------------------------------------------------------------------------------------------------------------

@@ -25,7 +25,7 @@ Scene::Scene( std::string const&_name, int const&_x, int const&_y,int const&_wid
   m_height(_height),
   m_winPos(_x,_y),
   m_name(_name),
-  m_emit(glm::vec3(0.0f,0.0f,0.0f),100000)
+  m_emit(glm::vec3(0.0f,0.0f,0.0f),50000)
 {
   //initialise mouse position
   SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
