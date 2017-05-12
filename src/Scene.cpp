@@ -372,6 +372,7 @@ void Scene::displayFlameGui()
   ImGui::SliderAngle("Steepness",&m_emit.m_flSteepness,0.0f,90.0f);
   ImGui::SliderInt("Life",&m_emit.m_flLife,0,100);
   ImGui::SliderInt("Density",&m_emit.m_flDensity,0,20);
+  ImGui::Checkbox("Spawn children",&m_emit.m_flChildren);
   //when selected flame will be emitted
   ImGui::Checkbox("Ignite flame",&m_emit.m_flame);
 }
@@ -381,8 +382,8 @@ void Scene::displayExplosionGui()
   //Explosion GUI
   ImGui::Text("Explosion colour");
   ColorSelector("Explosion colour", m_emit.m_expCol);
+  ImGui::SliderFloat("Size",&m_emit.m_expSize,1.0f,200.0f);
   ImGui::SliderFloat("Speed",&m_emit.m_expSpeed,0.1f,2.0f);
-  ImGui::SliderFloat("Base spread",&m_emit.m_expSize,2.0f,100.0f);
   ImGui::SliderAngle("Steepness",&m_emit.m_expIncline,0.0f,90.0f);
   ImGui::SliderInt("Life",&m_emit.m_expLife,0,100);
   ImGui::SliderInt("Density",&m_emit.m_expDensity,0,40);

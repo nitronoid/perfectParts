@@ -160,7 +160,7 @@ void Emitter::draw() const
   //Enable point sprite texturing
   glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE );
   //Draw all living particles
-  for(size_t it = 0; it < m_particleCount; ++it )
+  for(size_t it = 0; it < m_particleCount; ++it)
   {
     m_particles[it]->draw(m_frame);
   }
@@ -209,7 +209,7 @@ void Emitter::createFlame()
                                    m_flSize,                              //initial size
                                    life,                                  //life span
                                    m_frame,                               //current frame
-                                   true));                                //flag for spawning children
+                                   m_flChildren));                        //flag for spawning children
   }
 }
 //-------------------------------------------------------------------------------------------------------------------------
