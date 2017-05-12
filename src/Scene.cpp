@@ -25,7 +25,7 @@ Scene::Scene( std::string const&_name, int const&_x, int const&_y,int const&_wid
   m_height(_height),
   m_winPos(_x,_y),
   m_name(_name),
-  m_emit(glm::vec3(0.0f,0.0f,0.0f),50000)
+  m_emit(glm::vec3(0.0f,0.0f,0.0f),100000)
 {
   //initialise mouse position
   SDL_GetMouseState(&m_mousePos.x, &m_mousePos.y);
@@ -386,10 +386,12 @@ void Scene::displayExplosionGui()
   ImGui::SliderAngle("Steepness",&m_emit.m_expIncline,0.0f,90.0f);
   ImGui::SliderInt("Life",&m_emit.m_expLife,0,100);
   ImGui::SliderInt("Density",&m_emit.m_expDensity,0,40);
+  //number of frames to explode for
+  static int numExplosions = 5;
+  ImGui::SliderInt("Chain",&numExplosions,0,50);
   if(ImGui::Button("Detonate Explosion"))
   {
-    //explode for 6 frames
-    m_emit.m_explosion = 6;
+    m_emit.m_explosions = numExplosions;
   }
 
 }
@@ -448,7 +450,7 @@ void Scene::handleInput()
         case SDLK_ESCAPE :  m_quit = true; break;
         case SDLK_SPACE : m_pause = !m_pause; break;
         case SDLK_q : m_emit.m_firework = true; break;
-        case SDLK_w : m_emit.m_explosion = 6; break;
+        case SDLK_w : m_emit.m_explosions = 6; break;
         case SDLK_e : m_emit.m_flame = !m_emit.m_flame; break;
         case SDLK_c : m_emit.m_clear = true; break;
         case SDLK_f : resetPos(); break;

@@ -38,18 +38,20 @@ void Emitter::update()
   for(size_t it = 0; it < m_particleCount;)
   {
     m_particles[it]->update(m_frame);
-    //if particle has died we swap with the last alive particle
+    //if particle has died we move the last alive particle to it's position
     if(!(m_particles[it]->m_alive))
     {
-      //check that there are other living ones to swap with
+      //check that there are other living particles
       if(it < m_particleCount-1)
       {
-        //we don't increment 'it' here as we will need to update the particle we just swapped to this index
-        m_particles[it].swap(m_particles[m_particleCount-1]);
+        //we don't increment 'it' here as we will need to update the particle we just moved to this index
+        //NOTE: this nullifys the unique_ptr that we move, and will also call the destructor for the particle
+        //that we are replacing
+        m_particles[it]= std::move(m_particles[m_particleCount-1]);
       }
       else
       {
-        ++it; //increment when no swap was made
+        ++it; //increment when no move was made
       }
       --m_particleCount; //decrement particle count
     }
@@ -104,11 +106,11 @@ void Emitter::createObjects()
     createFirework();
     m_firework = false;
   }
-  if(m_explosion > 0)
+  if(m_explosions > 0)
   {
     //detonate an explosion
     createExplosion();
-    m_explosion--;
+    m_explosions--;
   }
 }
 //-------------------------------------------------------------------------------------------------------------------------
@@ -172,7 +174,7 @@ void Emitter::clearParticles()
 {
   //stop spawning
   m_flame = false;
-  m_explosion = 0;
+  m_explosions = 0;
   //clear the vector
   m_particles.clear();
   //set particle count to zero

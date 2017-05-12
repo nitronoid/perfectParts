@@ -108,9 +108,10 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   int            m_fwExpLife = 80;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief We detonate explosions over multiple frames to simulate a chain explosion, this give a more realistic look
+  /// @brief We detonate explosions over multiple frames to simulate a chain explosion, this give a more realistic look,
+  /// this variable holds the remaining number of frames for which we will detonate explosions
   //----------------------------------------------------------------------------------------------------------------------
-  int            m_explosion = 0;
+  int            m_explosions = 0;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Colour of new explosion
   //----------------------------------------------------------------------------------------------------------------------
