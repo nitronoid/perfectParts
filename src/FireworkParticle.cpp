@@ -8,28 +8,28 @@
 //-------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------
-FireworkParticle::FireworkParticle( int const&_fuse,
+FireworkParticle::FireworkParticle( int       const&_fuse,
                                     glm::vec3 const&_pos,
                                     glm::vec3 const&_vel,
                                     glm::vec4 const&_col,
-                                    float const&_brightness,
-                                    float const&_size,
-                                    int const&_life,
-                                    int const&_elife,
-                                    int const&_trailLife,
-                                    int const&_frame,
-                                    bool const&_spawn,
-                                    bool const&_blink) : Particle( _pos,
-                                                                   _vel,
-                                                                   _col,
-                                                                   _size,
-                                                                   _life,
-                                                                   _frame,
-                                                                   _spawn)
+                                    float     const&_brightness,
+                                    float     const&_size,
+                                    int       const&_life,
+                                    int       const&_elife,
+                                    int       const&_trailLife,
+                                    int       const&_frame,
+                                    bool      const&_spawn,
+                                    bool      const&_blink) :
+                                                             Particle( _pos,_vel,_col,_size,_life,_frame,_spawn),
+                                                             m_trailLife(_trailLife),
+                                                             //calculate frame to explode from fuse and current frame
+                                                             m_explosionFuse(_fuse + _frame),
+                                                             m_brightness(_brightness),
+                                                             m_explodedLife(_elife),
+                                                             m_blink(_blink)
+
 {
-  m_brightness = _brightness;
   //if blink flag is set to true then we calculate a random period for blinking
-  m_blink = _blink;
   if(_blink)
   {
     m_blinkPeriod = glm::linearRand(2,30);
@@ -38,10 +38,7 @@ FireworkParticle::FireworkParticle( int const&_fuse,
   {
     m_blinkPeriod = 0;
   }
-  // calculate frame to explode from fuse and current frame
-  m_explosionFuse = _fuse + _frame;
-  m_trailLife = _trailLife;
-  m_explodedLife = _elife;
+
 }
 //-------------------------------------------------------------------------------------------------------------------------
 int FireworkParticle::newParts( int const&) const
@@ -113,12 +110,12 @@ void FireworkParticle::draw( int const&_frame) const
 {
   //clamp the colour
   glm::vec4 clampedCol = glm::clamp(calcCol(_frame),0.0f,1.0f);
-  glColor4fv((const GLfloat*)glm::value_ptr(clampedCol));
+  glColor4fv(glm::value_ptr(clampedCol));
   //set point size
   glPointSize(m_size);
   //draw point, must use an individual draw loop for every particle as size can't be changed from within the loop
   glBegin(GL_POINTS);
-  glVertex3fv((const GLfloat*)glm::value_ptr(m_pos));
+  glVertex3fv(glm::value_ptr(m_pos));
   glEnd();
 }
 //-------------------------------------------------------------------------------------------------------------------------

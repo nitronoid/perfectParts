@@ -8,23 +8,21 @@
 //-------------------------------------------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------------------------------------------
-ExplosionParticle::ExplosionParticle( glm::vec3 const&_pos,
-                                      glm::vec3 const&_vel,
-                                      glm::vec4 const&_col,
-                                      float const&_size,
-                                      int const&_life,
-                                      int const&_tLife,
-                                      int const&_frame,
-                                      bool const&_spawn) :
-                                                           Particle(_pos,
-                                                                    _vel,
-                                                                    _col,
-                                                                    _size,
-                                                                    _life,
-                                                                    _frame,
-                                                                    _spawn)
+ExplosionParticle::ExplosionParticle(glm::vec3 const&_pos,
+                                     glm::vec3 const&_vel,
+                                     glm::vec4 const&_col,
+                                     float     const&_size,
+                                     int       const&_life,
+                                     int       const&_frame,
+                                     bool      const&_spawn) :
+                                                              Particle(_pos,
+                                                                       _vel,
+                                                                       _col,
+                                                                       _size,
+                                                                       _life,
+                                                                       _frame,
+                                                                       _spawn)
 {
-  m_trailLife = _tLife;
   //increase the rate of size change
   m_sizeDelta *= 1.5f;
 }
@@ -64,7 +62,6 @@ Particle* ExplosionParticle::createChild( int const&_frame) const
                                  m_col,                          //initial colour inherited
                                  m_size,                         //initial size inherited
                                  m_life,                         //life span inherited
-                                 0,                              //trail life is zero as this won't spawn children
                                  _frame,                         //current frame
                                  false);                         //Set to false so we don't spawn from the child
 }
@@ -82,12 +79,12 @@ void ExplosionParticle::draw( int const&) const
 {
   //clamp the colour
   glm::vec4 clampedCol = glm::clamp(calcCol(),0.0f,1.0f);
-  glColor4fv((const GLfloat*)glm::value_ptr(clampedCol));
+  glColor4fv(glm::value_ptr(clampedCol));
   //set point size
   glPointSize(m_size);
   //draw point, must use an individual draw loop for every particle as size can't be changed from within the loop
   glBegin(GL_POINTS);
-  glVertex3fv((const GLfloat*)glm::value_ptr(m_pos));
+  glVertex3fv(glm::value_ptr(m_pos));
   glEnd();
 }
 //-------------------------------------------------------------------------------------------------------------------------

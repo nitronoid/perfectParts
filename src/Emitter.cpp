@@ -6,6 +6,7 @@
 #include <QtOpenGL/QGLWidget>
 #include <glm/gtc/random.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/fast_trigonometry.hpp>
 #include <chrono>
 #include <iostream>
 
@@ -26,6 +27,7 @@ Emitter::Emitter(const glm::vec3 &_pos, const size_t &_max) :
 //-------------------------------------------------------------------------------------------------------------------------
 Emitter::~Emitter()
 {
+  delete[] m_textures;
   //clear the particle vector
   clearParticles();
 }
@@ -46,7 +48,7 @@ void Emitter::update()
       {
         //we don't increment 'it' here as we will need to update the particle we just moved to this index
         //NOTE: this nullifys the unique_ptr that we move, and will also call the destructor for the particle
-        //that we are replacing
+        //that we are replacing, use the swap function if you need to keep dead particle pointers valid
         m_particles[it]= std::move(m_particles[m_particleCount-1]);
       }
       else
@@ -140,6 +142,8 @@ void Emitter::addParticle( Particle* const&_newParticle)
   //if the vector contains dead particles we reset the first dead one
   if(m_particleCount < m_particles.size() )
   {
+    //unfortunately it is neccessary to allocate a new particle and reset out unique_ptr,
+    //rather than simply reseting the attributes as the particles may differ in type
     m_particles[m_particleCount].reset(_newParticle);
   }
   else
@@ -156,7 +160,7 @@ void Emitter::draw() const
   //Save current view matrix by pushing it onto the stack
   glPushMatrix();
   //Manipulate the view with our transformation matrix
-  glMultMatrixf((const GLfloat*)glm::value_ptr(m_transform));
+  glMultMatrixf(glm::value_ptr(m_transform));
   //Enable point sprite texturing
   glTexEnvi( GL_POINT_SPRITE, GL_COORD_REPLACE, GL_TRUE );
   //Draw all living particles
@@ -198,9 +202,9 @@ void Emitter::createFlame()
     float incline = glm::linearRand(-m_flSteepness,m_flSteepness);   //radians
 
     //calculate intial velocity with a conversion from spherical to cartesian coodinates
-    glm::vec3 newVel = glm::vec3(m_flSpeed * glm::sin(incline) * glm::cos(rotation),
-                                 m_flSpeed * glm::cos(incline),
-                                 m_flSpeed * glm::sin(incline) * glm::sin(rotation));
+    glm::vec3 newVel = glm::vec3(m_flSpeed * glm::fastSin(incline) * glm::fastCos(rotation),
+                                 m_flSpeed * glm::fastCos(incline),
+                                 m_flSpeed * glm::fastSin(incline) * glm::fastSin(rotation));
 
     //Add the particle to our vector
     addParticle( new FlameParticle(m_pos + newPos,                        //initial position
@@ -216,9 +220,9 @@ void Emitter::createFlame()
 void Emitter::createFirework()
 {
   //calculate intial velocity with a conversion from spherical to cartesian coodinates
-  glm::vec3 newVel = glm::vec3(m_fwThrust * glm::sin(m_fwIncline) * glm::cos(m_fwRotation),
-                               m_fwThrust * glm::cos(m_fwIncline),
-                               m_fwThrust * glm::sin(m_fwIncline) * glm::sin(m_fwRotation));
+  glm::vec3 newVel = glm::vec3(m_fwThrust * glm::fastSin(m_fwIncline) * glm::fastCos(m_fwRotation),
+                               m_fwThrust * glm::fastCos(m_fwIncline),
+                               m_fwThrust * glm::fastSin(m_fwIncline) * glm::fastSin(m_fwRotation));
 
   //check if we can fit a new particle in the system
   if(m_particleCount + m_fwFuel*(m_fwTrail*1) < m_maxParticles)
@@ -257,9 +261,9 @@ void Emitter::createExplosion()
     int life = glm::linearRand(m_expLife/2,3*m_expLife/2);
 
     //calculate intial velocity with a conversion from spherical to cartesian coodinates
-    glm::vec3 newVel = glm::vec3(speed * glm::sin(incline) * glm::cos(rotation),
-                                 speed * glm::cos(incline),
-                                 speed * glm::sin(incline) * glm::sin(rotation));
+    glm::vec3 newVel = glm::vec3(speed * glm::fastSin(incline) * glm::fastCos(rotation),
+                                 speed * glm::fastCos(incline),
+                                 speed * glm::fastSin(incline) * glm::fastSin(rotation));
 
     //Add the particle to our vector
     addParticle( new ExplosionParticle(m_pos,                             //initial position
@@ -267,23 +271,18 @@ void Emitter::createExplosion()
                                        m_expCol,                          //initial colour
                                        size,                              //initial size
                                        life,                              //life span
-                                       20,                                //trail life span
                                        m_frame,                           //current frame
                                        true));                            //flag for spawning trails
   }
 }
 //-------------------------------------------------------------------------------------------------------------------------
-void Emitter::initTextures(std::string const &_texPath) const
+void Emitter::initTexture(GLuint* const&_tex, std::string const &_texPath) const
 {
-  GLuint texID;
   //Load image from path
   QImage texImage = QImage(_texPath.c_str());
   //convert data so that OpenGL can read it
   QImage texData = QGLWidget::convertToGLFormat(texImage);
-  //generate and bind the texture
-  glActiveTexture(GL_TEXTURE0);
-  glGenTextures(1, &texID);
-  glBindTexture(GL_TEXTURE_2D, texID);
+  glBindTexture(GL_TEXTURE_2D, *_tex);
   glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, texData.width(), texData.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, texData.bits());
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

@@ -27,7 +27,7 @@ class Emitter
 {
 public:
 
-                /*The following variables are used as settings for creating particle objects,
+  /*The following variables are used as settings for creating particle objects,
                  * they are public to allow the user to manipulate them using the GUI
                  */
   //----------------------------------------------------------------------------------------------------------------------
@@ -147,7 +147,11 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Local transformations of the system are stored in this matrix and used for drawing
   //----------------------------------------------------------------------------------------------------------------------
-  glm::mat4 m_transform = glm::mat4(1.0f);
+  glm::mat4      m_transform = glm::mat4(1.0f);
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Array of OpenGL textures to use for our point sprites, must change the array size to add texture
+  //----------------------------------------------------------------------------------------------------------------------
+  GLuint*        m_textures = new GLuint[3];
 
 public:
   //----------------------------------------------------------------------------------------------------------------------
@@ -159,17 +163,24 @@ public:
   /// @param[in] _pos the position of the emitter
   /// @param[in] _max the particle limit
   //----------------------------------------------------------------------------------------------------------------------
-  Emitter(glm::vec3 const&_pos, size_t const&_max);
+  Emitter( glm::vec3 const&_pos, size_t const&_max );
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Delete copy constructor, DO NOT IMPLEMENT, class contains unique pointer
+  //----------------------------------------------------------------------------------------------------------------------
+  Emitter( Emitter const& ) = delete;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Delete assignment, DO NOT IMPLEMENT, class contains unique pointer
+  //----------------------------------------------------------------------------------------------------------------------
+  Emitter &operator=( Emitter const& ) = delete;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Default destructor
   //----------------------------------------------------------------------------------------------------------------------
   ~Emitter();
-
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Initialises textures at the provided filepath
   /// @param[in] _texPath the filepath to the texture
   //----------------------------------------------------------------------------------------------------------------------
-  void initTextures(std::string const&_texPath = QDir::currentPath().toStdString() + "/textures/RadialGradient.png") const;
+  void initTexture(GLuint * const&_tex, std::string const&_texPath ) const;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Updates all particles in the system
   //----------------------------------------------------------------------------------------------------------------------
@@ -203,12 +214,12 @@ public:
   /// @brief Sets the current position to the provided position
   /// @param[in] _pos the new position
   //----------------------------------------------------------------------------------------------------------------------
-  inline void setPos(const glm::vec3 &_pos) { m_pos=_pos; }
+  inline void setPos( glm::vec3 const&_pos ) { m_pos=_pos; }
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Sets the particle limit to the provided size provided
   /// @param[in] _max the new particle limit
   //----------------------------------------------------------------------------------------------------------------------
-  inline void setMaxParticles(const size_t &_max) { m_maxParticles = _max; }
+  inline void setMaxParticles( size_t const&_max ) { m_maxParticles = _max; }
 
 private:
   //----------------------------------------------------------------------------------------------------------------------
@@ -238,9 +249,9 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Adds the given particle to the m_particles vector
   /// @param[in] _newParticle a const reference to a pointer, which
-  /// we will use to create a new unique_ptr, or reset an exisiting one
+  /// is used to create a new unique_ptr, or reset an exisiting one
   //----------------------------------------------------------------------------------------------------------------------
-  void addParticle(Particle * const &_newParticle);
+  void addParticle( Particle * const&_newParticle );
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Spawns new particles into the system
   //----------------------------------------------------------------------------------------------------------------------

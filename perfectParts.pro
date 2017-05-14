@@ -13,9 +13,9 @@ SOURCES+=\
     $$PWD/imgui/src/ImGUIImpl.cpp \
     $$PWD/src/ExplosionParticle.cpp \
     $$PWD/imgui/src/colourpick.cpp \
-    $$PWD/src/ImGuizmo.cpp
+    $$PWD/imgui/src/ImGuizmo.cpp
 
-CONFIG += c++11
+CONFIG += c++14
 CONFIG-=app_bundle
 CONFIG += debug
 
@@ -38,13 +38,13 @@ HEADERS += \
     $$PWD/imgui/include/stb_textedit.h \
     $$PWD/imgui/include/ImGUIImpl.h \
     $$PWD/include/ExplosionParticle.h \
-    $$PWD/include/ImGuizmo.h
+    $$PWD/imgui/include/ImGuizmo.h
 
 INCLUDEPATH +=include
 INCLUDEPATH +=data
 INCLUDEPATH +=imgui/include
 
-OTHER_FILES+=imgui.ini
+OTHER_FILES+=imgui/imgui.ini
 
 QMAKE_CXXFLAGS+= -msse -msse2 -msse3
 QMAKE_CXXFLAGS += -std=c++11 -O3

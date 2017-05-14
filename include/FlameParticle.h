@@ -13,7 +13,7 @@
 /// Initial Version 20/03/17
 
 /// \class FlameParticle
-/// \brief encapsulates a flame particle
+/// \brief encapsulates a flame particle, is derived from abstract Particle class
 //------------------------------------------------------------------------------------------------------------------------
 
 class FlameParticle : public Particle
@@ -36,29 +36,29 @@ public:
   FlameParticle( glm::vec3 const&_pos,
                  glm::vec3 const&_vel,
                  glm::vec4 const&_col,
-                 float const&_size,
-                 int const&_life,
-                 int const&_frame,
-                 bool const&_spawn);
+                 float     const&_size,
+                 int       const&_life,
+                 int       const&_frame,
+                 bool      const&_spawn);
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Default Virtual destructor for particle, neccessary to prevent memory leak
   //----------------------------------------------------------------------------------------------------------------------
   virtual ~FlameParticle() = default;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Returns the amount of child particles to spawn
+  /// @brief Returns the amount of child particles to spawn, overrides the Particle class implementation
   /// @param[in] _frame the current frame
   //----------------------------------------------------------------------------------------------------------------------
-  virtual int newParts( int const&_frame) const override;
+  virtual int newParts( int const&_frame ) const override;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Draws the particle
+  /// @brief Draws the particle, overrides the Particle class implementation
   /// @param[in] parameter is unused, but required to allow polymorphism across all particles
   //----------------------------------------------------------------------------------------------------------------------
-  virtual void draw( int const&) const override;
+  virtual void draw( int const& ) const override;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Creates a pointer to a child particle
+  /// @brief Creates a pointer to a child particle, overrides the Particle class implementation
   /// @param[in] _frame the current frame
   //----------------------------------------------------------------------------------------------------------------------
-  virtual Particle* createChild( int const&_frame) const override;
+  virtual Particle* createChild( int const&_frame ) const override;
 
 }; // class end
 

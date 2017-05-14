@@ -5,12 +5,15 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #endif
-#include "Scene.h"
+
 #include <string>
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/fast_trigonometry.hpp>
+#include <cstring>
 #include "ImGuizmo.h"
+#include "Scene.h"
 
 //-------------------------------------------------------------------------------------------------------------------------
 /// @file Particle.cpp
@@ -34,7 +37,10 @@ Scene::Scene( std::string const&_name, int const&_x, int const&_y,int const&_wid
   //initialise SDL, OpenGL and ImGui
   init();
   //load textures
-  m_emit.initTextures();
+  glGenTextures(2, m_emit.m_textures);
+  m_emit.initTexture(&m_emit.m_textures[2],QDir::currentPath().toStdString() +"/textures/star.png");
+  m_emit.initTexture(&m_emit.m_textures[1],QDir::currentPath().toStdString() +"/textures/smoke.png");
+  m_emit.initTexture(&m_emit.m_textures[0],QDir::currentPath().toStdString() +"/textures/RadialGradient.png");
   //mutex and conditions to prevent two threads from accessing the particle data at the same time
   m_mutex = SDL_CreateMutex();
   m_canDraw = SDL_CreateCond();
@@ -155,7 +161,7 @@ void Scene::resetPos()
 {
   //default rotation and translation
   m_rotation = glm::vec2(0.0f,0.0f);
-  m_translation = glm::vec3(0.0f,-30.0f,150.0f);
+  m_translation = glm::vec3(0.0f,-30.0f,-150.0f);
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::init()
@@ -237,6 +243,16 @@ void Scene::displayGui()
   ImGui_ImplSdl_ProcessEvent(&m_inputEvent);
   ImGui_ImplSdl_NewFrame(m_sdlWin);
   ImGuizmo::BeginFrame();
+
+  //if this is the first frame we draw the gui, use default position and size
+  static bool first = true;
+  if(first)
+  {
+    first = false;
+    ImGui::SetNextWindowSize(ImVec2(280.0f,320.0f));
+    ImGui::SetNextWindowPos(ImVec2(10.0f,10.0f));
+  }
+
   //gui window
   if(ImGui::Begin("Controls"))
   {
@@ -260,7 +276,6 @@ void Scene::displayGui()
     }
   }
   ImGui::End(); // end of window
-
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::transformView()
@@ -276,19 +291,22 @@ void Scene::transformView()
   /// Omar Cornut (April 4, 2017). Immediate mode 3D gizmo for scene editing [online].
   /// [Accessed 2017]. Available from: "https://github.com/CedricGuillemet/ImGuizmo"
 
-  ImGui::Text("Object transform");
+  ImGui::Text("Object transform"); //title
+
   //get current keys being pressed
   const Uint8 *keystates = SDL_GetKeyboardState(NULL);
+
   //get the current projection and modelview matrices
   float mv[16];
   float pm[16];
   glGetFloatv(GL_MODELVIEW_MATRIX, mv);
   glGetFloatv(GL_PROJECTION_MATRIX, pm);
   //convert our 4x4 Matrix to a float array that ImGuizmo can manipulate
-  float *matrix = new float[16];
-  matrix = (float*)glm::value_ptr(m_emit.m_transform);
+  float matrix[16];
+  std::memcpy(matrix,glm::value_ptr(m_emit.m_transform),sizeof(matrix));
+  //matrix = glm::value_ptr(m_emit.m_transform);
 
-  //Declare the current operation and mode
+  //Declare the current operation and mode, static to hold the users selection
   static ImGuizmo::OPERATION mCurrentGizmoOperation(ImGuizmo::TRANSLATE);
   static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
 
@@ -325,11 +343,11 @@ void Scene::transformView()
   //If our mouse is being used to rotate the scene we disable the gizmo
   if(keystates[SDL_SCANCODE_LCTRL] || keystates[SDL_SCANCODE_RCTRL])
   {
-    ImGuizmo::Enable(false);
+    ImGuizmo::Enable(false);//disables gizmo
   }
   else
   {
-    ImGuizmo::Enable(true);
+    ImGuizmo::Enable(true);//enables gizmo
   }
   //Get current input
   m_io = ImGui::GetIO();
@@ -347,18 +365,51 @@ void Scene::transformView()
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::displaySystemGui()
 {
-  //System GUI for performance stats and options
+  //Global scene settings
   ImGui::Checkbox("Pause",&m_pause);
   ImGui::SameLine();
   ImGui::Checkbox("Grid",&m_grid);
   ImGui::SameLine();
-  ImGui::Checkbox("Reduce memory",&m_emit.m_reduceMemory);
-  if(ImGui::Button("Clear System")) {m_emit.m_clear = true;}
   if(ImGui::Button("Screenshot")) {m_snap = true;}
+
+  //Set textures
+  ImGui::Text("Textures");
+  static int tex = 0;
+  bool updateTex = ImGui::RadioButton("Soft",&tex,0);
+  ImGui::SameLine();
+  updateTex |= ImGui::RadioButton("Smoke",&tex,1);
+  ImGui::SameLine();
+  updateTex |= ImGui::RadioButton("Star",&tex,2);
+  if(updateTex) { glBindTexture(GL_TEXTURE_2D, m_emit.m_textures[tex]); }
+  ImGui::Separator();
+
+  //Memory usage and performance statistics
+  if(ImGui::Button("Clear System")) {m_emit.m_clear = true;}
+  ImGui::SameLine();
+  ImGui::Checkbox("Reduce memory",&m_emit.m_reduceMemory);
   ImGui::Text("Particle count: %zu / %zu",m_emit.particleCount(),m_emit.maxParticles());
   ImGui::Text("Frame time: %.3f ms/frame ", 1000.0f / ImGui::GetIO().Framerate);
   ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
   ImGui::Text("Particle memory usage: %zu", m_emit.vectorSize());
+  ImGui::Separator();
+
+  //Set particle limit
+  static bool advanced = false;
+  const static int standard = m_emit.maxParticles();
+  static int max = standard;
+  ImGui::Checkbox("Advanced settings",&advanced);
+  if(advanced)
+  {
+    if(ImGui::SliderInt("Capacity",&max,0,500000))
+    {
+      m_emit.setMaxParticles(static_cast<size_t>(max));
+    }
+    if(ImGui::Button("Reset"))
+    {
+      max = standard;
+      m_emit.setMaxParticles(standard);
+    }
+  }
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::displayFlameGui()
@@ -402,7 +453,6 @@ void Scene::displayFireworkGui()
   //firework GUI
   ImGui::Text("Firework Colour");
   ColorSelector("Firework colour", m_emit.m_fwCol);
-
   ImGui::SliderAngle("Incline",&m_emit.m_fwIncline,-90.0f,90.0f);
   ImGui::SliderAngle("Rotation",&m_emit.m_fwRotation,0.0f,360.0f);
   ImGui::SliderFloat("Thrust",&m_emit.m_fwThrust,0.1f,2.0f);
@@ -457,8 +507,6 @@ void Scene::handleInput()
         case SDLK_f : resetPos(); break;
         case SDLK_g : m_grid = !m_grid; break;
         case SDLK_s : m_snap = true; break;
-        case SDLK_LEFT : m_emit.setPos(m_emit.pos() + glm::vec3(-0.5f,0.0f,0.0f)); break;
-        case SDLK_RIGHT : m_emit.setPos(m_emit.pos() + glm::vec3(0.5f,0.0f,0.0f)); break;
         default : break;
         }
       }
@@ -476,11 +524,11 @@ void Scene::handleMouse()
 {
   //get keystates
   const Uint8 *keystates = SDL_GetKeyboardState(NULL);
-  glm::ivec2 newPos;
-  float strength = 0.2f;
+  glm::ivec2 newPos;//will hold the new mouse position
+  float strength = 0.2f; // change this to increase viewport navigation speed
   //get mouse state
   Uint32 button = SDL_GetMouseState(&newPos.x, &newPos.y);
-  //calculate distance moved by mozuse
+  //calculate distance moved by mouse
   glm::vec2 diff = ((glm::vec2)(newPos - m_mousePos)) * strength;
   diff.x = -diff.x;
   if(keystates[SDL_SCANCODE_LCTRL] || keystates[SDL_SCANCODE_RCTRL])
@@ -506,7 +554,7 @@ void Scene::handleMouse()
       //zoom from right mouse
     case SDL_BUTTON_RMASK :
     {
-      m_translation.z -= diff.y;
+      m_translation.z += diff.y;
       break;
     }
       //translate from middle mouse
@@ -520,10 +568,11 @@ void Scene::handleMouse()
     }
   }
   //bounds checking for rotation to keep it between 0 and 360 degrees
-  if(m_rotation.x >= 360.0f) {m_rotation.x -= 360.0f;}
-  else if(m_rotation.x < 0.0f) {m_rotation.x += 360.0f;}
-  if(m_rotation.y >= 360.0f) {m_rotation.y -= 360.0f;}
-  else if(m_rotation.y < 0.0f) {m_rotation.y += 360.0f;}
+  m_rotation.x = std::fmod(m_rotation.x,360.0f);
+  if(m_rotation.x < 0) {m_rotation.x += 360.0f;}
+  m_rotation.y = std::fmod(m_rotation.y,360.0f);
+  if(m_rotation.y < 0) {m_rotation.y += 360.0f;}
+
   //save mouse position
   m_mousePos = newPos;
 }
@@ -563,7 +612,7 @@ void Scene::draw()
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   //load our view
   glLoadIdentity();
-  glTranslatef(m_translation.x,m_translation.y,-m_translation.z);
+  glTranslatef(m_translation.x,m_translation.y,m_translation.z);
   glRotatef(m_rotation.x,1.0f,0.0f,0.0f);
   glRotatef(m_rotation.y,0.0f,1.0f,0.0f);
   //draw the grid

@@ -15,7 +15,7 @@ int main()
   //start main loop
   while(!world.m_quit) //exit when prompted
   {
-    //update and draw
+    //take user input and draw
     world.handleInput();
     world.draw();
   }

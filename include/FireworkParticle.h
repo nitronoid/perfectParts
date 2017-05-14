@@ -13,7 +13,7 @@
 /// Initial Version 20/03/17
 
 /// \class FireworkParticle
-/// \brief encapsulates a firework particle
+/// \brief encapsulates a firework particle, is derived from abstract Particle class
 //------------------------------------------------------------------------------------------------------------------------
 
 class FireworkParticle : public Particle
@@ -38,43 +38,43 @@ public:
   /// @param[in] _spawn used to set m_spawn, flag for spawning children
   /// @param[in] _blink used to set m_blink, flag for blinking, or sparkling effect
   //----------------------------------------------------------------------------------------------------------------------
-  FireworkParticle( int const&_fuse,
+  FireworkParticle( int       const&_fuse,
                     glm::vec3 const&_pos,
                     glm::vec3 const&_vel,
                     glm::vec4 const&_col,
-                    float const&_brightness,
-                    float const&_size,
-                    int const&_life,
-                    int const&_elife,
-                    int const&_trailLife,
-                    int const&_frame,
-                    bool const&_spawn,
-                    bool const&_blink);
+                    float     const&_brightness,
+                    float     const&_size,
+                    int       const&_life,
+                    int       const&_elife,
+                    int       const&_trailLife,
+                    int       const&_frame,
+                    bool      const&_spawn,
+                    bool      const&_blink );
 
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Default Virtual destructor for particle, neccessary to prevent memory leak
   //----------------------------------------------------------------------------------------------------------------------
   virtual ~FireworkParticle() = default;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Returns the amount of child particles to spawn
+  /// @brief Returns the amount of child particles to spawn, overrides the Particle class implementation
   /// @param[in] parameter is unused, but required to allow polymorphism across all particles
   //----------------------------------------------------------------------------------------------------------------------
-  virtual int newParts( int const&) const override;
+  virtual int newParts( int const& ) const override;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Updates the particle properties
+  /// @brief Updates the particle properties, overrides the Particle class implementation
   /// @param[in] _frame the current frame
   //----------------------------------------------------------------------------------------------------------------------
-  virtual void update( int const&_frame) override;
+  virtual void update( int const&_frame ) override;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Draws the particle
+  /// @brief Draws the particle, overrides the Particle class implementation
   /// @param[in] _frame the current frame
   //----------------------------------------------------------------------------------------------------------------------
-  virtual void draw( int const&_frame) const override;
+  virtual void draw( int const&_frame ) const override;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Creates a pointer to a child particle
+  /// @brief Creates a pointer to a child particle, overrides the Particle class implementation
   /// @param[in] _frame the current frame
   //----------------------------------------------------------------------------------------------------------------------
-  virtual Particle* createChild( int const&_frame) const override;
+  virtual Particle* createChild( int const&_frame ) const override;
 
 private:
   //----------------------------------------------------------------------------------------------------------------------
@@ -90,14 +90,6 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   int            m_blinkPeriod = 0;
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Flag for blinking particle
-  //----------------------------------------------------------------------------------------------------------------------
-  bool           m_blink = false;
-  //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Tells us if the particle has exploded
-  //----------------------------------------------------------------------------------------------------------------------
-  bool           m_exploded = false;
-  //----------------------------------------------------------------------------------------------------------------------
   /// @brief The brightness of the particle used to calculate draw colour, simulates temperature of firework
   //----------------------------------------------------------------------------------------------------------------------
   float          m_brightness = 1.0f;
@@ -105,6 +97,14 @@ private:
   /// @brief The life of the particle once it has exploded
   //----------------------------------------------------------------------------------------------------------------------
   int            m_explodedLife = 100;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Flag for blinking particle
+  //----------------------------------------------------------------------------------------------------------------------
+  bool           m_blink = false;
+  //----------------------------------------------------------------------------------------------------------------------
+  /// @brief Tells us if the particle has exploded
+  //----------------------------------------------------------------------------------------------------------------------
+  bool           m_exploded = false;
 
 private:
   //----------------------------------------------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ private:
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Calculates the colour of the particle for drawing
   //----------------------------------------------------------------------------------------------------------------------
-  glm::vec4 calcCol( int const&_frame) const;
+  glm::vec4 calcCol( int const&_frame ) const;
 
 }; // class end
 
