@@ -1,7 +1,7 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <string>
 #include <glm/glm.hpp>
 #include "Emitter.h"
