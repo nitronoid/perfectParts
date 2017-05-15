@@ -11,6 +11,7 @@ avoid constant memory allocations and resizing, however options are available to
 - Qt
 - SDL2
 - OpenGL 2
+- libpng (Mac users may need to fix libpng library conflicts)
 
 ## Sources ##
 The program uses ImGui for drawing GUI elements, and ImGuizmo for drawing the transformation gizmo.

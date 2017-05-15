@@ -157,11 +157,11 @@ private :
 
 private:
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Our update call back which executes the update function
+  /// @brief The update callback which executes the update function
   //----------------------------------------------------------------------------------------------------------------------
   Uint32 updateCallback(Uint32 interval);
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief A static timer callback which casts our update callback to allow the SDL TimerID to use it
+  /// @brief A static timer callback which acts as a wrapper for the update callback, to allow the SDL TimerID to use it
   //----------------------------------------------------------------------------------------------------------------------
   static Uint32 timerCallback(Uint32 interval, void *param);
   //----------------------------------------------------------------------------------------------------------------------

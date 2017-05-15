@@ -1,0 +1,75 @@
+\hypertarget{pngutils_8h}{\section{include/pngutils.h File Reference}
+\label{pngutils_8h}\index{include/pngutils.\-h@{include/pngutils.\-h}}
+}
+{\ttfamily \#include $<$Open\-G\-L/gl.\-h$>$}\\*
+{\ttfamily \#include $<$Open\-G\-L/glu.\-h$>$}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+G\-Luint \hyperlink{pngutils_8h_a91be4e5fe91e8957390ee54b29fedb91}{png\-\_\-texture\-\_\-size} (const char $\ast$file\-\_\-name, G\-Luint \&width, G\-Luint \&height)
+\begin{DoxyCompactList}\small\item\em Determine the width, height and raw data size of the png with the given filename. \end{DoxyCompactList}\item 
+G\-Luint \hyperlink{pngutils_8h_a3e603317c013c990f2599cd986e0ebea}{png\-\_\-texture\-\_\-load} (const char $\ast$file\-\_\-name, G\-Lubyte $\ast$\&data)
+\begin{DoxyCompactList}\small\item\em Load the image into the specified data. \end{DoxyCompactList}\item 
+\hypertarget{pngutils_8h_ad2f510d17cd7d1606b496d6ea6c0b299}{bool \hyperlink{pngutils_8h_ad2f510d17cd7d1606b496d6ea6c0b299}{save\-\_\-png\-\_\-libpng} (const char $\ast$file\-\_\-name, uint8\-\_\-t $\ast$pixels, int w, int h)}\label{pngutils_8h_ad2f510d17cd7d1606b496d6ea6c0b299}
+
+\begin{DoxyCompactList}\small\item\em Save frame buffer as .png image file. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyNote}{Note}
+modified using pnglib code to allow saving a png \mbox{[}Accessed 2017\mbox{]}. Available from\-: \char`\"{}http\-://www.\-labbookpages.\-co.\-uk/software/img\-Proc/lib\-P\-N\-G.\-html\char`\"{} 
+\end{DoxyNote}
+
+
+\subsection{Function Documentation}
+\hypertarget{pngutils_8h_a3e603317c013c990f2599cd986e0ebea}{\index{pngutils.\-h@{pngutils.\-h}!png\-\_\-texture\-\_\-load@{png\-\_\-texture\-\_\-load}}
+\index{png\-\_\-texture\-\_\-load@{png\-\_\-texture\-\_\-load}!pngutils.h@{pngutils.\-h}}
+\subsubsection[{png\-\_\-texture\-\_\-load}]{\setlength{\rightskip}{0pt plus 5cm}G\-Luint png\-\_\-texture\-\_\-load (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{file\-\_\-name, }
+\item[{G\-Lubyte $\ast$\&}]{data}
+\end{DoxyParamCaption}
+)}}\label{pngutils_8h_a3e603317c013c990f2599cd986e0ebea}
+
+
+Load the image into the specified data. 
+
+Load the image into the specified data.
+
+
+\begin{DoxyParams}{Parameters}
+{\em file\-\_\-name} & The filename from which to load the data \\
+\hline
+{\em data} & The chunk of data to fill with this image \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+E\-X\-I\-T\-\_\-\-S\-U\-C\-C\-E\-S\-S on success, E\-X\-I\-T\-\_\-\-F\-A\-I\-L\-U\-R\-E on failure 
+\end{DoxyReturn}
+\hypertarget{pngutils_8h_a91be4e5fe91e8957390ee54b29fedb91}{\index{pngutils.\-h@{pngutils.\-h}!png\-\_\-texture\-\_\-size@{png\-\_\-texture\-\_\-size}}
+\index{png\-\_\-texture\-\_\-size@{png\-\_\-texture\-\_\-size}!pngutils.h@{pngutils.\-h}}
+\subsubsection[{png\-\_\-texture\-\_\-size}]{\setlength{\rightskip}{0pt plus 5cm}G\-Luint png\-\_\-texture\-\_\-size (
+\begin{DoxyParamCaption}
+\item[{const char $\ast$}]{file\-\_\-name, }
+\item[{G\-Luint \&}]{width, }
+\item[{G\-Luint \&}]{height}
+\end{DoxyParamCaption}
+)}}\label{pngutils_8h_a91be4e5fe91e8957390ee54b29fedb91}
+
+
+Determine the width, height and raw data size of the png with the given filename. 
+
+Determine the width, height and raw data size of the png with the given filename.
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & const char$\ast$ with name of texture filename \\
+\hline
+{\em width} & Passed by reference, set by this function if successful \\
+\hline
+{\em height} & Passed by reference, set by this function if successful \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+0 on failure, or the size of the memory structure you need to malloc to load the image on success (raw) 
+\end{DoxyReturn}

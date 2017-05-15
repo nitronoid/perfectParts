@@ -276,13 +276,13 @@ void Emitter::createExplosion()
   }
 }
 //-------------------------------------------------------------------------------------------------------------------------
-void Emitter::initTexture(GLuint* const&_tex, std::string const &_texPath) const
+void Emitter::initTexture(GLuint* const&o_tex, std::string const &_texPath) const
 {
   //Load image from path
   QImage texImage = QImage(_texPath.c_str());
   //convert data so that OpenGL can read it
   QImage texData = QGLWidget::convertToGLFormat(texImage);
-  glBindTexture(GL_TEXTURE_2D, *_tex);
+  glBindTexture(GL_TEXTURE_2D, *o_tex);
   glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB, texData.width(), texData.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, texData.bits());
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);

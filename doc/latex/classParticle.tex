@@ -1,0 +1,207 @@
+\hypertarget{classParticle}{\section{Particle Class Reference}
+\label{classParticle}\index{Particle@{Particle}}
+}
+
+
+encapsulates a particle  
+
+
+
+
+{\ttfamily \#include $<$Particle.\-h$>$}
+
+Inheritance diagram for Particle\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classParticle}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classParticle_a611ed46b6f07319f0e2f7bd588192a30}{\hyperlink{classParticle_a611ed46b6f07319f0e2f7bd588192a30}{Particle} ()=default}\label{classParticle_a611ed46b6f07319f0e2f7bd588192a30}
+
+\begin{DoxyCompactList}\small\item\em Default constructor that initialises member variables to default values. \end{DoxyCompactList}\item 
+\hyperlink{classParticle_abf90ea6b45c5e07a3945b1ac4b2b641d}{Particle} (glm\-::vec3 const \&\-\_\-pos, glm\-::vec3 const \&\-\_\-vel, glm\-::vec4 const \&\-\_\-col, float const \&\-\_\-size, int const \&\-\_\-life, int const \&\-\_\-frame, bool const \&\-\_\-spawn)
+\begin{DoxyCompactList}\small\item\em Constructor using intial position, velocity, colour, size, life span and a spawn flag. \end{DoxyCompactList}\item 
+\hypertarget{classParticle_a9d921eb3cc8673d98639bfc99c34da92}{virtual \hyperlink{classParticle_a9d921eb3cc8673d98639bfc99c34da92}{$\sim$\-Particle} ()=default}\label{classParticle_a9d921eb3cc8673d98639bfc99c34da92}
+
+\begin{DoxyCompactList}\small\item\em Default Virtual destructor for particle, neccessary to prevent memory leak. \end{DoxyCompactList}\item 
+virtual int \hyperlink{classParticle_abbaa24710a9341fe90df0da7b96a4014}{new\-Parts} (int const \&\-\_\-frame) const =0
+\begin{DoxyCompactList}\small\item\em Returns the amount of child particles to spawn. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classParticle_a842b0304310e8e8e92119563bbefe8a9}{update} (int const \&)
+\begin{DoxyCompactList}\small\item\em Updates the particle properties. \end{DoxyCompactList}\item 
+virtual \hyperlink{classParticle}{Particle} $\ast$ \hyperlink{classParticle_a3c7dcda6443a8cd16c142d6e712d3268}{create\-Child} (int const \&\-\_\-frame) const =0
+\begin{DoxyCompactList}\small\item\em Creates a pointer to a child particle. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classParticle_a468fedc0c5773683ce0f14e7a906b184}{draw} (int const \&\-\_\-frame) const =0
+\begin{DoxyCompactList}\small\item\em Draws the particle. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classParticle_afa6c5fb980874037e2ce0971f678b44d}{bool \hyperlink{classParticle_afa6c5fb980874037e2ce0971f678b44d}{m\-\_\-alive} = true}\label{classParticle_afa6c5fb980874037e2ce0971f678b44d}
+
+\begin{DoxyCompactList}\small\item\em Flag telling us if the particle is currently alive. \end{DoxyCompactList}\item 
+\hypertarget{classParticle_a1f7c4f4c38aa28b135d3b1abce3c0c02}{bool \hyperlink{classParticle_a1f7c4f4c38aa28b135d3b1abce3c0c02}{m\-\_\-spawn} = false}\label{classParticle_a1f7c4f4c38aa28b135d3b1abce3c0c02}
+
+\begin{DoxyCompactList}\small\item\em Flag for whether or not this particle spawns children. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classParticle_a5583d126be9e5a2afa87d5696af7bc2d}{glm\-::vec3 \hyperlink{classParticle_a5583d126be9e5a2afa87d5696af7bc2d}{m\-\_\-pos} = glm\-::vec3(0.\-0f,0.\-0f,0.\-0f)}\label{classParticle_a5583d126be9e5a2afa87d5696af7bc2d}
+
+\begin{DoxyCompactList}\small\item\em The position of the particle. \end{DoxyCompactList}\item 
+\hypertarget{classParticle_a36b054c5a937be8d39b5b74e7c0ccaf2}{glm\-::vec3 \hyperlink{classParticle_a36b054c5a937be8d39b5b74e7c0ccaf2}{m\-\_\-vel} = glm\-::vec3(0.\-0f,0.\-0f,0.\-0f)}\label{classParticle_a36b054c5a937be8d39b5b74e7c0ccaf2}
+
+\begin{DoxyCompactList}\small\item\em The velocity of the particle. \end{DoxyCompactList}\item 
+\hypertarget{classParticle_acb820ee6efbbc886119bd322aabdbda5}{glm\-::vec3 \hyperlink{classParticle_acb820ee6efbbc886119bd322aabdbda5}{m\-\_\-accel} = glm\-::vec3(0.\-0f,-\/0.\-01f,0.\-0f)}\label{classParticle_acb820ee6efbbc886119bd322aabdbda5}
+
+\begin{DoxyCompactList}\small\item\em The acceleration of the particle. \end{DoxyCompactList}\item 
+\hypertarget{classParticle_a43e01bd0b50f845f9066b8efb574a4a0}{glm\-::vec4 \hyperlink{classParticle_a43e01bd0b50f845f9066b8efb574a4a0}{m\-\_\-col} = glm\-::vec4(1.\-0f,1.\-0f,1.\-0f,1.\-0f)}\label{classParticle_a43e01bd0b50f845f9066b8efb574a4a0}
+
+\begin{DoxyCompactList}\small\item\em The colour of the particle. \end{DoxyCompactList}\item 
+\hypertarget{classParticle_af28eb6fe8c29593ff02e0ecbd017c1ef}{glm\-::vec4 \hyperlink{classParticle_af28eb6fe8c29593ff02e0ecbd017c1ef}{m\-\_\-col\-Delta} = glm\-::vec4(0.\-0f,0.\-0f,0.\-0f,0.\-0f)}\label{classParticle_af28eb6fe8c29593ff02e0ecbd017c1ef}
+
+\begin{DoxyCompactList}\small\item\em The rate of colour change. \end{DoxyCompactList}\item 
+\hypertarget{classParticle_aa823a748fcec2f10bf44143389e4fae9}{G\-Lfloat \hyperlink{classParticle_aa823a748fcec2f10bf44143389e4fae9}{m\-\_\-size\-Delta} = 0.\-0f}\label{classParticle_aa823a748fcec2f10bf44143389e4fae9}
+
+\begin{DoxyCompactList}\small\item\em The rate of size change. \end{DoxyCompactList}\item 
+\hypertarget{classParticle_af6e8decb5f201ebabe1f460b0cfbbc8d}{G\-Lfloat \hyperlink{classParticle_af6e8decb5f201ebabe1f460b0cfbbc8d}{m\-\_\-size} = 5.\-0f}\label{classParticle_af6e8decb5f201ebabe1f460b0cfbbc8d}
+
+\begin{DoxyCompactList}\small\item\em The size of the particle. \end{DoxyCompactList}\item 
+\hypertarget{classParticle_a281390be9b1a6d0bf3c7506b01cae304}{int \hyperlink{classParticle_a281390be9b1a6d0bf3c7506b01cae304}{m\-\_\-life} = 100}\label{classParticle_a281390be9b1a6d0bf3c7506b01cae304}
+
+\begin{DoxyCompactList}\small\item\em The remaining life span in frames. \end{DoxyCompactList}\item 
+\hypertarget{classParticle_a86d093cab863dafaa67891f5fbcca8fc}{int \hyperlink{classParticle_a86d093cab863dafaa67891f5fbcca8fc}{m\-\_\-birth\-Frame} = 0}\label{classParticle_a86d093cab863dafaa67891f5fbcca8fc}
+
+\begin{DoxyCompactList}\small\item\em The frame the particle was born. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+encapsulates a particle 
+
+Revision History\-: See \char`\"{}https\-://github.\-com/nitronoid/perfect\-Parts\char`\"{} Initial Version 20/03/17 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classParticle_abf90ea6b45c5e07a3945b1ac4b2b641d}{\index{Particle@{Particle}!Particle@{Particle}}
+\index{Particle@{Particle}!Particle@{Particle}}
+\subsubsection[{Particle}]{\setlength{\rightskip}{0pt plus 5cm}Particle\-::\-Particle (
+\begin{DoxyParamCaption}
+\item[{glm\-::vec3 const \&}]{\-\_\-pos, }
+\item[{glm\-::vec3 const \&}]{\-\_\-vel, }
+\item[{glm\-::vec4 const \&}]{\-\_\-col, }
+\item[{float const \&}]{\-\_\-size, }
+\item[{int const \&}]{\-\_\-life, }
+\item[{int const \&}]{\-\_\-frame, }
+\item[{bool const \&}]{\-\_\-spawn}
+\end{DoxyParamCaption}
+)}}\label{classParticle_abf90ea6b45c5e07a3945b1ac4b2b641d}
+
+
+Constructor using intial position, velocity, colour, size, life span and a spawn flag. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-pos} & the initial position of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-vel} & the initial velocity of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-col} & the initial colour of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-size} & the initial size of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-life} & the initial life of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-frame} & the current frame, used to set m\-\_\-birth\-Frame \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-spawn} & used to set m\-\_\-spawn, flag for spawning children \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classParticle_a3c7dcda6443a8cd16c142d6e712d3268}{\index{Particle@{Particle}!create\-Child@{create\-Child}}
+\index{create\-Child@{create\-Child}!Particle@{Particle}}
+\subsubsection[{create\-Child}]{\setlength{\rightskip}{0pt plus 5cm}virtual {\bf Particle}$\ast$ Particle\-::create\-Child (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{\-\_\-frame}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classParticle_a3c7dcda6443a8cd16c142d6e712d3268}
+
+
+Creates a pointer to a child particle. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-frame} & the current frame \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \hyperlink{classFireworkParticle_a29256978e2558abb2fc808e3b96b8000}{Firework\-Particle}, \hyperlink{classExplosionParticle_a1948c2b0f3b39d303b2d8cef6b0e0701}{Explosion\-Particle}, and \hyperlink{classFlameParticle_aac20eda5440173cc4c2e7cd93a73eff0}{Flame\-Particle}.
+
+\hypertarget{classParticle_a468fedc0c5773683ce0f14e7a906b184}{\index{Particle@{Particle}!draw@{draw}}
+\index{draw@{draw}!Particle@{Particle}}
+\subsubsection[{draw}]{\setlength{\rightskip}{0pt plus 5cm}virtual void Particle\-::draw (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{\-\_\-frame}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classParticle_a468fedc0c5773683ce0f14e7a906b184}
+
+
+Draws the particle. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-frame} & the current frame \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \hyperlink{classFireworkParticle_a495692a1f1f4a340c3d548215fd5e5d0}{Firework\-Particle}, \hyperlink{classExplosionParticle_a0e3a9cd71e0d13732254f9184b7f38e9}{Explosion\-Particle}, and \hyperlink{classFlameParticle_a8d0b55a23c44197f404f707a04e1a5f3}{Flame\-Particle}.
+
+\hypertarget{classParticle_abbaa24710a9341fe90df0da7b96a4014}{\index{Particle@{Particle}!new\-Parts@{new\-Parts}}
+\index{new\-Parts@{new\-Parts}!Particle@{Particle}}
+\subsubsection[{new\-Parts}]{\setlength{\rightskip}{0pt plus 5cm}virtual int Particle\-::new\-Parts (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{\-\_\-frame}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [pure virtual]}}}\label{classParticle_abbaa24710a9341fe90df0da7b96a4014}
+
+
+Returns the amount of child particles to spawn. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-frame} & the current frame \\
+\hline
+\end{DoxyParams}
+
+
+Implemented in \hyperlink{classFireworkParticle_ac0149d0e10dc1e20d108354543f15299}{Firework\-Particle}, \hyperlink{classExplosionParticle_a302953be6e09fa22437248d175906e55}{Explosion\-Particle}, and \hyperlink{classFlameParticle_abe5fd489f2b08f16b6d2722be57c3f5c}{Flame\-Particle}.
+
+\hypertarget{classParticle_a842b0304310e8e8e92119563bbefe8a9}{\index{Particle@{Particle}!update@{update}}
+\index{update@{update}!Particle@{Particle}}
+\subsubsection[{update}]{\setlength{\rightskip}{0pt plus 5cm}void Particle\-::update (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{classParticle_a842b0304310e8e8e92119563bbefe8a9}
+
+
+Updates the particle properties. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em parameter} & is unused, but required to allow polymorphism across all particles \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented in \hyperlink{classFireworkParticle_aacfe5d5991b4585c176d9e2315d0d293}{Firework\-Particle}, and \hyperlink{classExplosionParticle_ac1c36920bf241f397c639fdaac40a9f9}{Explosion\-Particle}.
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{Particle_8h}{Particle.\-h}\item 
+src/\hyperlink{Particle_8cpp}{Particle.\-cpp}\end{DoxyCompactItemize}

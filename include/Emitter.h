@@ -178,9 +178,10 @@ public:
   ~Emitter();
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Initialises textures at the provided filepath
+  /// @param[o] o_tex a pointer to store the openGL texture
   /// @param[in] _texPath the filepath to the texture
   //----------------------------------------------------------------------------------------------------------------------
-  void initTexture(GLuint * const&_tex, std::string const&_texPath ) const;
+  void initTexture(GLuint * const&o_tex, std::string const&_texPath ) const;
   //----------------------------------------------------------------------------------------------------------------------
   /// @brief Updates all particles in the system
   //----------------------------------------------------------------------------------------------------------------------

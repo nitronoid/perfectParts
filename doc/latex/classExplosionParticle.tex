@@ -1,0 +1,171 @@
+\hypertarget{classExplosionParticle}{\section{Explosion\-Particle Class Reference}
+\label{classExplosionParticle}\index{Explosion\-Particle@{Explosion\-Particle}}
+}
+
+
+encapsulates an explosion particle, is derived from abstract \hyperlink{classParticle}{Particle} class  
+
+
+
+
+{\ttfamily \#include $<$Explosion\-Particle.\-h$>$}
+
+Inheritance diagram for Explosion\-Particle\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classExplosionParticle}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classExplosionParticle_a2175ab3a5622c59880a5e087ee113b43}{\hyperlink{classExplosionParticle_a2175ab3a5622c59880a5e087ee113b43}{Explosion\-Particle} ()=default}\label{classExplosionParticle_a2175ab3a5622c59880a5e087ee113b43}
+
+\begin{DoxyCompactList}\small\item\em Default constructor that initialises member variables to default values. \end{DoxyCompactList}\item 
+\hyperlink{classExplosionParticle_a1f80155f7d52d00d04c614baa55aefac}{Explosion\-Particle} (glm\-::vec3 const \&\-\_\-pos, glm\-::vec3 const \&\-\_\-vel, glm\-::vec4 const \&\-\_\-col, float const \&\-\_\-size, int const \&\-\_\-life, int const \&\-\_\-frame, bool const \&\-\_\-spawn)
+\begin{DoxyCompactList}\small\item\em Constructor using intial position, velocity, colour, size, life span and a spawn flag. \end{DoxyCompactList}\item 
+\hypertarget{classExplosionParticle_aeb7b8dd431a766a92442540a5b876e03}{virtual \hyperlink{classExplosionParticle_aeb7b8dd431a766a92442540a5b876e03}{$\sim$\-Explosion\-Particle} ()=default}\label{classExplosionParticle_aeb7b8dd431a766a92442540a5b876e03}
+
+\begin{DoxyCompactList}\small\item\em Default Virtual destructor for particle, neccessary to prevent memory leak. \end{DoxyCompactList}\item 
+virtual int \hyperlink{classExplosionParticle_a302953be6e09fa22437248d175906e55}{new\-Parts} (int const \&) const override
+\begin{DoxyCompactList}\small\item\em Returns the amount of child particles to spawn, overrides the \hyperlink{classParticle}{Particle} class implementation. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classExplosionParticle_ac1c36920bf241f397c639fdaac40a9f9}{update} (int const \&\-\_\-frame) override
+\begin{DoxyCompactList}\small\item\em Updates the particle properties, overrides the \hyperlink{classParticle}{Particle} class implementation. \end{DoxyCompactList}\item 
+virtual \hyperlink{classParticle}{Particle} $\ast$ \hyperlink{classExplosionParticle_a1948c2b0f3b39d303b2d8cef6b0e0701}{create\-Child} (int const \&\-\_\-frame) const override
+\begin{DoxyCompactList}\small\item\em Creates a pointer to a child particle, overrides the \hyperlink{classParticle}{Particle} class implementation. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classExplosionParticle_a0e3a9cd71e0d13732254f9184b7f38e9}{draw} (int const \&) const override
+\begin{DoxyCompactList}\small\item\em Draws the particle, overrides the \hyperlink{classParticle}{Particle} class implementation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+encapsulates an explosion particle, is derived from abstract \hyperlink{classParticle}{Particle} class 
+
+Revision History\-: See \char`\"{}https\-://github.\-com/nitronoid/perfect\-Parts\char`\"{} Initial Version 24/03/17 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classExplosionParticle_a1f80155f7d52d00d04c614baa55aefac}{\index{Explosion\-Particle@{Explosion\-Particle}!Explosion\-Particle@{Explosion\-Particle}}
+\index{Explosion\-Particle@{Explosion\-Particle}!ExplosionParticle@{Explosion\-Particle}}
+\subsubsection[{Explosion\-Particle}]{\setlength{\rightskip}{0pt plus 5cm}Explosion\-Particle\-::\-Explosion\-Particle (
+\begin{DoxyParamCaption}
+\item[{glm\-::vec3 const \&}]{\-\_\-pos, }
+\item[{glm\-::vec3 const \&}]{\-\_\-vel, }
+\item[{glm\-::vec4 const \&}]{\-\_\-col, }
+\item[{float const \&}]{\-\_\-size, }
+\item[{int const \&}]{\-\_\-life, }
+\item[{int const \&}]{\-\_\-frame, }
+\item[{bool const \&}]{\-\_\-spawn}
+\end{DoxyParamCaption}
+)}}\label{classExplosionParticle_a1f80155f7d52d00d04c614baa55aefac}
+
+
+Constructor using intial position, velocity, colour, size, life span and a spawn flag. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-pos} & the initial position of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-vel} & the initial velocity of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-col} & the initial colour of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-size} & the initial size of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-life} & the initial life of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-t\-Life} & the life span of child particles that compose trails \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-frame} & the current frame, used to set m\-\_\-birth\-Frame \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-spawn} & used to set m\-\_\-spawn, flag for spawning children \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classExplosionParticle_a1948c2b0f3b39d303b2d8cef6b0e0701}{\index{Explosion\-Particle@{Explosion\-Particle}!create\-Child@{create\-Child}}
+\index{create\-Child@{create\-Child}!ExplosionParticle@{Explosion\-Particle}}
+\subsubsection[{create\-Child}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Particle} $\ast$ Explosion\-Particle\-::create\-Child (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{\-\_\-frame}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classExplosionParticle_a1948c2b0f3b39d303b2d8cef6b0e0701}
+
+
+Creates a pointer to a child particle, overrides the \hyperlink{classParticle}{Particle} class implementation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-frame} & the current frame \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classParticle_a3c7dcda6443a8cd16c142d6e712d3268}{Particle}.
+
+\hypertarget{classExplosionParticle_a0e3a9cd71e0d13732254f9184b7f38e9}{\index{Explosion\-Particle@{Explosion\-Particle}!draw@{draw}}
+\index{draw@{draw}!ExplosionParticle@{Explosion\-Particle}}
+\subsubsection[{draw}]{\setlength{\rightskip}{0pt plus 5cm}void Explosion\-Particle\-::draw (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classExplosionParticle_a0e3a9cd71e0d13732254f9184b7f38e9}
+
+
+Draws the particle, overrides the \hyperlink{classParticle}{Particle} class implementation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em parameter} & is unused, but required to allow polymorphism across all particles \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classParticle_a468fedc0c5773683ce0f14e7a906b184}{Particle}.
+
+\hypertarget{classExplosionParticle_a302953be6e09fa22437248d175906e55}{\index{Explosion\-Particle@{Explosion\-Particle}!new\-Parts@{new\-Parts}}
+\index{new\-Parts@{new\-Parts}!ExplosionParticle@{Explosion\-Particle}}
+\subsubsection[{new\-Parts}]{\setlength{\rightskip}{0pt plus 5cm}int Explosion\-Particle\-::new\-Parts (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classExplosionParticle_a302953be6e09fa22437248d175906e55}
+
+
+Returns the amount of child particles to spawn, overrides the \hyperlink{classParticle}{Particle} class implementation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em parameter} & is unused, but required to allow polymorphism across all particles \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classParticle_abbaa24710a9341fe90df0da7b96a4014}{Particle}.
+
+\hypertarget{classExplosionParticle_ac1c36920bf241f397c639fdaac40a9f9}{\index{Explosion\-Particle@{Explosion\-Particle}!update@{update}}
+\index{update@{update}!ExplosionParticle@{Explosion\-Particle}}
+\subsubsection[{update}]{\setlength{\rightskip}{0pt plus 5cm}void Explosion\-Particle\-::update (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{\-\_\-frame}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classExplosionParticle_ac1c36920bf241f397c639fdaac40a9f9}
+
+
+Updates the particle properties, overrides the \hyperlink{classParticle}{Particle} class implementation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-frame} & the current frame \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \hyperlink{classParticle_a842b0304310e8e8e92119563bbefe8a9}{Particle}.
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{ExplosionParticle_8h}{Explosion\-Particle.\-h}\item 
+src/\hyperlink{ExplosionParticle_8cpp}{Explosion\-Particle.\-cpp}\end{DoxyCompactItemize}

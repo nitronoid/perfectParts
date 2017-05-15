@@ -1,0 +1,91 @@
+\hypertarget{classScene}{\section{Scene Class Reference}
+\label{classScene}\index{Scene@{Scene}}
+}
+
+
+encapsulates a 3\-D Open\-G\-L \hyperlink{classScene}{Scene}  
+
+
+
+
+{\ttfamily \#include $<$Scene.\-h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classScene_a93ccc41b0a2f6c24e467d5d9de76ec0d}{\hyperlink{classScene_a93ccc41b0a2f6c24e467d5d9de76ec0d}{Scene} ()=default}\label{classScene_a93ccc41b0a2f6c24e467d5d9de76ec0d}
+
+\begin{DoxyCompactList}\small\item\em Default constructor that initialises member variables to default values. \end{DoxyCompactList}\item 
+\hyperlink{classScene_acae65db27253defb67bb4a7f55dda339}{Scene} (std\-::string const \&\-\_\-name, int const \&\-\_\-x, int const \&\-\_\-y, int const \&\-\_\-width, int const \&\-\_\-height)
+\begin{DoxyCompactList}\small\item\em Constructor that takes a name, intial size and intial position to generate an S\-D\-L window, with an Open\-G\-L context. \end{DoxyCompactList}\item 
+\hypertarget{classScene_a6f6ba16bcbbf24d7f16df251b0a2ae3d}{\hyperlink{classScene_a6f6ba16bcbbf24d7f16df251b0a2ae3d}{Scene} (\hyperlink{classScene}{Scene} const \&)=delete}\label{classScene_a6f6ba16bcbbf24d7f16df251b0a2ae3d}
+
+\begin{DoxyCompactList}\small\item\em Delete copy constructor, D\-O N\-O\-T I\-M\-P\-L\-E\-M\-E\-N\-T, emitter isn't trivially copyable. \end{DoxyCompactList}\item 
+\hypertarget{classScene_a09aee6d6de84d1471e0300411e9d0df7}{\hyperlink{classScene}{Scene} \& \hyperlink{classScene_a09aee6d6de84d1471e0300411e9d0df7}{operator=} (\hyperlink{classScene}{Scene} const \&)=delete}\label{classScene_a09aee6d6de84d1471e0300411e9d0df7}
+
+\begin{DoxyCompactList}\small\item\em Delete assignment, D\-O N\-O\-T I\-M\-P\-L\-E\-M\-E\-N\-T, emitter isn't trivially copyable. \end{DoxyCompactList}\item 
+\hypertarget{classScene_a3b8cec2e32546713915f8c6303c951f1}{\hyperlink{classScene_a3b8cec2e32546713915f8c6303c951f1}{$\sim$\-Scene} ()}\label{classScene_a3b8cec2e32546713915f8c6303c951f1}
+
+\begin{DoxyCompactList}\small\item\em Default destructor. \end{DoxyCompactList}\item 
+\hypertarget{classScene_ab404b2cf95322ad5efd4f3f5d942bdaf}{void \hyperlink{classScene_ab404b2cf95322ad5efd4f3f5d942bdaf}{make\-Current} () const }\label{classScene_ab404b2cf95322ad5efd4f3f5d942bdaf}
+
+\begin{DoxyCompactList}\small\item\em Calls S\-D\-L\-\_\-\-G\-L\-\_\-\-Make\-Current to link our S\-D\-L\-\_\-\-Window and Open\-G\-L context. \end{DoxyCompactList}\item 
+\hypertarget{classScene_ac0e3d2c98ba6063a086467fb2c19142f}{void \hyperlink{classScene_ac0e3d2c98ba6063a086467fb2c19142f}{draw} ()}\label{classScene_ac0e3d2c98ba6063a086467fb2c19142f}
+
+\begin{DoxyCompactList}\small\item\em Draws the G\-U\-I, particles and the window. \end{DoxyCompactList}\item 
+\hypertarget{classScene_a839b81cdf0cdc807e48e660d92606496}{void \hyperlink{classScene_a839b81cdf0cdc807e48e660d92606496}{handle\-Input} ()}\label{classScene_a839b81cdf0cdc807e48e660d92606496}
+
+\begin{DoxyCompactList}\small\item\em Handles user input, G\-U\-I, and manipulates emitter variables. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classScene_a45e1e0091492b6012f5496a7bb16bc05}{bool \hyperlink{classScene_a45e1e0091492b6012f5496a7bb16bc05}{m\-\_\-quit} = false}\label{classScene_a45e1e0091492b6012f5496a7bb16bc05}
+
+\begin{DoxyCompactList}\small\item\em Flag to close the window. \end{DoxyCompactList}\item 
+\hypertarget{classScene_af6cba253a3657d48d17a6369a98a208b}{S\-D\-L\-\_\-\-Event \hyperlink{classScene_af6cba253a3657d48d17a6369a98a208b}{m\-\_\-input\-Event}}\label{classScene_af6cba253a3657d48d17a6369a98a208b}
+
+\begin{DoxyCompactList}\small\item\em Holds the current user input. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+encapsulates a 3\-D Open\-G\-L \hyperlink{classScene}{Scene} 
+
+Revision History\-: See \char`\"{}https\-://github.\-com/nitronoid/perfect\-Parts\char`\"{} Initial Version 20/03/17 \begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000002}{Todo}]extend G\-U\-I functionality \end{DoxyRefDesc}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classScene_acae65db27253defb67bb4a7f55dda339}{\index{Scene@{Scene}!Scene@{Scene}}
+\index{Scene@{Scene}!Scene@{Scene}}
+\subsubsection[{Scene}]{\setlength{\rightskip}{0pt plus 5cm}Scene\-::\-Scene (
+\begin{DoxyParamCaption}
+\item[{std\-::string const \&}]{\-\_\-name, }
+\item[{int const \&}]{\-\_\-x, }
+\item[{int const \&}]{\-\_\-y, }
+\item[{int const \&}]{\-\_\-width, }
+\item[{int const \&}]{\-\_\-height}
+\end{DoxyParamCaption}
+)}}\label{classScene_acae65db27253defb67bb4a7f55dda339}
+
+
+Constructor that takes a name, intial size and intial position to generate an S\-D\-L window, with an Open\-G\-L context. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-name} & the name of the window \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-x} & the intial x position of the window \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-y} & the intial y position of the window \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-width} & the intial width of the window \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-height} & the intial height of the window \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{Scene_8h}{Scene.\-h}\item 
+src/Scene.\-cpp\end{DoxyCompactItemize}

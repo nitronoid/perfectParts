@@ -1,0 +1,184 @@
+\hypertarget{classFireworkParticle}{\section{Firework\-Particle Class Reference}
+\label{classFireworkParticle}\index{Firework\-Particle@{Firework\-Particle}}
+}
+
+
+encapsulates a firework particle, is derived from abstract \hyperlink{classParticle}{Particle} class  
+
+
+
+
+{\ttfamily \#include $<$Firework\-Particle.\-h$>$}
+
+Inheritance diagram for Firework\-Particle\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classFireworkParticle}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classFireworkParticle_a8900c1a99a0442e56dbff7153e967056}{\hyperlink{classFireworkParticle_a8900c1a99a0442e56dbff7153e967056}{Firework\-Particle} ()=default}\label{classFireworkParticle_a8900c1a99a0442e56dbff7153e967056}
+
+\begin{DoxyCompactList}\small\item\em Default constructor that initialises member variables to default values. \end{DoxyCompactList}\item 
+\hyperlink{classFireworkParticle_aa9833cf5c42acc247b734dbeb8125bc3}{Firework\-Particle} (int const \&\-\_\-fuse, glm\-::vec3 const \&\-\_\-pos, glm\-::vec3 const \&\-\_\-vel, glm\-::vec4 const \&\-\_\-col, float const \&\-\_\-brightness, float const \&\-\_\-size, int const \&\-\_\-life, int const \&\-\_\-elife, int const \&\-\_\-trail\-Life, int const \&\-\_\-frame, bool const \&\-\_\-spawn, bool const \&\-\_\-blink)
+\begin{DoxyCompactList}\small\item\em Constructor using intial position, velocity, colour, size, life span and a spawn flag. \end{DoxyCompactList}\item 
+\hypertarget{classFireworkParticle_a2093ec748627554a4e8b68663d4b2245}{virtual \hyperlink{classFireworkParticle_a2093ec748627554a4e8b68663d4b2245}{$\sim$\-Firework\-Particle} ()=default}\label{classFireworkParticle_a2093ec748627554a4e8b68663d4b2245}
+
+\begin{DoxyCompactList}\small\item\em Default Virtual destructor for particle, neccessary to prevent memory leak. \end{DoxyCompactList}\item 
+virtual int \hyperlink{classFireworkParticle_ac0149d0e10dc1e20d108354543f15299}{new\-Parts} (int const \&) const override
+\begin{DoxyCompactList}\small\item\em Returns the amount of child particles to spawn, overrides the \hyperlink{classParticle}{Particle} class implementation. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classFireworkParticle_aacfe5d5991b4585c176d9e2315d0d293}{update} (int const \&\-\_\-frame) override
+\begin{DoxyCompactList}\small\item\em Updates the particle properties, overrides the \hyperlink{classParticle}{Particle} class implementation. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classFireworkParticle_a495692a1f1f4a340c3d548215fd5e5d0}{draw} (int const \&\-\_\-frame) const override
+\begin{DoxyCompactList}\small\item\em Draws the particle, overrides the \hyperlink{classParticle}{Particle} class implementation. \end{DoxyCompactList}\item 
+virtual \hyperlink{classParticle}{Particle} $\ast$ \hyperlink{classFireworkParticle_a29256978e2558abb2fc808e3b96b8000}{create\-Child} (int const \&\-\_\-frame) const override
+\begin{DoxyCompactList}\small\item\em Creates a pointer to a child particle, overrides the \hyperlink{classParticle}{Particle} class implementation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+encapsulates a firework particle, is derived from abstract \hyperlink{classParticle}{Particle} class 
+
+Revision History\-: See \char`\"{}https\-://github.\-com/nitronoid/perfect\-Parts\char`\"{} Initial Version 20/03/17 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classFireworkParticle_aa9833cf5c42acc247b734dbeb8125bc3}{\index{Firework\-Particle@{Firework\-Particle}!Firework\-Particle@{Firework\-Particle}}
+\index{Firework\-Particle@{Firework\-Particle}!FireworkParticle@{Firework\-Particle}}
+\subsubsection[{Firework\-Particle}]{\setlength{\rightskip}{0pt plus 5cm}Firework\-Particle\-::\-Firework\-Particle (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{\-\_\-fuse, }
+\item[{glm\-::vec3 const \&}]{\-\_\-pos, }
+\item[{glm\-::vec3 const \&}]{\-\_\-vel, }
+\item[{glm\-::vec4 const \&}]{\-\_\-col, }
+\item[{float const \&}]{\-\_\-brightness, }
+\item[{float const \&}]{\-\_\-size, }
+\item[{int const \&}]{\-\_\-life, }
+\item[{int const \&}]{\-\_\-elife, }
+\item[{int const \&}]{\-\_\-trail\-Life, }
+\item[{int const \&}]{\-\_\-frame, }
+\item[{bool const \&}]{\-\_\-spawn, }
+\item[{bool const \&}]{\-\_\-blink}
+\end{DoxyParamCaption}
+)}}\label{classFireworkParticle_aa9833cf5c42acc247b734dbeb8125bc3}
+
+
+Constructor using intial position, velocity, colour, size, life span and a spawn flag. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-fuse} & the amount of frames until the firework explodes \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-pos} & the initial position of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-vel} & the initial velocity of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-col} & the initial colour of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-brightness} & the intial brightness of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-size} & the initial size of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-life} & the initial life of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-e\-Life} & the life of the particle after exploding \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-trail\-Life} & the life span of child particles that compose trails \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-frame} & the current frame, used to set m\-\_\-birth\-Frame \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-spawn} & used to set m\-\_\-spawn, flag for spawning children \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-blink} & used to set m\-\_\-blink, flag for blinking, or sparkling effect \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classFireworkParticle_a29256978e2558abb2fc808e3b96b8000}{\index{Firework\-Particle@{Firework\-Particle}!create\-Child@{create\-Child}}
+\index{create\-Child@{create\-Child}!FireworkParticle@{Firework\-Particle}}
+\subsubsection[{create\-Child}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Particle} $\ast$ Firework\-Particle\-::create\-Child (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{\-\_\-frame}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classFireworkParticle_a29256978e2558abb2fc808e3b96b8000}
+
+
+Creates a pointer to a child particle, overrides the \hyperlink{classParticle}{Particle} class implementation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-frame} & the current frame \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classParticle_a3c7dcda6443a8cd16c142d6e712d3268}{Particle}.
+
+\hypertarget{classFireworkParticle_a495692a1f1f4a340c3d548215fd5e5d0}{\index{Firework\-Particle@{Firework\-Particle}!draw@{draw}}
+\index{draw@{draw}!FireworkParticle@{Firework\-Particle}}
+\subsubsection[{draw}]{\setlength{\rightskip}{0pt plus 5cm}void Firework\-Particle\-::draw (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{\-\_\-frame}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classFireworkParticle_a495692a1f1f4a340c3d548215fd5e5d0}
+
+
+Draws the particle, overrides the \hyperlink{classParticle}{Particle} class implementation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-frame} & the current frame \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classParticle_a468fedc0c5773683ce0f14e7a906b184}{Particle}.
+
+\hypertarget{classFireworkParticle_ac0149d0e10dc1e20d108354543f15299}{\index{Firework\-Particle@{Firework\-Particle}!new\-Parts@{new\-Parts}}
+\index{new\-Parts@{new\-Parts}!FireworkParticle@{Firework\-Particle}}
+\subsubsection[{new\-Parts}]{\setlength{\rightskip}{0pt plus 5cm}int Firework\-Particle\-::new\-Parts (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classFireworkParticle_ac0149d0e10dc1e20d108354543f15299}
+
+
+Returns the amount of child particles to spawn, overrides the \hyperlink{classParticle}{Particle} class implementation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em parameter} & is unused, but required to allow polymorphism across all particles \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classParticle_abbaa24710a9341fe90df0da7b96a4014}{Particle}.
+
+\hypertarget{classFireworkParticle_aacfe5d5991b4585c176d9e2315d0d293}{\index{Firework\-Particle@{Firework\-Particle}!update@{update}}
+\index{update@{update}!FireworkParticle@{Firework\-Particle}}
+\subsubsection[{update}]{\setlength{\rightskip}{0pt plus 5cm}void Firework\-Particle\-::update (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{\-\_\-frame}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classFireworkParticle_aacfe5d5991b4585c176d9e2315d0d293}
+
+
+Updates the particle properties, overrides the \hyperlink{classParticle}{Particle} class implementation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-frame} & the current frame \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \hyperlink{classParticle_a842b0304310e8e8e92119563bbefe8a9}{Particle}.
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{FireworkParticle_8h}{Firework\-Particle.\-h}\item 
+src/\hyperlink{FireworkParticle_8cpp}{Firework\-Particle.\-cpp}\end{DoxyCompactItemize}

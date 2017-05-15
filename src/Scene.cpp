@@ -244,6 +244,10 @@ void Scene::createGLContext()
 
   //Create the context
   m_glContext=SDL_GL_CreateContext(m_sdlWin);
+  if(m_glContext == NULL)
+  {
+    ErrorExit("Failed to create OpenGL context");
+  }
 }
 //-------------------------------------------------------------------------------------------------------------------------
 void Scene::displayGui()

@@ -1,0 +1,235 @@
+\hypertarget{classEmitter}{\section{Emitter Class Reference}
+\label{classEmitter}\index{Emitter@{Emitter}}
+}
+
+
+encapsulates a particle emitter  
+
+
+
+
+{\ttfamily \#include $<$Emitter.\-h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classEmitter_ab3e306b6807f4113b77e0f0dc402f8ee}{\hyperlink{classEmitter_ab3e306b6807f4113b77e0f0dc402f8ee}{Emitter} ()=default}\label{classEmitter_ab3e306b6807f4113b77e0f0dc402f8ee}
+
+\begin{DoxyCompactList}\small\item\em Default constructor that initialises member variables to default values. \end{DoxyCompactList}\item 
+\hyperlink{classEmitter_a441e3b9302f39f0d359773e5ed72afb7}{Emitter} (glm\-::vec3 const \&\-\_\-pos, size\-\_\-t const \&\-\_\-max)
+\begin{DoxyCompactList}\small\item\em Constructor using a passed position and particle limit. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_abe9a91a6a709a244ec17c9f8284c279e}{\hyperlink{classEmitter_abe9a91a6a709a244ec17c9f8284c279e}{Emitter} (\hyperlink{classEmitter}{Emitter} const \&)=delete}\label{classEmitter_abe9a91a6a709a244ec17c9f8284c279e}
+
+\begin{DoxyCompactList}\small\item\em Delete copy constructor, D\-O N\-O\-T I\-M\-P\-L\-E\-M\-E\-N\-T, class contains unique pointer. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a9c2eef3cc2d4909b4f8053abc2a66505}{\hyperlink{classEmitter}{Emitter} \& \hyperlink{classEmitter_a9c2eef3cc2d4909b4f8053abc2a66505}{operator=} (\hyperlink{classEmitter}{Emitter} const \&)=delete}\label{classEmitter_a9c2eef3cc2d4909b4f8053abc2a66505}
+
+\begin{DoxyCompactList}\small\item\em Delete assignment, D\-O N\-O\-T I\-M\-P\-L\-E\-M\-E\-N\-T, class contains unique pointer. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a0af9a50316daf2580cde9b99fe7c6f96}{\hyperlink{classEmitter_a0af9a50316daf2580cde9b99fe7c6f96}{$\sim$\-Emitter} ()}\label{classEmitter_a0af9a50316daf2580cde9b99fe7c6f96}
+
+\begin{DoxyCompactList}\small\item\em Default destructor. \end{DoxyCompactList}\item 
+void \hyperlink{classEmitter_a9fbfc0ce29b00564ff2366aa4c9e10af}{init\-Texture} (G\-Luint $\ast$const \&o\-\_\-tex, std\-::string const \&\-\_\-tex\-Path) const 
+\begin{DoxyCompactList}\small\item\em Initialises textures at the provided filepath. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a2ece709498f9cbbb9d4f8cba2780b0e9}{void \hyperlink{classEmitter_a2ece709498f9cbbb9d4f8cba2780b0e9}{update} ()}\label{classEmitter_a2ece709498f9cbbb9d4f8cba2780b0e9}
+
+\begin{DoxyCompactList}\small\item\em Updates all particles in the system. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_ad0ef8fd3cc8a6d1b8996ec8da041e967}{void \hyperlink{classEmitter_ad0ef8fd3cc8a6d1b8996ec8da041e967}{draw} () const }\label{classEmitter_ad0ef8fd3cc8a6d1b8996ec8da041e967}
+
+\begin{DoxyCompactList}\small\item\em Draws all particles in the system. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a4b7046dbc627e71f29dbbb17b3ea0415}{std\-::size\-\_\-t \hyperlink{classEmitter_a4b7046dbc627e71f29dbbb17b3ea0415}{particle\-Count} () const }\label{classEmitter_a4b7046dbc627e71f29dbbb17b3ea0415}
+
+\begin{DoxyCompactList}\small\item\em Returns the current amount of particles in the system. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a64b6f240ca3d13e60789d92bbfe4d517}{std\-::size\-\_\-t \hyperlink{classEmitter_a64b6f240ca3d13e60789d92bbfe4d517}{max\-Particles} () const }\label{classEmitter_a64b6f240ca3d13e60789d92bbfe4d517}
+
+\begin{DoxyCompactList}\small\item\em Returns the maximum number of particles allowed to be in the system. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a4320b2c9aff78bc6fbb318b320291f6f}{std\-::size\-\_\-t \hyperlink{classEmitter_a4320b2c9aff78bc6fbb318b320291f6f}{vector\-Size} () const }\label{classEmitter_a4320b2c9aff78bc6fbb318b320291f6f}
+
+\begin{DoxyCompactList}\small\item\em Returns the current size of the array. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a8d3c4dba0d12c1952350cbc4cda69db7}{glm\-::vec3 \hyperlink{classEmitter_a8d3c4dba0d12c1952350cbc4cda69db7}{pos} () const }\label{classEmitter_a8d3c4dba0d12c1952350cbc4cda69db7}
+
+\begin{DoxyCompactList}\small\item\em Returns the current position. \end{DoxyCompactList}\item 
+void \hyperlink{classEmitter_a6229955278657909f2f88731d5015118}{set\-Pos} (glm\-::vec3 const \&\-\_\-pos)
+\begin{DoxyCompactList}\small\item\em Sets the current position to the provided position. \end{DoxyCompactList}\item 
+void \hyperlink{classEmitter_aa8ee7a71384a6759b675188221630f1a}{set\-Max\-Particles} (size\-\_\-t const \&\-\_\-max)
+\begin{DoxyCompactList}\small\item\em Sets the particle limit to the provided size provided. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classEmitter_a1cecbc82f0907e305afb6d6a4d6a3021}{bool \hyperlink{classEmitter_a1cecbc82f0907e305afb6d6a4d6a3021}{m\-\_\-reduce\-Memory} = false}\label{classEmitter_a1cecbc82f0907e305afb6d6a4d6a3021}
+
+\begin{DoxyCompactList}\small\item\em Flag used to determine whether the emitter should clear dead particles from m\-\_\-particles when unused, this will save memory but could slow down the system. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a24c3fe59e6f1ac64d61a9681d7a6c943}{bool \hyperlink{classEmitter_a24c3fe59e6f1ac64d61a9681d7a6c943}{m\-\_\-flame} = false}\label{classEmitter_a24c3fe59e6f1ac64d61a9681d7a6c943}
+
+\begin{DoxyCompactList}\small\item\em Flag used to spawn flame into the system. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_acd5d5ce9370f9e45d73ec7182155ad69}{glm\-::vec4 \hyperlink{classEmitter_acd5d5ce9370f9e45d73ec7182155ad69}{m\-\_\-fl\-Col} = glm\-::vec4(1.\-0f,0.\-67f,0.\-0f,1.\-0f)}\label{classEmitter_acd5d5ce9370f9e45d73ec7182155ad69}
+
+\begin{DoxyCompactList}\small\item\em Colour that the new flame will be. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a7835d97db9ca64b7534eba110e0f7845}{float \hyperlink{classEmitter_a7835d97db9ca64b7534eba110e0f7845}{m\-\_\-fl\-Speed} = 1.\-2f}\label{classEmitter_a7835d97db9ca64b7534eba110e0f7845}
+
+\begin{DoxyCompactList}\small\item\em Speed of the flame. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a4e024aa6c38ea9eb95c076d2325e0dfe}{int \hyperlink{classEmitter_a4e024aa6c38ea9eb95c076d2325e0dfe}{m\-\_\-fl\-Life} = 40}\label{classEmitter_a4e024aa6c38ea9eb95c076d2325e0dfe}
+
+\begin{DoxyCompactList}\small\item\em Average life of flame particles. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a56f401933d8c66a8355e9d3073041311}{int \hyperlink{classEmitter_a56f401933d8c66a8355e9d3073041311}{m\-\_\-fl\-Density} = 10}\label{classEmitter_a56f401933d8c66a8355e9d3073041311}
+
+\begin{DoxyCompactList}\small\item\em Amount of spawning particles to add every frame. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a77f3919bf2449d9fe9ab2294d824a10b}{float \hyperlink{classEmitter_a77f3919bf2449d9fe9ab2294d824a10b}{m\-\_\-fl\-Spread} = 2.\-0f}\label{classEmitter_a77f3919bf2449d9fe9ab2294d824a10b}
+
+\begin{DoxyCompactList}\small\item\em Spread of intial flame particle positions. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a254bbe70cc78563bc3e035eaa594c82d}{float \hyperlink{classEmitter_a254bbe70cc78563bc3e035eaa594c82d}{m\-\_\-fl\-Steepness} = 0.\-26f}\label{classEmitter_a254bbe70cc78563bc3e035eaa594c82d}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{classEmitter}{Emitter} angle for the flame particles. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_ab44f6794ae404bc2a6885f968241fa87}{float \hyperlink{classEmitter_ab44f6794ae404bc2a6885f968241fa87}{m\-\_\-fl\-Size} = 120.\-0f}\label{classEmitter_ab44f6794ae404bc2a6885f968241fa87}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{classEmitter}{Emitter} angle for the flame particles. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_aad0ffc2fadafa73475b9310ef57822f3}{bool \hyperlink{classEmitter_aad0ffc2fadafa73475b9310ef57822f3}{m\-\_\-fl\-Children} = true}\label{classEmitter_aad0ffc2fadafa73475b9310ef57822f3}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{classEmitter}{Emitter} angle for the flame particles. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a4e6f9266ac19bf3d185d30284bc43b24}{bool \hyperlink{classEmitter_a4e6f9266ac19bf3d185d30284bc43b24}{m\-\_\-firework} = false}\label{classEmitter_a4e6f9266ac19bf3d185d30284bc43b24}
+
+\begin{DoxyCompactList}\small\item\em Flag used to spawn a firework into the system. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_ad198e73134d1764f120e7e76acf3588b}{glm\-::vec4 \hyperlink{classEmitter_ad198e73134d1764f120e7e76acf3588b}{m\-\_\-fw\-Col} = glm\-::vec4(1.\-0f,0.\-078f,0.\-576f,1.\-0f)}\label{classEmitter_ad198e73134d1764f120e7e76acf3588b}
+
+\begin{DoxyCompactList}\small\item\em Colour of the new firework. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a37991f5de30d840af13e253b72ea281e}{bool \hyperlink{classEmitter_a37991f5de30d840af13e253b72ea281e}{m\-\_\-fw\-Blink} = false}\label{classEmitter_a37991f5de30d840af13e253b72ea281e}
+
+\begin{DoxyCompactList}\small\item\em Flag used to make new firework blink. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_aa661616d478f33efea14b12add2d13d3}{float \hyperlink{classEmitter_aa661616d478f33efea14b12add2d13d3}{m\-\_\-fw\-Rotation} = 0.\-0f}\label{classEmitter_aa661616d478f33efea14b12add2d13d3}
+
+\begin{DoxyCompactList}\small\item\em Angle of steepness between -\/180 and 180 degrees, that firework is ejected. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a37cf901dd5727584ee318d228abb9f94}{float \hyperlink{classEmitter_a37cf901dd5727584ee318d228abb9f94}{m\-\_\-fw\-Incline} = 0.\-0f}\label{classEmitter_a37cf901dd5727584ee318d228abb9f94}
+
+\begin{DoxyCompactList}\small\item\em Angle of rotation between 0 and 360 degrees, that firework is ejected. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_ac1325204ad2906d835790453b810763b}{float \hyperlink{classEmitter_ac1325204ad2906d835790453b810763b}{m\-\_\-fw\-Thrust} = 1.\-0f}\label{classEmitter_ac1325204ad2906d835790453b810763b}
+
+\begin{DoxyCompactList}\small\item\em Initial velocity of firework. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_adcdc6f5ca0e589fbf20ec45140c5a4aa}{int \hyperlink{classEmitter_adcdc6f5ca0e589fbf20ec45140c5a4aa}{m\-\_\-fw\-Fuel} = 300}\label{classEmitter_adcdc6f5ca0e589fbf20ec45140c5a4aa}
+
+\begin{DoxyCompactList}\small\item\em Amount of spawning particles in firework. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a2ddd6ee2e0e1609024903644f61543fc}{int \hyperlink{classEmitter_a2ddd6ee2e0e1609024903644f61543fc}{m\-\_\-fw\-Trail} = 20}\label{classEmitter_a2ddd6ee2e0e1609024903644f61543fc}
+
+\begin{DoxyCompactList}\small\item\em Lifespan of firework trail particles. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_ab17edfb3652261eb28b1d03f91f9d044}{int \hyperlink{classEmitter_ab17edfb3652261eb28b1d03f91f9d044}{m\-\_\-fw\-Fuse} = 95}\label{classEmitter_ab17edfb3652261eb28b1d03f91f9d044}
+
+\begin{DoxyCompactList}\small\item\em Fuse timer in frames before firework explodes. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a4b411dc3c9945ce1b987e67dfe73034d}{int \hyperlink{classEmitter_a4b411dc3c9945ce1b987e67dfe73034d}{m\-\_\-fw\-Exp\-Life} = 80}\label{classEmitter_a4b411dc3c9945ce1b987e67dfe73034d}
+
+\begin{DoxyCompactList}\small\item\em Lifespan of spawning particles in firework after explosion. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_ad4f37d42386349dd35897d1f90bc9626}{int \hyperlink{classEmitter_ad4f37d42386349dd35897d1f90bc9626}{m\-\_\-explosions} = 0}\label{classEmitter_ad4f37d42386349dd35897d1f90bc9626}
+
+\begin{DoxyCompactList}\small\item\em We detonate explosions over multiple frames to simulate a chain explosion, this give a more realistic look, this variable holds the remaining number of frames for which we will detonate explosions. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a2fb204e6cb07011468d7603f7aa8bce7}{glm\-::vec4 \hyperlink{classEmitter_a2fb204e6cb07011468d7603f7aa8bce7}{m\-\_\-exp\-Col} = glm\-::vec4(0.\-647f,0.\-306f,0.\-2f,1.\-0f)}\label{classEmitter_a2fb204e6cb07011468d7603f7aa8bce7}
+
+\begin{DoxyCompactList}\small\item\em Colour of new explosion. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a0e8ab9310a04b5860722e3cb953642e6}{int \hyperlink{classEmitter_a0e8ab9310a04b5860722e3cb953642e6}{m\-\_\-exp\-Density} = 20}\label{classEmitter_a0e8ab9310a04b5860722e3cb953642e6}
+
+\begin{DoxyCompactList}\small\item\em The life span of new explosion particles. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_afc994081ef53be0a63ef421697844524}{int \hyperlink{classEmitter_afc994081ef53be0a63ef421697844524}{m\-\_\-exp\-Life} = 80}\label{classEmitter_afc994081ef53be0a63ef421697844524}
+
+\begin{DoxyCompactList}\small\item\em The amount of shooting particles in the explosion. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a9698c6471e3d28a10c6210ecd2804f3d}{float \hyperlink{classEmitter_a9698c6471e3d28a10c6210ecd2804f3d}{m\-\_\-exp\-Size} = 70.\-0f}\label{classEmitter_a9698c6471e3d28a10c6210ecd2804f3d}
+
+\begin{DoxyCompactList}\small\item\em The size of the explosion particles. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_adf82b76b44887e822b839e580894a622}{float \hyperlink{classEmitter_adf82b76b44887e822b839e580894a622}{m\-\_\-exp\-Incline} = 1.\-5f}\label{classEmitter_adf82b76b44887e822b839e580894a622}
+
+\begin{DoxyCompactList}\small\item\em The range for the explosion particle emission. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_aefb05cb4e4750257404580f0792679d2}{float \hyperlink{classEmitter_aefb05cb4e4750257404580f0792679d2}{m\-\_\-exp\-Speed} = 1.\-0f}\label{classEmitter_aefb05cb4e4750257404580f0792679d2}
+
+\begin{DoxyCompactList}\small\item\em The speed of the explosion particles. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a60ab680e86688dd4f0f428b6d88f5f06}{bool \hyperlink{classEmitter_a60ab680e86688dd4f0f428b6d88f5f06}{m\-\_\-clear} = false}\label{classEmitter_a60ab680e86688dd4f0f428b6d88f5f06}
+
+\begin{DoxyCompactList}\small\item\em Flag to clear the system. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a79ec38b927d82009c22199a4cbecfd85}{glm\-::mat4 \hyperlink{classEmitter_a79ec38b927d82009c22199a4cbecfd85}{m\-\_\-transform} = glm\-::mat4(1.\-0f)}\label{classEmitter_a79ec38b927d82009c22199a4cbecfd85}
+
+\begin{DoxyCompactList}\small\item\em Local transformations of the system are stored in this matrix and used for drawing. \end{DoxyCompactList}\item 
+\hypertarget{classEmitter_a4530f4a730e651511dfee30293e666ba}{G\-Luint $\ast$ \hyperlink{classEmitter_a4530f4a730e651511dfee30293e666ba}{m\-\_\-textures} = new G\-Luint\mbox{[}3\mbox{]}}\label{classEmitter_a4530f4a730e651511dfee30293e666ba}
+
+\begin{DoxyCompactList}\small\item\em Array of Open\-G\-L textures to use for our point sprites, must change the array size to add texture. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+encapsulates a particle emitter 
+
+Revision History\-: See \char`\"{}https\-://github.\-com/nitronoid/perfect\-Parts\char`\"{} Initial Version 20/03/17 \begin{DoxyRefDesc}{Todo}
+\item[\hyperlink{todo__todo000001}{Todo}]add more variables for gui \end{DoxyRefDesc}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classEmitter_a441e3b9302f39f0d359773e5ed72afb7}{\index{Emitter@{Emitter}!Emitter@{Emitter}}
+\index{Emitter@{Emitter}!Emitter@{Emitter}}
+\subsubsection[{Emitter}]{\setlength{\rightskip}{0pt plus 5cm}Emitter\-::\-Emitter (
+\begin{DoxyParamCaption}
+\item[{glm\-::vec3 const \&}]{\-\_\-pos, }
+\item[{size\-\_\-t const \&}]{\-\_\-max}
+\end{DoxyParamCaption}
+)}}\label{classEmitter_a441e3b9302f39f0d359773e5ed72afb7}
+
+
+Constructor using a passed position and particle limit. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-pos} & the position of the emitter \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-max} & the particle limit \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classEmitter_a9fbfc0ce29b00564ff2366aa4c9e10af}{\index{Emitter@{Emitter}!init\-Texture@{init\-Texture}}
+\index{init\-Texture@{init\-Texture}!Emitter@{Emitter}}
+\subsubsection[{init\-Texture}]{\setlength{\rightskip}{0pt plus 5cm}void Emitter\-::init\-Texture (
+\begin{DoxyParamCaption}
+\item[{G\-Luint $\ast$const \&}]{o\-\_\-tex, }
+\item[{std\-::string const \&}]{\-\_\-tex\-Path}
+\end{DoxyParamCaption}
+) const}}\label{classEmitter_a9fbfc0ce29b00564ff2366aa4c9e10af}
+
+
+Initialises textures at the provided filepath. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+ & {\em o\mbox{]}} & o\-\_\-tex a pointer to store the open\-G\-L texture \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-tex\-Path} & the filepath to the texture \\
+\hline
+\end{DoxyParams}
+\hypertarget{classEmitter_aa8ee7a71384a6759b675188221630f1a}{\index{Emitter@{Emitter}!set\-Max\-Particles@{set\-Max\-Particles}}
+\index{set\-Max\-Particles@{set\-Max\-Particles}!Emitter@{Emitter}}
+\subsubsection[{set\-Max\-Particles}]{\setlength{\rightskip}{0pt plus 5cm}void Emitter\-::set\-Max\-Particles (
+\begin{DoxyParamCaption}
+\item[{size\-\_\-t const \&}]{\-\_\-max}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classEmitter_aa8ee7a71384a6759b675188221630f1a}
+
+
+Sets the particle limit to the provided size provided. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-max} & the new particle limit \\
+\hline
+\end{DoxyParams}
+\hypertarget{classEmitter_a6229955278657909f2f88731d5015118}{\index{Emitter@{Emitter}!set\-Pos@{set\-Pos}}
+\index{set\-Pos@{set\-Pos}!Emitter@{Emitter}}
+\subsubsection[{set\-Pos}]{\setlength{\rightskip}{0pt plus 5cm}void Emitter\-::set\-Pos (
+\begin{DoxyParamCaption}
+\item[{glm\-::vec3 const \&}]{\-\_\-pos}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{classEmitter_a6229955278657909f2f88731d5015118}
+
+
+Sets the current position to the provided position. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-pos} & the new position \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{Emitter_8h}{Emitter.\-h}\item 
+src/\hyperlink{Emitter_8cpp}{Emitter.\-cpp}\end{DoxyCompactItemize}

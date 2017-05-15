@@ -1,0 +1,147 @@
+\hypertarget{classFlameParticle}{\section{Flame\-Particle Class Reference}
+\label{classFlameParticle}\index{Flame\-Particle@{Flame\-Particle}}
+}
+
+
+encapsulates a flame particle, is derived from abstract \hyperlink{classParticle}{Particle} class  
+
+
+
+
+{\ttfamily \#include $<$Flame\-Particle.\-h$>$}
+
+Inheritance diagram for Flame\-Particle\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classFlameParticle}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classFlameParticle_af0faccc4ff4f1ff25aa1489cb98fee41}{\hyperlink{classFlameParticle_af0faccc4ff4f1ff25aa1489cb98fee41}{Flame\-Particle} ()=default}\label{classFlameParticle_af0faccc4ff4f1ff25aa1489cb98fee41}
+
+\begin{DoxyCompactList}\small\item\em Default constructor that initialises member variables to default values. \end{DoxyCompactList}\item 
+\hyperlink{classFlameParticle_aacb39d3f0127656555c0f5bdbf12dfea}{Flame\-Particle} (glm\-::vec3 const \&\-\_\-pos, glm\-::vec3 const \&\-\_\-vel, glm\-::vec4 const \&\-\_\-col, float const \&\-\_\-size, int const \&\-\_\-life, int const \&\-\_\-frame, bool const \&\-\_\-spawn)
+\begin{DoxyCompactList}\small\item\em Constructor using intial position, velocity, colour, size, life span and a spawn flag. \end{DoxyCompactList}\item 
+\hypertarget{classFlameParticle_a22bf84e45b0da08457b869be7671eb5b}{virtual \hyperlink{classFlameParticle_a22bf84e45b0da08457b869be7671eb5b}{$\sim$\-Flame\-Particle} ()=default}\label{classFlameParticle_a22bf84e45b0da08457b869be7671eb5b}
+
+\begin{DoxyCompactList}\small\item\em Default Virtual destructor for particle, neccessary to prevent memory leak. \end{DoxyCompactList}\item 
+virtual int \hyperlink{classFlameParticle_abe5fd489f2b08f16b6d2722be57c3f5c}{new\-Parts} (int const \&\-\_\-frame) const override
+\begin{DoxyCompactList}\small\item\em Returns the amount of child particles to spawn, overrides the \hyperlink{classParticle}{Particle} class implementation. \end{DoxyCompactList}\item 
+virtual void \hyperlink{classFlameParticle_a8d0b55a23c44197f404f707a04e1a5f3}{draw} (int const \&) const override
+\begin{DoxyCompactList}\small\item\em Draws the particle, overrides the \hyperlink{classParticle}{Particle} class implementation. \end{DoxyCompactList}\item 
+virtual \hyperlink{classParticle}{Particle} $\ast$ \hyperlink{classFlameParticle_aac20eda5440173cc4c2e7cd93a73eff0}{create\-Child} (int const \&\-\_\-frame) const override
+\begin{DoxyCompactList}\small\item\em Creates a pointer to a child particle, overrides the \hyperlink{classParticle}{Particle} class implementation. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+encapsulates a flame particle, is derived from abstract \hyperlink{classParticle}{Particle} class 
+
+Revision History\-: See \char`\"{}https\-://github.\-com/nitronoid/perfect\-Parts\char`\"{} Initial Version 20/03/17 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{classFlameParticle_aacb39d3f0127656555c0f5bdbf12dfea}{\index{Flame\-Particle@{Flame\-Particle}!Flame\-Particle@{Flame\-Particle}}
+\index{Flame\-Particle@{Flame\-Particle}!FlameParticle@{Flame\-Particle}}
+\subsubsection[{Flame\-Particle}]{\setlength{\rightskip}{0pt plus 5cm}Flame\-Particle\-::\-Flame\-Particle (
+\begin{DoxyParamCaption}
+\item[{glm\-::vec3 const \&}]{\-\_\-pos, }
+\item[{glm\-::vec3 const \&}]{\-\_\-vel, }
+\item[{glm\-::vec4 const \&}]{\-\_\-col, }
+\item[{float const \&}]{\-\_\-size, }
+\item[{int const \&}]{\-\_\-life, }
+\item[{int const \&}]{\-\_\-frame, }
+\item[{bool const \&}]{\-\_\-spawn}
+\end{DoxyParamCaption}
+)}}\label{classFlameParticle_aacb39d3f0127656555c0f5bdbf12dfea}
+
+
+Constructor using intial position, velocity, colour, size, life span and a spawn flag. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-pos} & the initial position of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-vel} & the initial velocity of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-col} & the initial colour of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-size} & the initial size of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-life} & the initial life of the particle \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-frame} & the current frame, used to set m\-\_\-birth\-Frame \\
+\hline
+\mbox{\tt in}  & {\em \-\_\-spawn} & used to set m\-\_\-spawn, flag for spawning children \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{classFlameParticle_aac20eda5440173cc4c2e7cd93a73eff0}{\index{Flame\-Particle@{Flame\-Particle}!create\-Child@{create\-Child}}
+\index{create\-Child@{create\-Child}!FlameParticle@{Flame\-Particle}}
+\subsubsection[{create\-Child}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Particle} $\ast$ Flame\-Particle\-::create\-Child (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{\-\_\-frame}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classFlameParticle_aac20eda5440173cc4c2e7cd93a73eff0}
+
+
+Creates a pointer to a child particle, overrides the \hyperlink{classParticle}{Particle} class implementation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-frame} & the current frame \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classParticle_a3c7dcda6443a8cd16c142d6e712d3268}{Particle}.
+
+\hypertarget{classFlameParticle_a8d0b55a23c44197f404f707a04e1a5f3}{\index{Flame\-Particle@{Flame\-Particle}!draw@{draw}}
+\index{draw@{draw}!FlameParticle@{Flame\-Particle}}
+\subsubsection[{draw}]{\setlength{\rightskip}{0pt plus 5cm}void Flame\-Particle\-::draw (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classFlameParticle_a8d0b55a23c44197f404f707a04e1a5f3}
+
+
+Draws the particle, overrides the \hyperlink{classParticle}{Particle} class implementation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em parameter} & is unused, but required to allow polymorphism across all particles \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classParticle_a468fedc0c5773683ce0f14e7a906b184}{Particle}.
+
+\hypertarget{classFlameParticle_abe5fd489f2b08f16b6d2722be57c3f5c}{\index{Flame\-Particle@{Flame\-Particle}!new\-Parts@{new\-Parts}}
+\index{new\-Parts@{new\-Parts}!FlameParticle@{Flame\-Particle}}
+\subsubsection[{new\-Parts}]{\setlength{\rightskip}{0pt plus 5cm}int Flame\-Particle\-::new\-Parts (
+\begin{DoxyParamCaption}
+\item[{int const \&}]{\-\_\-frame}
+\end{DoxyParamCaption}
+) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}}\label{classFlameParticle_abe5fd489f2b08f16b6d2722be57c3f5c}
+
+
+Returns the amount of child particles to spawn, overrides the \hyperlink{classParticle}{Particle} class implementation. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em \-\_\-frame} & the current frame \\
+\hline
+\end{DoxyParams}
+
+
+Implements \hyperlink{classParticle_abbaa24710a9341fe90df0da7b96a4014}{Particle}.
+
+
+
+The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+include/\hyperlink{FlameParticle_8h}{Flame\-Particle.\-h}\item 
+src/Flame\-Particle.\-cpp\end{DoxyCompactItemize}
