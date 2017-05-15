@@ -53,6 +53,8 @@ Scene::Scene( std::string const&_name, int const&_x, int const&_y,int const&_wid
 //-------------------------------------------------------------------------------------------------------------------------
 Scene::~Scene()
 {
+  //Destroy our textures
+  glDeleteTextures(3,m_emit.m_textures);
   //shut down ImGui
   ImGui_ImplSdl_Shutdown();
   //remove mutex and conditions
@@ -198,17 +200,24 @@ void Scene::initGL() const
   glClearColor(0.0f,0.0f,0.0f,1.0f);
   //set viewport and load projection
   resize();
-  //set OpenGL parameters
+  //Disable lighting as particles are light sources
   glDisable(GL_LIGHTING);
-  glDisable(GL_DEPTH_TEST);
-  glEnable(GL_NORMALIZE);
-  glEnable( GL_POINT_SMOOTH ); //rounded points
+  //Depth test for correct drawing order
+  glEnable(GL_DEPTH_TEST);
+  //Don't write to depth buffer so that additive blending works correctly
+  glDepthMask(GL_FALSE);
+  //rounded points
+  glEnable( GL_POINT_SMOOTH );
+  //The point distance attenuation settings scale point sprites based on distance
   glPointParameterfv(GL_POINT_DISTANCE_ATTENUATION, coeff);
   glPointParameterfv(GL_POINT_SIZE_MIN, &min);
   glPointParameterfv(GL_POINT_FADE_THRESHOLD_SIZE, &thresh);
-  glEnable(GL_TEXTURE_2D); //need this for textures
-  glEnable(GL_POINT_SPRITE); //need this for point sprites
-  glBlendFunc( GL_ONE, GL_ONE ); //additive blending
+  //enable textures
+  glEnable(GL_TEXTURE_2D);
+  //textured point sprites
+  glEnable(GL_POINT_SPRITE);
+  //additive blending
+  glBlendFunc( GL_ONE, GL_ONE );
   glEnable( GL_BLEND );
 }
 //-------------------------------------------------------------------------------------------------------------------------
@@ -416,6 +425,7 @@ void Scene::displayFlameGui()
 {
   //Flame GUI
   ImGui::Text("Fire colour");
+  //Set properties for new flame particles
   ColorSelector("Fire colour", m_emit.m_flCol);
   ImGui::SliderFloat("Size",&m_emit.m_flSize,2.0f,200.0f);
   ImGui::SliderFloat("Speed",&m_emit.m_flSpeed,0.1f,2.0f);
@@ -432,6 +442,7 @@ void Scene::displayExplosionGui()
 {
   //Explosion GUI
   ImGui::Text("Explosion colour");
+  //Set properties for new Explosion particles
   ColorSelector("Explosion colour", m_emit.m_expCol);
   ImGui::SliderFloat("Size",&m_emit.m_expSize,1.0f,200.0f);
   ImGui::SliderFloat("Speed",&m_emit.m_expSpeed,0.1f,2.0f);
@@ -452,6 +463,7 @@ void Scene::displayFireworkGui()
 {
   //firework GUI
   ImGui::Text("Firework Colour");
+  //Set properties for new fire particles
   ColorSelector("Firework colour", m_emit.m_fwCol);
   ImGui::SliderAngle("Incline",&m_emit.m_fwIncline,-90.0f,90.0f);
   ImGui::SliderAngle("Rotation",&m_emit.m_fwRotation,0.0f,360.0f);
