@@ -31,7 +31,7 @@ The system has some basic controls implemented with keyboard shortcuts
 - ESC --- Quits the program
 - SPACE --- Pauses time
 
-The clicking and dragging the mouse can be used to transform the 3D scene, when holding down CTRL on the keyboard.
+Clicking and dragging the mouse can be used to transform the 3D scene, when holding down CTRL on the keyboard.
 - CTRL + LEFT Mouse --- Rotate scene
 - CTRL + RIGHT Mouse --- Zoom scene
 - CTRL + MIDDLE Mouse --- Pan scene
@@ -47,7 +47,7 @@ Every control has a label which explains its use.
 <img src="http://i.imgur.com/GLfH7ny.png" width="250">
 </p>
 The system tab contains options to pause time, select texture, take a screenshot, reduce memory and clear the system.
-If you take a screenshot, it will be saved in .png format in the local screenshot folder.
+If you take a screenshot, it will be saved in .png format in the local screenshot folder (program must be run from the same directory as this folder).
 The reduce memory option will use a garbage collector to remove unused particles from the system, based on the current number and performance. 
 This will allow for the system to be clean when it will least affect performance. 
 The advanced section will allow you to change the particle system limit, which I have defaulted to 100,000.
@@ -56,8 +56,8 @@ The advanced section will allow you to change the particle system limit, which I
 <p align="center">
 <img src="http://i.imgur.com/E3d5jDZ.png" width="500">
 </p>
-The view tab displays the scene rotation and translations, and allows for manual editing.
-It also displays the current rotation and translations of the emitter, note that this only affects the matrix and not the actual emitter position, gravity and other forces will be relative to the transformations.
+The view tab displays the scene rotation and translation, and allows for manual editing.
+It also displays the current rotation and translation of the emitter, note that this only affects the matrix and not the actual emitter position, gravity and other forces will be relative to the transformations.
 A gizmo is displayed when this tab is selected for interactive editing of the transformation, which can be done in local or world space.
 
 ## References ##
