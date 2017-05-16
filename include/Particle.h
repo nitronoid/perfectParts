@@ -20,7 +20,7 @@
 /// Initial Version 20/03/17
 
 /// \class Particle
-/// \brief encapsulates a particle
+/// \brief encapsulates a particle, is an abstract class
 //------------------------------------------------------------------------------------------------------------------------
 
 class Particle
@@ -73,7 +73,10 @@ public:
   //----------------------------------------------------------------------------------------------------------------------
   virtual void update( int const& );
   //----------------------------------------------------------------------------------------------------------------------
-  /// @brief Creates a pointer to a child particle
+  /// @brief Creates a pointer to a child particle, I chose to implement the create child class as a member function
+  /// for all derived particle classes as in the current system, particles may only spawn other particles of the same
+  /// type. If it was required that they spawn particles of other types I would implement a factory patter, but for now
+  /// this seems like a more compact solution.
   /// @param[in] _frame the current frame
   //----------------------------------------------------------------------------------------------------------------------
   virtual Particle* createChild( int const&_frame ) const = 0;

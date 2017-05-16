@@ -6806,7 +6806,7 @@ bool ImGui::DragFloat(const char* label, float* v, float v_speed, float v_min, f
     int decimal_precision = ParseFormatPrecision(display_format, 3);
 
     // Tabbing or CTRL-clicking on Drag turns it into an input box
-    bool start_text_input = false;
+   // bool start_text_input = false;
     const bool tab_focus_requested = FocusableItemRegister(window, g.ActiveId == id);
     if (tab_focus_requested || (hovered && (g.IO.MouseClicked[0] | g.IO.MouseDoubleClicked[0])))
     {
@@ -6815,7 +6815,7 @@ bool ImGui::DragFloat(const char* label, float* v, float v_speed, float v_min, f
 
         if (tab_focus_requested || g.IO.KeyCtrl || g.IO.MouseDoubleClicked[0])
         {
-            start_text_input = true;
+            //start_text_input = true;
             g.ScalarAsInputTextId = 0;
         }
     }

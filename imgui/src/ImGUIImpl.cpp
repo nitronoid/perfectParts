@@ -11,9 +11,15 @@
 // If you are new to ImGui, see examples/README.txt and documentation at the top of imgui.cpp.
 // https://github.com/ocornut/imgui
 
+#if defined (__linux__) || defined (WIN32)
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
 #include <SDL2/SDL_opengl.h>
+#else
+#include <SDL.h>
+#include <SDL_syswm.h>
+#include <SDL_opengl.h>
+#endif
 #include <imgui.h>
 #include "ImGUIImpl.h"
 

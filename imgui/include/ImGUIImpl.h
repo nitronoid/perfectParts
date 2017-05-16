@@ -11,13 +11,15 @@
 // If you are new to ImGui, see examples/README.txt and documentation at the top of imgui.cpp.
 // SOURCE = https://github.com/ocornut/imgui
 
-#include <SDL.h>
+
 #include "imgui.h"
 
 #if defined (__linux__) || defined (WIN32)
+#include <SDL2/SDL.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #else
+#include <SDL.h>
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 #endif

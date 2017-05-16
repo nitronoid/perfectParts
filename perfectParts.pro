@@ -49,6 +49,7 @@ OTHER_FILES+=imgui/imgui.ini
 
 QMAKE_CXXFLAGS+= -msse -msse2 -msse3
 QMAKE_CXXFLAGS+= -std=c++11 -O3
+QMAKE_CXXFLAGS += -isystem "$$PWD/imgui/include" -isystem "$$PWD/imgui/src"
 
 linux-g++:QMAKE_CXXFLAGS +=  -march=native
 linux-g++-64:QMAKE_CXXFLAGS +=  -march=native

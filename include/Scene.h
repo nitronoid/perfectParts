@@ -1,7 +1,12 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#if defined (__linux__) || defined (WIN32)
+#include <SDL2/SDL.h>
+#else
 #include <SDL.h>
+#endif
+
 #include <string>
 #include <glm/glm.hpp>
 #include "Emitter.h"

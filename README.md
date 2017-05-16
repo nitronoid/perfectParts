@@ -18,6 +18,10 @@ The program uses ImGui for drawing GUI elements, and ImGuizmo for drawing the tr
 - dear ImGui --- https://github.com/ocornut/imgui
 - ImGuizmo --- https://github.com/CedricGuillemet/ImGuizmo
 
+## Compiler ##
+The system works when compiled with clang++ and g++, however I was unable to suppress the ImGui warnings using g++.
+For a warning free build, use clang++.
+
 ## Controls ##
 ### Keyboard and Mouse controls ###
 The system has some basic controls implemented with keyboard shortcuts
